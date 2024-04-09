@@ -2,17 +2,21 @@
 
 A simple java project for OOP exam
 
-# Ideas
+## Ideas
 
 - Camera API
 - Platformer (pretty animations)
 - Super Sprint
 
-# The big Questions
+## The big Questions
 
 che cazzo scegliamo ocropoid? (resolved)
 \
 oporco ha un cane, di chi è il cane? (unresolved)
 
-# Camera API
-we're making out of unimore with this one `fire emoji` 
+## Camera API
+we're making out of unimore with this one `fire emoji`
+
+## Resources
+Here a list of useful resources:
+* [WebCam API](https://www.baeldung.com/java-capture-image-from-webcam)
