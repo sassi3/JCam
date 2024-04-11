@@ -21,7 +21,8 @@ for a `OpenCVFrameGrabber` object.
 `OpenCVFrameGrabber` is an object that requires the device's number which you are going to use to take photos.
 The default device is `0`.
 
-Before taking a photo you need to start the grabber with the `FrameGrabber`'s method `start()`. 
+Before taking a photo you need to start the grabber with the `FrameGrabber`'s method `start()` 
+(clearly at the end of your task you need to `stop()` the grabber). 
 Then it is possible to take photo using the `grab()` method. It returns a `Frame` object.
 
 ### `Frame` && `JavaFXFrameConverter`
@@ -31,13 +32,18 @@ It is a data structure which is useful as "bridge" between JavaCV and JavaFX. In
 operation is performed by the JavaFX's object `JavaFXFrameConverter`: its method `convert(frame)` allows
 to convert a JavaCV `Frame` into `Image`.
 
-### `IplImage` (obsolete)
+#### `IplImage` (obsolete)
 
-`IplImage` is the base data structure to represent a common image using JavaCV API. It contains a lot of useful informations
+`IplImage` is a data structure to represent common image using JavaCV API. It contains a lot of useful informations
 about the image, like width, height, bit's depth and some pointers that point to image's data itself.
 
-**Warning**: `Iplimage` is obsolete; in latest data structures it has been replaced with `cv::Mat`.
+**Warning**: `Iplimage` is obsolete; in latest data structures it has been replaced with `Mat`. It is possible that 
+using this one you can gain some advantages and functionalities working on photos.
 
-### `Mat` (current)
+#### `Mat` (current)
 
+`Mat` is a powerful data structure to represent n-dimensional dense numerical
+single-channel or multi-channel array. It is clear the reason why it 
+is the favourite way to store images of every type.
 
+`Mat`'s [JavaDoc](https://bytedeco.org/javacpp-presets/opencv/apidocs/org/bytedeco/opencv/opencv_core/Mat.html).
