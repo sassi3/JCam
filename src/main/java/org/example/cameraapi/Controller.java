@@ -22,7 +22,6 @@ public class Controller {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-
                 try {
                     Camera.showWebcam(camera);
                 } catch (Exception e) {
