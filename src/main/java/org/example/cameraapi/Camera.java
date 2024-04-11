@@ -4,7 +4,6 @@ import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 import com.github.sarxos.webcam.WebcamResolution;
 import com.github.sarxos.webcam.util.ImageUtils;
-import org.bytedeco.javacv.FrameGrabber.Exception;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -37,7 +36,7 @@ public class Camera {
         window.setVisible(true);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Camera.clickWebcamCapture();
         Camera.clickWebcamShow();
     }
