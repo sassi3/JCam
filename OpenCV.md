@@ -6,6 +6,9 @@ OpenCV is a very popular open source library for image processing. It uses a C++
 
 Here you can find some useful notes about OpenCV functions and data structures usage.
 
+Consider to use Webcam Capture API (see WebcamCapture.md) instead of OpenCV. That library has more features than OpenCV, 
+for example the possibility to have a camera preview. 
+
 ## `IplImage`
 
 `IplImage` is the base data structure to represent a common image using OpenCV API. It contains a lot of useful informations
