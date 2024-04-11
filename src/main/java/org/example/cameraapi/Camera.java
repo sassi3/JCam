@@ -34,21 +34,28 @@ public class Camera {
 
     public static void showWebcam(Canvas canvas) throws Exception {
 
-        GraphicsContext g2d = canvas.getGraphicsContext2D();
         FrameGrabber grabber = new OpenCVFrameGrabber(0);
         JavaFXFrameConverter converter = new JavaFXFrameConverter();
         grabber.start();
-        Frame frame = grabber.grab();
+        printFrame(canvas,grabber,converter);
 
-        Image img = converter.convert(frame);
-
-
-
-        g2d.drawImage(img, 0, 0);
 
     }
 
-    public static void clickWebcamShow() throws Exception {
+    private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) {
+        GraphicsContext g2d = canvas.getGraphicsContext2D();
+
+        Frame frame = null;
+        try {
+            frame = grabber.grab();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Image img = converter.convert(frame);
+        g2d.drawImage(img, 0, 0);
+    }
+
+    public static void clickWebcamShow() {
         Webcam webcam = Webcam.getDefault();
         webcam.setViewSize(WebcamResolution.VGA.getSize());
 
