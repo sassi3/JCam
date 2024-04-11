@@ -1,27 +1,18 @@
 package org.example.cameraapi;
 
-import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamPanel;
-import com.github.sarxos.webcam.WebcamResolution;
-import com.github.sarxos.webcam.WebcamUtils;
-import com.github.sarxos.webcam.util.ImageUtils;
+
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import org.bytedeco.javacv.*;
-import org.bytedeco.javacv.FrameGrabber.Exception;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.IplImage;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
 import org.bytedeco.opencv.opencv_core.Mat;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
 public class Camera {
+
 
     public static void clickWebcamCapture() throws IOException {
         Webcam webcam = Webcam.getDefault();
@@ -69,5 +60,8 @@ public class Camera {
         window.pack();
         window.setVisible(true);
 
+
+
     }
 }
+
