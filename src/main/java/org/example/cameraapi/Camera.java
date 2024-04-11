@@ -64,10 +64,10 @@ public class Camera {
 
     public static void main(String[] args) throws IOException {
         // Now this is the only working
-        Camera.clickOpenCV();
+        //Camera.clickOpenCV();
         // These are bruh and slow
-        // Camera.clickWebcamCapture();
-        // Camera.clickWebcamUtils();
-        // Camera.clickWebcamShow();
+         //Camera.clickWebcamCapture();
+         //Camera.clickWebcamUtils();
+         Camera.clickWebcamShow();
     }
 }
