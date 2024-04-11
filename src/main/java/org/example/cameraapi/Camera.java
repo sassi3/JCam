@@ -1,25 +1,67 @@
 package org.example.cameraapi;
 
+
+
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import org.bytedeco.javacv.*;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.IplImage;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 public class Camera {
-    public static void run() throws Exception {
-        FrameGrabber grabber = new OpenCVFrameGrabber(0);
-        grabber.start();
-        Frame frame = grabber.grab();
 
-        OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
-        IplImage img = converter.convert(frame);
-        opencv_imgcodecs.cvSaveImage("selfie.jpg", img);
 
-        CanvasFrame canvas = new CanvasFrame("Web Cam");
-        canvas.showImage(frame);
+    public static void clickWebcamCapture() throws IOException {
+        Webcam webcam = Webcam.getDefault();
+        webcam.open();
+
+        BufferedImage image = webcam.getImage();
+
+        ImageIO.write(image, ImageUtils.FORMAT_JPG, new File("selfie.jpg"));
     }
 
-    public static void main(String[] args) throws Exception {
-        Camera.run();
+    public static void showWebcam(Canvas canvas) throws Exception {
+
+        FrameGrabber grabber = new OpenCVFrameGrabber(0);
+        JavaFXFrameConverter converter = new JavaFXFrameConverter();
+        grabber.start();
+        printFrame(canvas,grabber,converter);
+
+
+    }
+
+    private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) {
+        GraphicsContext g2d = canvas.getGraphicsContext2D();
+
+        Frame frame = null;
+        try {
+            frame = grabber.grab();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Image img = converter.convert(frame);
+        g2d.drawImage(img, 0, 0);
+    }
+
+    public static void clickWebcamShow() {
+        Webcam webcam = Webcam.getDefault();
+        webcam.setViewSize(WebcamResolution.VGA.getSize());
+
+        WebcamPanel panel = new WebcamPanel(webcam);
+        panel.setImageSizeDisplayed(true);
+
+        JFrame window = new JFrame("Webcam");
+        window.add(panel);
+        window.setResizable(true);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.pack();
+        window.setVisible(true);
+
+
+
     }
 }
 
