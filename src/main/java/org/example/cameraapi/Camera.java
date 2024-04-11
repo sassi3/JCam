@@ -29,20 +29,16 @@ public class Camera {
     public static void showWebcam(Canvas canvas) throws Exception {
         FrameGrabber grabber = new OpenCVFrameGrabber(0);
         JavaFXFrameConverter converter = new JavaFXFrameConverter();
+
         grabber.start();
         printFrame(canvas, grabber, converter);
+        grabber.stop();
     }
 
-    private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) {
+    private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         GraphicsContext g2d = canvas.getGraphicsContext2D();
 
-        Frame frame;
-        try {
-            frame = grabber.grab();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        Image img = converter.convert(frame);
+        Image img = converter.convert(grabber.grab());
         g2d.drawImage(img, 0, 0);
     }
 
