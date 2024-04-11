@@ -1,5 +1,7 @@
 # Webcam Camera
 
+### Out of this project: it uses Swing
+
 Webcam Camera API is a powerful library that allow you to display a streaming
 preview of what your webcam is capturing, and to take and save photos.
 
