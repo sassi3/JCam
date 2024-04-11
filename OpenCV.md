@@ -13,9 +13,13 @@ for example the possibility to have a camera preview, and at the same time it su
 
 ## Quick information
 
-### `IplImage`
+### `IplImage` (obsolete)
 
 `IplImage` is the base data structure to represent a common image using OpenCV API. It contains a lot of useful informations
 about the image, like width, height, bit's depth and some pointers that point to image's data itself.
 
 **Warning**: `Iplimage` is obsolete; in latest data structures it has been replaced with `cv::Mat`.
+
+### `Mat`
+
+
