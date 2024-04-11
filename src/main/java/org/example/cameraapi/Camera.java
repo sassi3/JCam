@@ -37,7 +37,7 @@ public class Camera {
     }
 
     public static void main(String[] args) throws Exception {
-         Camera.clickWebcamCapture();
-         Camera.clickWebcamShow();
+        Camera.clickWebcamCapture();
+        Camera.clickWebcamShow();
     }
 }
