@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
-import org.bytedeco.javacv.FrameGrabber;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -23,10 +22,9 @@ public class Controller {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-
                 try {
                     Camera.showWebcam(camera);
-                } catch (FrameGrabber.Exception e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }

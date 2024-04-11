@@ -20,7 +20,10 @@ This data structure is an extension of `Frame`, but `Jframe` is sightly incompat
 
 Specific information about `Jframe` data structure and its methods are available on its [JavaDoc](https://docs.oracle.com/javase/8/docs/api/javax/swing/JFrame.html).
 
-### Swing
+### Webcam Camera in JavaFX
 
 It is true that Webcam Capture is a library written for Swing projects,
-but it is possible to use JavaFX by importing `javafx.embed.swing.SwingFXUtils`.
+so be careful using that into JavaFX projects! There is a way to use this library in
+Java FX (see the correspondent section on the linked GitHub page). Anyway, it is not
+recommended to use JavaFX framework because Webcam Camera is Swift native. Principal problem is 
+`Jframe` data structure: it is incompatible with JavaFX because it uses `Frame`.
