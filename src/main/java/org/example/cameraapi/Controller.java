@@ -15,15 +15,30 @@ import javafx.fxml.FXML;
 public class Controller  {
     @FXML private Canvas camera_canvas;
     private final Camera camera;
-    
-    public Controller() throws Exception {
+    private AnimationTimer timer;
+
+    // By default, the camera preview is shown on program startup
+    public Controller() throws FrameGrabber.Exception {
         camera = new Camera();
         camera.start();
         initializeTimer();
     }
 
+    // Useful method to stop the camera when the user changes page (for example, opening settings)
+    @FXML
+    public void webcamStop() throws FrameGrabber.Exception {
+        camera.stop();
+        timer.stop();
+    }
+
+    @FXML
+    public void webcamRestart() throws FrameGrabber.Exception {
+        camera.start();
+        timer.start();
+    }
+
     public void initializeTimer() {
-        AnimationTimer timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 try {
