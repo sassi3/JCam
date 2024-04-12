@@ -41,7 +41,6 @@ public class Camera {
 
     private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         GraphicsContext g2d = canvas.getGraphicsContext2D();
-
         Image img = converter.convert(grabber.grab());
         g2d.drawImage(img, 0, 0);
     }
