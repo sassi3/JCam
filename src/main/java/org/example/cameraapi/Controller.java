@@ -14,11 +14,18 @@ import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import javafx.fxml.FXML;
 
-public class Controller {
+public class Controller  {
     @FXML private Canvas camera;
     AnimationTimer timer;
-    FrameGrabber grabber = new OpenCVFrameGrabber(0);
-    JavaFXFrameConverter converter = new JavaFXFrameConverter();
+    Camera cam;
+
+    {
+        try {
+            cam = new Camera(new JavaFXFrameConverter() );
+        } catch (FrameGrabber.Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     public void initializeTimer() {
@@ -26,7 +33,7 @@ public class Controller {
             @Override
             public void handle(long now) {
                 try {
-                    Camera.showWebcam(camera,grabber,converter);
+                    Camera.showWebcam(camera,cam.grabber,cam.converter);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -37,7 +44,7 @@ public class Controller {
 
     @FXML
     public void handleStart() throws Exception {
-        grabber.start();
+        cam.grabber.start();
         initializeTimer();
     }
 

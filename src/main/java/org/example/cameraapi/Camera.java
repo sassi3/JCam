@@ -17,6 +17,15 @@ import java.io.File;
 import java.io.IOException;
 
 public class Camera {
+    FrameGrabber grabber;
+    JavaFXFrameConverter converter;
+
+    public Camera( JavaFXFrameConverter converter) throws FrameGrabber.Exception {
+        FrameGrabber grabber;
+        grabber = FrameGrabber.createDefault(0);
+        this.grabber = grabber;
+        this.converter = converter;
+    }
     /* public static void clickWebcamCapture() throws IOException {
         Webcam webcam = Webcam.getDefault();
         webcam.open();
