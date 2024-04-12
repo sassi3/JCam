@@ -15,6 +15,7 @@ public class App extends Application {
         stage.setTitle("Camera");
         stage.setScene(scene);
         stage.setResizable(false);
+
         stage.show();
     }
 

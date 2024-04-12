@@ -17,6 +17,15 @@ import java.io.File;
 import java.io.IOException;
 
 public class Camera {
+    FrameGrabber grabber;
+    JavaFXFrameConverter converter;
+
+    public Camera( JavaFXFrameConverter converter) throws FrameGrabber.Exception {
+        FrameGrabber grabber;
+        grabber = FrameGrabber.createDefault(0);
+        this.grabber = grabber;
+        this.converter = converter;
+    }
     /* public static void clickWebcamCapture() throws IOException {
         Webcam webcam = Webcam.getDefault();
         webcam.open();
@@ -26,13 +35,8 @@ public class Camera {
         ImageIO.write(image, ImageUtils.FORMAT_JPG, new File("selfie.jpg"));
     } */
 
-    public static void showWebcam(Canvas canvas) throws Exception {
-        FrameGrabber grabber = new OpenCVFrameGrabber(0);
-        JavaFXFrameConverter converter = new JavaFXFrameConverter();
-
-        grabber.start();
+    public static void showWebcam(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         printFrame(canvas, grabber, converter);
-        grabber.stop();
     }
 
     private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
