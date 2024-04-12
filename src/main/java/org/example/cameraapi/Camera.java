@@ -26,13 +26,8 @@ public class Camera {
         ImageIO.write(image, ImageUtils.FORMAT_JPG, new File("selfie.jpg"));
     } */
 
-    public static void showWebcam(Canvas canvas) throws Exception {
-        FrameGrabber grabber = new OpenCVFrameGrabber(0);
-        JavaFXFrameConverter converter = new JavaFXFrameConverter();
-
-        grabber.start();
+    public static void showWebcam(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         printFrame(canvas, grabber, converter);
-        grabber.stop();
     }
 
     private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
