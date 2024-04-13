@@ -25,6 +25,15 @@ Before taking a photo you need to start the grabber with the `FrameGrabber`'s me
 (clearly at the end of your task you need to `stop()` the grabber). 
 Then it is possible to take photo using the `grab()` method. It returns a `Frame` object.
 
+`Image` && `ImageView` && `WritableImage`
+
+It is important to distinguish three similar data structures: `Image`, `ImageView` and `WritableImage`.
+They have three specific different purposes: the first one is used to work on images; 
+the second one is useful to work on image's printing on the screen; then the last one is used to manage image's store operations.
+
+I found a nice [guide](https://www.tutorialspoint.com/javafx/javafx_images.htm) to use these two data structure and 
+understand their differences.
+
 ### `Frame` && `JavaFXFrameConverter`
 
 It is a data structure which is useful as "bridge" between JavaCV and JavaFX. In fact, 
@@ -43,7 +52,7 @@ using this one you can gain some advantages and functionalities working on photo
 #### `Mat` (current)
 
 `Mat` is a powerful data structure to represent n-dimensional dense numerical
-single-channel or multi-channel array. It is clear the reason why it 
+single-channel or multichannel array. It is clear the reason why it 
 is the favourite way to store images of every type.
 
 `Mat`'s [JavaDoc](https://bytedeco.org/javacpp-presets/opencv/apidocs/org/bytedeco/opencv/opencv_core/Mat.html).
