@@ -27,26 +27,31 @@ public class Controller  {
 
     // Useful method to stop the camera when the user changes page (for example, opening settings)
     @FXML
-    public void webcamStop() throws FrameGrabber.Exception {
+    private void webcamStop() throws FrameGrabber.Exception {
         camera.stop();
         timer.stop();
     }
 
     @FXML
-    public void webcamRestart() throws FrameGrabber.Exception {
+    private void webcamRestart() throws FrameGrabber.Exception {
         camera.start();
         timer.start();
     }
 
     @FXML
-    public void takePicture() throws FrameGrabber.Exception {
-        Frame snap = camera.getGrabber().grab();
-        // TEMPORARY: only to debug
-        raw_picture = camera.getConverter().convert(snap);
-        // continue...
+    private void picturePreview() {
+        output_picture = new ImageView(raw_picture);
+        output_picture.setPreserveRatio(true);
     }
 
-    public void initializeTimer() {
+    @FXML
+    private void takePicture() throws FrameGrabber.Exception {
+        Frame snap = camera.getGrabber().grab();
+        raw_picture = camera.getConverter().convert(snap);
+        this.picturePreview();
+    }
+
+    private void initializeTimer() {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -61,7 +66,7 @@ public class Controller  {
     }
 
     // Unused mat2Image converter, but maybe useful
-    /* public static Image mat2Image(Mat mat) {
+    /* private static Image mat2Image(Mat mat) {
         MatOfByte buffer = new MatOfByte();
         Imgcodecs.imencode(".png", mat, buffer);
         return new Image(new ByteArrayInputStream(buffer.toArray()));
