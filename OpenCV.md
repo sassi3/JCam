@@ -25,7 +25,7 @@ Before taking a photo you need to start the grabber with the `FrameGrabber`'s me
 (clearly at the end of your task you need to `stop()` the grabber). 
 Then it is possible to take photo using the `grab()` method. It returns a `Frame` object.
 
-`Image` && `ImageView` && `WritableImage`
+### `Image` && `ImageView` && `WritableImage`
 
 It is important to distinguish three similar data structures: `Image`, `ImageView` and `WritableImage`.
 They have three specific different purposes: the first one is used to work on images; 
