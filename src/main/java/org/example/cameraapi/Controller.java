@@ -1,5 +1,7 @@
 package org.example.cameraapi;
 
+import java.util.Objects;
+import com.github.sarxos.webcam.Webcam;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
@@ -20,9 +22,19 @@ public class Controller  {
 
     // By default, the camera preview is shown on program startup
     public Controller() throws FrameGrabber.Exception {
+        Webcam webcam = Webcam.getDefault();
         camera = new Camera();
-        camera.start();
-        initializeTimer();
+        if (webcam != null) {
+            System.out.println("webcam found: " + webcam.getName());
+            camera.grabber = FrameGrabber.createDefault(0);
+            camera.start();
+            initializeTimer();
+        }
+        else{
+            System.out.println("No webcam found");
+            showErrorScreen();
+        }
+
     }
 
     // Useful method to stop the camera when the user changes page (for example, opening settings)
@@ -65,6 +77,15 @@ public class Controller  {
         timer.start();
     }
 
+    public void showErrorScreen(){
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                Camera.printImg(camera_canvas,new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+            }
+        };
+        timer.start();
+    }
     // Unused mat2Image converter, but maybe useful
     /* private static Image mat2Image(Mat mat) {
         MatOfByte buffer = new MatOfByte();
