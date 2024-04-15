@@ -31,15 +31,16 @@ public class Camera {
     }
 
     public static void showWebcam(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
-        printFrame(canvas, grabber, converter);
+        printImg(canvas, grabber, converter);
     }
 
-    private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
+
+    private static void printImg(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         GraphicsContext g2d = canvas.getGraphicsContext2D();
         Image img = converter.convert(grabber.grab());
         g2d.drawImage(img, 0, 0);
     }
-    public static void printFrame(Canvas canvas, Image img)  {
+    public static void printImg(Canvas canvas, Image img)  {
         GraphicsContext g2d = canvas.getGraphicsContext2D();
         g2d.drawImage(img, 0, 0);
     }

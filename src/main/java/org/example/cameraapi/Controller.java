@@ -1,6 +1,5 @@
 package org.example.cameraapi;
 
-import java.io.ByteArrayInputStream;
 import java.util.Objects;
 
 import com.github.sarxos.webcam.Webcam;
@@ -8,10 +7,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.JavaFXFrameConverter;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.imgcodecs.Imgcodecs;
 import javafx.fxml.FXML;
 
 public class Controller  {
@@ -29,7 +24,8 @@ public class Controller  {
             initializeTimer();
         }
         else{
-            Camera.printFrame(camera_canvas,new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+            System.out.println("No webcam found");
+            showErrorScreen();
         }
 
     }
@@ -61,6 +57,15 @@ public class Controller  {
         timer.start();
     }
 
+    public void showErrorScreen(){
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                Camera.printImg(camera_canvas,new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+            }
+        };
+        timer.start();
+    }
     // Unused mat2Image converter, but maybe useful
     /* public static Image mat2Image(Mat mat) {
         MatOfByte buffer = new MatOfByte();
