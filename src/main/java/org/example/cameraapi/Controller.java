@@ -19,6 +19,7 @@ public class Controller  {
         Webcam webcam = Webcam.getDefault();
         camera = new Camera();
         if (webcam != null) {
+            System.out.println("webcam found: " + webcam.getName());
             camera.grabber = FrameGrabber.createDefault(0);
             camera.start();
             initializeTimer();
