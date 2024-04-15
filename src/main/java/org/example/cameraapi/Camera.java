@@ -30,6 +30,7 @@ public class Camera {
         grabber.stop();
     }
 
+
     public static void showWebcam(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         printFrame(canvas, grabber, converter);
     }
