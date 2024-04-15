@@ -6,11 +6,11 @@ import javafx.scene.image.Image;
 import org.bytedeco.javacv.*;
 
 public class Camera {
-    private final FrameGrabber grabber;
+    FrameGrabber grabber;
     private final JavaFXFrameConverter converter;
 
-    public Camera() throws FrameGrabber.Exception {
-        grabber = FrameGrabber.createDefault(0);
+    public Camera() {
+
         converter = new JavaFXFrameConverter();
     }
 
@@ -37,6 +37,10 @@ public class Camera {
     private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         GraphicsContext g2d = canvas.getGraphicsContext2D();
         Image img = converter.convert(grabber.grab());
+        g2d.drawImage(img, 0, 0);
+    }
+    public static void printFrame(Canvas canvas, Image img)  {
+        GraphicsContext g2d = canvas.getGraphicsContext2D();
         g2d.drawImage(img, 0, 0);
     }
 }
