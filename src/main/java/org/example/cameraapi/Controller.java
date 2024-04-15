@@ -68,7 +68,7 @@ public class Controller  {
             @Override
             public void handle(long now) {
                 try {
-                    Camera.webcamStreaming(camera_canvas, camera.getGrabber(), camera.getConverter());
+                    Camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
