@@ -25,6 +25,8 @@ public class Controller  {
         camera = new Camera();
         if (webcam != null) {
             camera.grabber = FrameGrabber.createDefault(0);
+            camera.start();
+            initializeTimer();
         }
         else{
             Camera.printFrame(camera_canvas,new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
