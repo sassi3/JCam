@@ -1,7 +1,6 @@
 package org.example.cameraapi;
 
 import java.util.Objects;
-import com.github.sarxos.webcam.Webcam;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.Button;
@@ -14,8 +13,8 @@ import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 
 public class Controller  {
-    private final Camera camera;
     private AnimationTimer timer;
+    private final Camera camera;
     @FXML private Canvas camera_canvas;
     @FXML private Image raw_picture;        // I think that it is a good practice to keep a copy of original data
     @FXML private Image current_picture;
@@ -25,23 +24,14 @@ public class Controller  {
     private boolean outputChecker = true; // assures that the transform gets applied on output_picture only once
     // By default, the camera preview is shown on program startup
     public Controller() throws FrameGrabber.Exception {
-        Webcam webcam = Webcam.getDefault();
         camera = new Camera();
-        if (webcam != null) {
-            System.out.println("webcam found: " + webcam.getName());
-            camera.grabber = FrameGrabber.createDefault(0);
-            camera.start();
-            initializeTimer();
-        }
-        else{
-            System.out.println("No webcam found");
-            showErrorScreen();
-        }
-
+        initializeTimer();
     }
-    public void disableCaptureButton(){
+
+    public void disableInterface(){
         captureButton.disarm();
     }
+
     // Useful method to stop the camera when the user changes page (for example, opening settings)
     @FXML
     private void webcamStop() throws FrameGrabber.Exception {
@@ -74,13 +64,21 @@ public class Controller  {
         this.picturePreview();
     }
 
+
+
+
+
     private void initializeTimer() {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-
                 try {
-                    Camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
+                    if (Objects.isNull(camera.getGrabber())) {
+                        disableInterface();
+                        camera.printImg(camera_canvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+                    } else {
+                        camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -89,20 +87,6 @@ public class Controller  {
         timer.start();
     }
 
-    public void showErrorScreen(){
-
-        timer = new AnimationTimer() {
-
-            @Override
-            public void handle(long now) {
-                disableCaptureButton();
-                Camera.printImg(camera_canvas,new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
-            }
-        };
-        timer.start();
-
-
-    }
     // Unused mat2Image converter, but maybe useful
     /* private static Image mat2Image(Mat mat) {
         MatOfByte buffer = new MatOfByte();

@@ -9,11 +9,22 @@ import org.bytedeco.opencv.opencv_core.Arrays;
 
 
 public class Camera {
-    FrameGrabber grabber;
+    private FrameGrabber grabber;
     private final JavaFXFrameConverter converter;
 
     public Camera() {
-        converter = new JavaFXFrameConverter();
+        try {
+            System.out.println("Default webcam detected.");
+            grabber = FrameGrabber.createDefault(0);
+            start();
+        } catch (FrameGrabber.Exception e) {
+            System.out.println("No webcam detected.");
+            grabber = null;
+        } finally {
+            converter = new JavaFXFrameConverter();
+            // Background routine for webcam detection. It runs even in case there is a default webcam
+            System.out.println("Starting background routine for webcam detection...");
+        }
     }
 
 
@@ -27,6 +38,13 @@ public class Camera {
         return grabber;
     }
 
+    public void setGrabber(FrameGrabber grabber) {
+        this.grabber = grabber;
+    }
+
+
+
+
     public void start() throws FrameGrabber.Exception {
         grabber.start();
     }
@@ -35,19 +53,19 @@ public class Camera {
         grabber.stop();
     }
 
-
-    public static void showWebcam(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
+    public void showWebcam(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         printFrame(canvas, grabber, converter);
     }
 
 
-    private static void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
+    private void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         GraphicsContext g2d = canvas.getGraphicsContext2D();
         Image img = converter.convert(grabber.grab());
         imgFlipper(g2d);
         g2d.drawImage(img, 0, 0, canvas.getWidth(), canvas.getHeight());
     }
-    public static void printImg(Canvas canvas, Image img)  {
+
+    public void printImg(Canvas canvas, Image img)  {
         GraphicsContext g2d = canvas.getGraphicsContext2D();
         g2d.drawImage(img, 0, 0, canvas.getWidth(), canvas.getHeight());
     }
@@ -75,11 +93,9 @@ public class Camera {
          */
     }
 
-
+  
     public static void imgFlipper(GraphicsContext g2d) {
         g2d.setTransform(flipperMaker(g2d.getCanvas()));
     }
-
-
 }
 
