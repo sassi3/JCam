@@ -24,34 +24,7 @@ public class Controller  {
     // By default, the camera preview is shown on program startup
     public Controller() throws FrameGrabber.Exception {
         camera = new Camera();
-        if (Objects.isNull(camera.getGrabber())) {
-            disableInterface();
-            timer = new AnimationTimer() {
-                @Override
-                public void handle(long now) {
-                    try {
-                        camera.printImg(camera_canvas,new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            };
-            timer.start();
-            System.out.println("Timer running.");
-        } else {
-            timer = new AnimationTimer() {
-                @Override
-                public void handle(long now) {
-                    try {
-                        camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            };
-            timer.start();
-            System.out.println("Timer running.");
-        }
+        initializeTimer();
     }
 
     public void disableInterface(){
@@ -82,6 +55,29 @@ public class Controller  {
         Frame snap = camera.getGrabber().grab();
         raw_picture = camera.getConverter().convert(snap);
         this.picturePreview();
+    }
+
+
+
+
+
+    private void initializeTimer() {
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                try {
+                    if (Objects.isNull(camera.getGrabber())) {
+                        disableInterface();
+                        camera.printImg(camera_canvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+                    } else {
+                        camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        timer.start();
     }
 
     // Unused mat2Image converter, but maybe useful

@@ -1,6 +1,5 @@
 package org.example.cameraapi;
 
-import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -12,14 +11,16 @@ public class Camera {
 
     public Camera() {
         try {
+            System.out.println("Default webcam detected.");
             grabber = FrameGrabber.createDefault(0);
-            System.out.println("Default webcam detected. Starting timer...");
+            start();
         } catch (FrameGrabber.Exception e) {
+            System.out.println("No webcam detected.");
             grabber = null;
-            System.out.println("No webcam detected. Starting timer...");
         } finally {
             converter = new JavaFXFrameConverter();
-            // Routine in background for webcam research. It runs even in case there is a default webcam
+            // Background routine for webcam detection. It runs even in case there is a default webcam
+            System.out.println("Starting background routine for webcam detection...");
         }
     }
 
@@ -34,6 +35,9 @@ public class Camera {
     public void setGrabber(FrameGrabber grabber) {
         this.grabber = grabber;
     }
+
+
+
 
     public void start() throws FrameGrabber.Exception {
         grabber.start();
