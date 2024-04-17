@@ -1,7 +1,10 @@
 package org.example.cameraapi;
 
+import java.util.Objects;
+import com.github.sarxos.webcam.Webcam;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -17,14 +20,27 @@ public class Controller  {
     @FXML private Image current_picture;
     @FXML private ImageView output_picture;
     @FXML private WritableImage picture_to_write;
+    @FXML private Button captureButton;
 
     // By default, the camera preview is shown on program startup
     public Controller() throws FrameGrabber.Exception {
+        Webcam webcam = Webcam.getDefault();
         camera = new Camera();
-        camera.start();
-        initializeTimer();
-    }
+        if (webcam != null) {
+            System.out.println("webcam found: " + webcam.getName());
+            camera.grabber = FrameGrabber.createDefault(0);
+            camera.start();
+            initializeTimer();
+        }
+        else{
+            System.out.println("No webcam found");
+            showErrorScreen();
+        }
 
+    }
+    public void disableCaptureButton(){
+        captureButton.disarm();
+    }
     // Useful method to stop the camera when the user changes page (for example, opening settings)
     @FXML
     private void webcamStop() throws FrameGrabber.Exception {
@@ -55,8 +71,9 @@ public class Controller  {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+
                 try {
-                    Camera.webcamStreaming(camera_canvas, camera.getGrabber(), camera.getConverter());
+                    Camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -65,6 +82,20 @@ public class Controller  {
         timer.start();
     }
 
+    public void showErrorScreen(){
+
+        timer = new AnimationTimer() {
+
+            @Override
+            public void handle(long now) {
+                disableCaptureButton();
+                Camera.printImg(camera_canvas,new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+            }
+        };
+        timer.start();
+
+
+    }
     // Unused mat2Image converter, but maybe useful
     /* private static Image mat2Image(Mat mat) {
         MatOfByte buffer = new MatOfByte();
