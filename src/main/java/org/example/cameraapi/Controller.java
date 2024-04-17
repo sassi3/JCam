@@ -12,6 +12,7 @@ import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 
 public class Controller  {
+    private AnimationTimer timer;
     private final Camera camera;
     @FXML private Canvas camera_canvas;
     @FXML private Image raw_picture;        // I think that it is a good practice to keep a copy of original data
@@ -22,9 +23,34 @@ public class Controller  {
 
     // By default, the camera preview is shown on program startup
     public Controller() throws FrameGrabber.Exception {
-        camera = new Camera(camera_canvas);
+        camera = new Camera();
         if (Objects.isNull(camera.getGrabber())) {
             disableInterface();
+            timer = new AnimationTimer() {
+                @Override
+                public void handle(long now) {
+                    try {
+                        camera.printImg(camera_canvas,new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
+            timer.start();
+            System.out.println("Timer running.");
+        } else {
+            timer = new AnimationTimer() {
+                @Override
+                public void handle(long now) {
+                    try {
+                        camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            };
+            timer.start();
+            System.out.println("Timer running.");
         }
     }
 
@@ -36,13 +62,13 @@ public class Controller  {
     @FXML
     private void webcamStop() throws FrameGrabber.Exception {
         camera.stop();
-        camera.getTimer().stop();
+        timer.stop();
     }
 
     @FXML
     private void webcamRestart() throws FrameGrabber.Exception {
         camera.start();
-        camera.getTimer().start();
+        timer.start();
     }
 
     @FXML
