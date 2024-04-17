@@ -66,6 +66,8 @@ public class Controller  {
         if (outputChecker) {
             outputChecker = false;
             output_picture.getTransforms().add(new Affine(-1,0,output_picture.getFitWidth(),0,1,0));
+            // flips what's displayed by the image view around the y axis
+            // and then translates it right (through the x axis) by the width of the image view itself
         }
         Frame snap = camera.getGrabber().grab();
         raw_picture = camera.getConverter().convert(snap);
