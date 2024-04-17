@@ -56,7 +56,7 @@ public class Controller  {
 
     @FXML
     private void picturePreview() {
-        output_picture = new ImageView(raw_picture);
+        output_picture.setImage(raw_picture);
         output_picture.setPreserveRatio(true);
     }
 
