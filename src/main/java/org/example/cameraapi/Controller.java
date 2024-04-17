@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.transform.Affine;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
@@ -21,7 +22,7 @@ public class Controller  {
     @FXML private ImageView output_picture;
     @FXML private WritableImage picture_to_write;
     @FXML private Button captureButton;
-
+    private boolean outputChecker = true; // assures that the transform gets applied on output_picture only once
     // By default, the camera preview is shown on program startup
     public Controller() throws FrameGrabber.Exception {
         Webcam webcam = Webcam.getDefault();
@@ -62,6 +63,10 @@ public class Controller  {
 
     @FXML
     private void takePicture() throws FrameGrabber.Exception {
+        if (outputChecker) {
+            outputChecker = false;
+            output_picture.getTransforms().add(new Affine(-1,0,output_picture.getFitWidth(),0,1,0));
+        }
         Frame snap = camera.getGrabber().grab();
         raw_picture = camera.getConverter().convert(snap);
         this.picturePreview();
