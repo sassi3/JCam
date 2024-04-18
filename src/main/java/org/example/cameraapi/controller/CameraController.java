@@ -127,7 +127,7 @@ public class CameraController {
                 try {
                     if (Objects.isNull(camera.getGrabber())) {
                         disableInterface();
-                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/ErrImg.png"))));
                     } else {
                         printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     }
