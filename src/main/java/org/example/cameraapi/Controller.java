@@ -4,35 +4,45 @@ import java.util.Objects;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.transform.Affine;
-import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
+import org.bytedeco.javacv.JavaFXFrameConverter;
 
 public class Controller  {
     private AnimationTimer timer;
     private final Camera camera;
-    @FXML private Canvas camera_canvas;
-    @FXML private Image raw_picture;        // I think that it is a good practice to keep a copy of original data
-    @FXML private Image current_picture;
-    @FXML private ImageView output_picture;
-    @FXML private WritableImage picture_to_write;
+    @FXML private Canvas cameraCanvas;
+    @FXML private Image rawPicture;
+    @FXML private Image currentPicture;
+    @FXML private ImageView outputPicture;
+    @FXML private WritableImage pictureToWrite;
+
+    // --------- BUTTONS & CHECKBOXES ---------
     @FXML private Button captureButton;
-    private boolean outputChecker = true; // assures that the transform gets applied on output_picture only once
+    @FXML private CheckBox flipCheckBox;
+    @FXML private CheckBox freezeCheckBox;
+    private boolean outputChecker;
+
     // By default, the camera preview is shown on program startup
-    public Controller() throws FrameGrabber.Exception {
+    public Controller() {
         camera = new Camera();
+        outputChecker = true;   // assures that the transform gets applied on output_picture only once
         initializeTimer();
     }
 
-    public void disableInterface(){
+    // -------------- DISARMER --------------
+    public void disableInterface() {
         captureButton.disarm();
+        flipCheckBox.disarm();
+        freezeCheckBox.disarm();
     }
 
-    // Useful method to stop the camera when the user changes page (for example, opening settings)
+    // --------------- FXMLs ---------------
     @FXML
     private void webcamStop() throws FrameGrabber.Exception {
         camera.stop();
@@ -47,27 +57,48 @@ public class Controller  {
 
     @FXML
     private void picturePreview() {
-        output_picture.setImage(raw_picture);
-        output_picture.setPreserveRatio(true);
+        outputPicture.setImage(rawPicture);
+        outputPicture.setPreserveRatio(true);
     }
 
     @FXML
     private void takePicture() throws FrameGrabber.Exception {
+        // ? Are you sure ?
         if (outputChecker) {
             outputChecker = false;
-            output_picture.getTransforms().add(new Affine(-1,0,output_picture.getFitWidth(),0,1,0));
-            // flips what's displayed by the image view around the y axis
-            // and then translates it right (through the x axis) by the width of the image view itself
+            outputPicture.getTransforms().add(new Affine(-1,0,outputPicture.getFitWidth(),0,1,0));
+            // flips what's displayed by the image view around the y-axis
+            // and then translates it right (through the x-axis) by the width of the image view itself
         }
-        Frame snap = camera.getGrabber().grab();
-        raw_picture = camera.getConverter().convert(snap);
-        this.picturePreview();
+        rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
+        picturePreview();
     }
 
+    // --------------- EFFECTS ---------------
+    @FXML
+    private void flipCamera() {
+        Effects.flip();
+        if (Effects.isFreezed()) {
+            Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        }
+    }
 
+    @FXML
+    private void freezeCamera() {
+        Effects.freeze(timer);
+    }
 
+    // --------- UNIVERSAL CANVAS PRINTERS ---------
+    private void printWebcamFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
+        canvas.getGraphicsContext2D().drawImage(converter.convert(grabber.grab()), 0, 0, canvas.getWidth(), canvas.getHeight());
+        if (!Effects.isFlipped()) Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+    }
 
+    private void printImg(Canvas canvas, Image img)  {
+        canvas.getGraphicsContext2D().drawImage(img, 0, 0);
+    }
 
+    // -------------- TIMER --------------
     private void initializeTimer() {
         timer = new AnimationTimer() {
             @Override
@@ -75,9 +106,9 @@ public class Controller  {
                 try {
                     if (Objects.isNull(camera.getGrabber())) {
                         disableInterface();
-                        camera.printImg(camera_canvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
                     } else {
-                        camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
+                        printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -86,11 +117,4 @@ public class Controller  {
         };
         timer.start();
     }
-
-    // Unused mat2Image converter, but maybe useful
-    /* private static Image mat2Image(Mat mat) {
-        MatOfByte buffer = new MatOfByte();
-        Imgcodecs.imencode(".png", mat, buffer);
-        return new Image(new ByteArrayInputStream(buffer.toArray()));
-    } */
 }
