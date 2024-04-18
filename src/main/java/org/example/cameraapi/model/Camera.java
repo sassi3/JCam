@@ -16,8 +16,8 @@ public class Camera {
             grabber = null;
         } finally {
             converter = new JavaFXFrameConverter();
-            // Background routine for webcam detection. It runs even in case there is a default webcam
             System.out.println("Starting background routine for webcam detection...");
+            // Background routine for webcam detection. It runs even in case there is a default webcam
         }
     }
 
