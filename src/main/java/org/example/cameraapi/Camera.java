@@ -1,8 +1,4 @@
 package org.example.cameraapi;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.transform.Affine;
 import org.bytedeco.javacv.*;
 
 
@@ -36,8 +32,6 @@ public class Camera {
     public void setGrabber(FrameGrabber grabber) {
         this.grabber = grabber;
     }
-
-
 
     // -------------- START & STOP --------------
     public void start() throws FrameGrabber.Exception {
