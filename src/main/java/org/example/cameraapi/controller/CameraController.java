@@ -1,4 +1,4 @@
-package org.example.cameraapi;
+package org.example.cameraapi.controller;
 
 import java.util.Objects;
 import javafx.scene.canvas.Canvas;
@@ -7,13 +7,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.transform.Affine;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 import org.bytedeco.javacv.JavaFXFrameConverter;
+import org.example.cameraapi.model.Camera;
+import org.example.cameraapi.Effects;
 
-public class Controller  {
+public class CameraController {
     private AnimationTimer timer;
     private final Camera camera;
     @FXML private Canvas cameraCanvas;
@@ -30,7 +31,7 @@ public class Controller  {
     private boolean outputChecker;
 
     // By default, the camera preview is shown on program startup
-    public Controller() {
+    public CameraController() {
         camera = new Camera();
         printablePicture = new ImageView();
         outputChecker = true;   // assures that the transform gets applied on output_picture only once

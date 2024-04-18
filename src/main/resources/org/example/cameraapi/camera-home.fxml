@@ -9,7 +9,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="433.0" maxWidth="633.0" minHeight="433.0" minWidth="633.0" prefHeight="433.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.cameraapi.Controller">
+<AnchorPane maxHeight="433.0" maxWidth="633.0" minHeight="433.0" minWidth="633.0" prefHeight="433.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.cameraapi.controller.CameraController">
    <children>
       <Button fx:id="captureButton" layoutX="290.0" layoutY="379.0" mnemonicParsing="false" onAction="#takePicture" text="Capture" />
       <MenuBar prefHeight="26.0" prefWidth="633.0">

@@ -1,4 +1,4 @@
-package org.example.cameraapi;
+package org.example.cameraapi.model;
 
 import org.bytedeco.javacv.*;
 
