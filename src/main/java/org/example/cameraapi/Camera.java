@@ -1,6 +1,6 @@
 package org.example.cameraapi;
-import org.bytedeco.javacv.*;
 
+import org.bytedeco.javacv.*;
 
 public class Camera {
     private FrameGrabber grabber;
@@ -42,4 +42,3 @@ public class Camera {
         grabber.stop();
     }
 }
-
