@@ -17,10 +17,11 @@ public class Controller  {
     private AnimationTimer timer;
     private final Camera camera;
     @FXML private Canvas cameraCanvas;
+
+    // --------- IMAGES' CONTAINERS ---------
     @FXML private Image rawPicture;
     @FXML private Image currentPicture;
-    @FXML private ImageView outputPicture;
-    @FXML private WritableImage pictureToWrite;
+    @FXML private ImageView printablePicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
     @FXML private Button captureButton;
@@ -31,6 +32,7 @@ public class Controller  {
     // By default, the camera preview is shown on program startup
     public Controller() {
         camera = new Camera();
+        printablePicture = new ImageView();
         outputChecker = true;   // assures that the transform gets applied on output_picture only once
         initializeTimer();
     }
@@ -42,7 +44,7 @@ public class Controller  {
         freezeCheckBox.disarm();
     }
 
-    // --------------- FXMLs ---------------
+    // ------------ WEBCAM HANDLERS ------------
     @FXML
     private void webcamStop() throws FrameGrabber.Exception {
         camera.stop();
@@ -55,10 +57,11 @@ public class Controller  {
         timer.start();
     }
 
+    // ------ TAKING, SHOWING & SAVING PICTURES ------
     @FXML
-    private void picturePreview() {
-        outputPicture.setImage(rawPicture);
-        outputPicture.setPreserveRatio(true);
+    private void previewPicture(Image picture) {
+        printablePicture.setImage(picture);
+        printablePicture.setPreserveRatio(true);
     }
 
     @FXML
@@ -66,15 +69,22 @@ public class Controller  {
         // ? Are you sure ?
         if (outputChecker) {
             outputChecker = false;
-            outputPicture.getTransforms().add(new Affine(-1,0,outputPicture.getFitWidth(),0,1,0));
+            printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
         }
         rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
-        picturePreview();
+        previewPicture(rawPicture);
+        currentPicture = rawPicture;
+        // IDEA: create a try-catch block to give an error message in case of failure (we need to search how to give error message)
     }
 
-    // --------------- EFFECTS ---------------
+    @FXML
+    private void savePicture(Image picture) {
+        // something...
+    }
+
+    // ------------ EFFECTS HANDLERS ------------
     @FXML
     private void flipCamera() {
         Effects.flip();
