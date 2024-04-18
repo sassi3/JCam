@@ -1,19 +1,19 @@
-package org.example.cameraapi;
+package org.example.cameraapi.controller;
 
 import java.util.Objects;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.transform.Affine;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 import org.bytedeco.javacv.JavaFXFrameConverter;
+import org.example.cameraapi.model.Camera;
+import org.example.cameraapi.Effects;
 
-public class Controller  {
+public class CameraController {
     private AnimationTimer timer;
     private final Camera camera;
     @FXML private Canvas cameraCanvas;
@@ -24,13 +24,14 @@ public class Controller  {
     @FXML private ImageView printablePicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
+    @FXML private ButtonBar effectsBar;
+    @FXML private ToggleButton freezeToggleButton;
+    @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
-    @FXML private CheckBox flipCheckBox;
-    @FXML private CheckBox freezeCheckBox;
     private boolean outputChecker;
 
     // By default, the camera preview is shown on program startup
-    public Controller() {
+    public CameraController() {
         camera = new Camera();
         printablePicture = new ImageView();
         outputChecker = true;   // assures that the transform gets applied on output_picture only once
@@ -40,8 +41,8 @@ public class Controller  {
     // -------------- DISARMER --------------
     public void disableInterface() {
         captureButton.disarm();
-        flipCheckBox.disarm();
-        freezeCheckBox.disarm();
+        freezeToggleButton.disarm();
+        flipToggleButton.disarm();
     }
 
     // ------------ WEBCAM HANDLERS ------------
@@ -49,12 +50,14 @@ public class Controller  {
     private void webcamStop() throws FrameGrabber.Exception {
         camera.stop();
         timer.stop();
+        System.out.println("Webcam stopped.");
     }
 
     @FXML
     private void webcamRestart() throws FrameGrabber.Exception {
         camera.start();
         timer.start();
+        System.out.println("Webcam restarted.");
     }
 
     // ------ TAKING, SHOWING & SAVING PICTURES ------
@@ -73,10 +76,17 @@ public class Controller  {
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
         }
-        rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
-        previewPicture(rawPicture);
-        currentPicture = rawPicture;
-        // IDEA: create a try-catch block to give an error message in case of failure (we need to search how to give error message)
+        try {
+            rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
+            previewPicture(rawPicture);
+            currentPicture = rawPicture;
+        } catch (FrameGrabber.Exception fex) {
+            webcamStop();
+            showFailedToTakePictureAlert();
+            webcamRestart();
+            return;
+        }
+        // Operations to open the editor window
     }
 
     @FXML
@@ -91,11 +101,13 @@ public class Controller  {
         if (Effects.isFreezed()) {
             Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
         }
+        flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
     @FXML
     private void freezeCamera() {
         Effects.freeze(timer);
+        freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
 
     // --------- UNIVERSAL CANVAS PRINTERS ---------
@@ -116,7 +128,7 @@ public class Controller  {
                 try {
                     if (Objects.isNull(camera.getGrabber())) {
                         disableInterface();
-                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/ErrImg.png"))));
                     } else {
                         printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     }
@@ -126,5 +138,23 @@ public class Controller  {
             }
         };
         timer.start();
+    }
+
+    // --------------- ALERTS ---------------
+    void showFailedToTakePictureAlert() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.getDialogPane().setMinWidth(675);
+        alert.getDialogPane().setMaxWidth(675);
+        alert.setTitle("Warning!");
+        alert.setHeaderText("Unable to take picture");
+        alert.setContentText("""
+                The application is unable to take the picture.
+                Quick fixes:
+                 ~ Retry to take the photo;
+                 ~ Check if your webcam works properly. Maybe try to switch to another device using the "Device List" dropdown menu;
+                 ~ Try to restart the application;
+                 ~ Try to restart the computer;
+                 ~ Pray (trust me, it doesn't work).""");
+        alert.showAndWait();
     }
 }
