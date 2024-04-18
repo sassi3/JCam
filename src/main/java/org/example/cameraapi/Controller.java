@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.transform.Affine;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
@@ -22,7 +23,7 @@ public class Controller  {
     @FXML private ImageView outputPicture;
     @FXML private WritableImage pictureToWrite;
     @FXML private Button captureButton;
-
+    private boolean outputChecker = true; // assures that the transform gets applied on output_picture only once
     // By default, the camera preview is shown on program startup
     public Controller() throws FrameGrabber.Exception {
         camera = new Camera();
@@ -48,12 +49,18 @@ public class Controller  {
 
     @FXML
     private void picturePreview() {
-        outputPicture = new ImageView(rawPicture);
-        outputPicture.setPreserveRatio(true);
+        output_picture.setImage(raw_picture);
+        output_picture.setPreserveRatio(true);
     }
 
     @FXML
     private void takePicture() throws FrameGrabber.Exception {
+        if (outputChecker) {
+            outputChecker = false;
+            output_picture.getTransforms().add(new Affine(-1,0,output_picture.getFitWidth(),0,1,0));
+            // flips what's displayed by the image view around the y axis
+            // and then translates it right (through the x axis) by the width of the image view itself
+        }
         Frame snap = camera.getGrabber().grab();
         rawPicture = camera.getConverter().convert(snap);
         this.picturePreview();
