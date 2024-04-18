@@ -3,6 +3,7 @@ package org.example.cameraapi;
 import java.util.Objects;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,15 +11,16 @@ import javafx.scene.image.WritableImage;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
+import org.bytedeco.javacv.JavaFXFrameConverter;
 
 public class Controller  {
     private AnimationTimer timer;
     private final Camera camera;
-    @FXML private Canvas camera_canvas;
-    @FXML private Image raw_picture;        // I think that it is a good practice to keep a copy of original data
-    @FXML private Image current_picture;
-    @FXML private ImageView output_picture;
-    @FXML private WritableImage picture_to_write;
+    @FXML private Canvas cameraCanvas;
+    @FXML private Image rawPicture;        // I think that it is a good practice to keep a copy of original data
+    @FXML private Image currentPicture;
+    @FXML private ImageView outputPicture;
+    @FXML private WritableImage pictureToWrite;
     @FXML private Button captureButton;
 
     // By default, the camera preview is shown on program startup
@@ -31,7 +33,7 @@ public class Controller  {
         captureButton.disarm();
     }
 
-    // Useful method to stop the camera when the user changes page (for example, opening settings)
+    // --------------- FXML ---------------
     @FXML
     private void webcamStop() throws FrameGrabber.Exception {
         camera.stop();
@@ -46,21 +48,30 @@ public class Controller  {
 
     @FXML
     private void picturePreview() {
-        output_picture = new ImageView(raw_picture);
-        output_picture.setPreserveRatio(true);
+        outputPicture = new ImageView(rawPicture);
+        outputPicture.setPreserveRatio(true);
     }
 
     @FXML
     private void takePicture() throws FrameGrabber.Exception {
         Frame snap = camera.getGrabber().grab();
-        raw_picture = camera.getConverter().convert(snap);
+        rawPicture = camera.getConverter().convert(snap);
         this.picturePreview();
     }
 
+    // ----------- CANVAS PRINTERS -----------
+    private void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
+        GraphicsContext graphics2D = canvas.getGraphicsContext2D();
+        Image img = converter.convert(grabber.grab());
+        graphics2D.drawImage(img, 0, 0);
+    }
 
+    private void printImg(Canvas canvas, Image img)  {
+        GraphicsContext graphics2D = canvas.getGraphicsContext2D();
+        graphics2D.drawImage(img, 0, 0);
+    }
 
-
-
+    // -------------- TIMER --------------
     private void initializeTimer() {
         timer = new AnimationTimer() {
             @Override
@@ -68,9 +79,9 @@ public class Controller  {
                 try {
                     if (Objects.isNull(camera.getGrabber())) {
                         disableInterface();
-                        camera.printImg(camera_canvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
+                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
                     } else {
-                        camera.showWebcam(camera_canvas, camera.getGrabber(), camera.getConverter());
+                        printFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);

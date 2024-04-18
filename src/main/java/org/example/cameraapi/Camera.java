@@ -46,21 +46,5 @@ public class Camera {
     public void stop() throws FrameGrabber.Exception {
         grabber.stop();
     }
-
-    public void showWebcam(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
-        printFrame(canvas, grabber, converter);
-    }
-
-
-    private void printFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
-        GraphicsContext g2d = canvas.getGraphicsContext2D();
-        Image img = converter.convert(grabber.grab());
-        g2d.drawImage(img, 0, 0);
-    }
-
-    public void printImg(Canvas canvas, Image img)  {
-        GraphicsContext g2d = canvas.getGraphicsContext2D();
-        g2d.drawImage(img, 0, 0);
-    }
 }
 
