@@ -26,19 +26,17 @@ public class Controller  {
     @FXML private Button captureButton;
     @FXML private CheckBox flipCheckBox;
     @FXML private CheckBox freezeCheckBox;
-    private boolean flip;
     private boolean outputChecker;
 
     // By default, the camera preview is shown on program startup
     public Controller() {
         camera = new Camera();
         outputChecker = true;   // assures that the transform gets applied on output_picture only once
-        flip = false;
         initializeTimer();
     }
 
     // -------------- DISARMER --------------
-    public void disableInterface(){
+    public void disableInterface() {
         captureButton.disarm();
         flipCheckBox.disarm();
         freezeCheckBox.disarm();
@@ -79,8 +77,10 @@ public class Controller  {
     // --------------- EFFECTS ---------------
     @FXML
     private void flipCamera() {
-        flip = !flip;
-        System.out.println("flip: " + flip);
+        Effects.flip();
+        if (Effects.isFreezed()) {
+            Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        }
     }
 
     @FXML
@@ -91,7 +91,7 @@ public class Controller  {
     // --------- UNIVERSAL CANVAS PRINTERS ---------
     private void printWebcamFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
         canvas.getGraphicsContext2D().drawImage(converter.convert(grabber.grab()), 0, 0, canvas.getWidth(), canvas.getHeight());
-        if (!flip) Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        if (!Effects.isFlipped()) Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
     }
 
     private void printImg(Canvas canvas, Image img)  {
@@ -117,11 +117,4 @@ public class Controller  {
         };
         timer.start();
     }
-
-    // Unused mat2Image converter, but maybe useful
-    /* private static Image mat2Image(Mat mat) {
-        MatOfByte buffer = new MatOfByte();
-        Imgcodecs.imencode(".png", mat, buffer);
-        return new Image(new ByteArrayInputStream(buffer.toArray()));
-    } */
 }
