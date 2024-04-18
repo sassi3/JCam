@@ -3,9 +3,7 @@ package org.example.cameraapi.controller;
 import java.util.Objects;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
@@ -26,9 +24,10 @@ public class CameraController {
     @FXML private ImageView printablePicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
+    @FXML private ButtonBar effectsBar;
+    @FXML private ToggleButton freezeToggleButton;
+    @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
-    @FXML private CheckBox flipCheckBox;
-    @FXML private CheckBox freezeCheckBox;
     private boolean outputChecker;
 
     // By default, the camera preview is shown on program startup
@@ -42,8 +41,8 @@ public class CameraController {
     // -------------- DISARMER --------------
     public void disableInterface() {
         captureButton.disarm();
-        flipCheckBox.disarm();
-        freezeCheckBox.disarm();
+        freezeToggleButton.disarm();
+        flipToggleButton.disarm();
     }
 
     // ------------ WEBCAM HANDLERS ------------
@@ -102,11 +101,13 @@ public class CameraController {
         if (Effects.isFreezed()) {
             Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
         }
+        flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
     @FXML
     private void freezeCamera() {
         Effects.freeze(timer);
+        freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
 
     // --------- UNIVERSAL CANVAS PRINTERS ---------
