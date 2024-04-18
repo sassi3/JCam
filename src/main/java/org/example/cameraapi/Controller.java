@@ -3,13 +3,12 @@ package org.example.cameraapi;
 import java.util.Objects;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.transform.Affine;
-import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 import org.bytedeco.javacv.JavaFXFrameConverter;
@@ -22,19 +21,27 @@ public class Controller  {
     @FXML private Image currentPicture;
     @FXML private ImageView outputPicture;
     @FXML private WritableImage pictureToWrite;
+
+    // --------- BUTTONS & CHECKBOXES ---------
     @FXML private Button captureButton;
+    @FXML private CheckBox flipCheckBox;
+    @FXML private CheckBox freezeCheckBox;
+    private boolean flip;
     private boolean outputChecker;
 
     // By default, the camera preview is shown on program startup
     public Controller() {
         camera = new Camera();
         outputChecker = true;   // assures that the transform gets applied on output_picture only once
+        flip = false;
         initializeTimer();
     }
 
     // -------------- DISARMER --------------
     public void disableInterface(){
         captureButton.disarm();
+        flipCheckBox.disarm();
+        freezeCheckBox.disarm();
     }
 
     // --------------- FXMLs ---------------
@@ -69,10 +76,22 @@ public class Controller  {
         picturePreview();
     }
 
+    // --------------- EFFECTS ---------------
+    @FXML
+    private void flipCamera() {
+        flip = !flip;
+        System.out.println("flip: " + flip);
+    }
+
+    @FXML
+    private void freezeCamera() {
+        Effects.freeze(timer);
+    }
+
     // --------- UNIVERSAL CANVAS PRINTERS ---------
     private void printWebcamFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
-        Image img = converter.convert(grabber.grab());
-        canvas.getGraphicsContext2D().drawImage(img, 0, 0, canvas.getWidth(), canvas.getHeight());
+        canvas.getGraphicsContext2D().drawImage(converter.convert(grabber.grab()), 0, 0, canvas.getWidth(), canvas.getHeight());
+        if (!flip) Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
     }
 
     private void printImg(Canvas canvas, Image img)  {
@@ -90,7 +109,6 @@ public class Controller  {
                         printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("Icons/ErrImg.png"))));
                     } else {
                         printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
-                        Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);

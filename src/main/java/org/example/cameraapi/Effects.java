@@ -1,9 +1,12 @@
 package org.example.cameraapi;
 
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Affine;
 
 public class Effects {
+    private static boolean freezed = false;
+
     // ---------------- FLIPPER ----------------
     public static void imgFlipper(GraphicsContext graphicsContext2D) {
         graphicsContext2D.setTransform(flipperMaker(graphicsContext2D.getCanvas().getWidth()));
@@ -28,5 +31,15 @@ public class Effects {
          * being negative implies it is placed at the left of the y-axis, thus not in the range of what's showed
          * by the canvas. We can fix that by moving the whole image to the right by its width.
          */
+    }
+
+    // ---------------- FREEZE ----------------
+    public static void freeze(AnimationTimer timer) {
+        if (freezed) {
+            timer.start();
+        } else{
+            timer.stop();
+        }
+        freezed = !freezed;
     }
 }
