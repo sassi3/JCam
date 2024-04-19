@@ -1,12 +1,17 @@
 package org.example.cameraapi.controller;
 
+import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
+
+import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
+import javafx.stage.Modality;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 import org.bytedeco.javacv.JavaFXFrameConverter;
@@ -24,7 +29,6 @@ public class CameraController {
     @FXML private ImageView printablePicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
-    @FXML private ButtonBar effectsBar;
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
@@ -86,7 +90,9 @@ public class CameraController {
             webcamRestart();
             return;
         }
-        // Operations to open the editor window
+        webcamStop();
+        handleEditor();
+        webcamRestart();
     }
 
     @FXML
@@ -138,6 +144,29 @@ public class CameraController {
             }
         };
         timer.start();
+    }
+
+    // --------------- DIALOGS ---------------
+    @FXML
+    public void handleEditor() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("editor-controller-view.fxml"));
+            DialogPane editor = loader.load();
+            EditorController editorController = loader.getController();
+
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Editor");
+            dialog.initModality(Modality.WINDOW_MODAL);
+            dialog.setDialogPane(editor);
+
+            Optional<ButtonType> clickedButton = dialog.showAndWait();
+            if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
+                // something...
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // --------------- ALERTS ---------------
