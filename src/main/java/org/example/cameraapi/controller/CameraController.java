@@ -15,7 +15,7 @@ import org.example.cameraapi.Effects;
 
 public class CameraController {
     private AnimationTimer timer;
-    private final Camera camera;
+    private Camera camera;
     @FXML private Canvas cameraCanvas;
 
     // --------- IMAGES' CONTAINERS ---------
@@ -30,11 +30,11 @@ public class CameraController {
     @FXML private Button captureButton;
     private boolean outputChecker;
 
-    // By default, the camera preview is shown on program startup
-    public CameraController() {
+    @FXML
+    public void initialize() {
         camera = new Camera();
         printablePicture = new ImageView();
-        outputChecker = true;   // assures that the transform gets applied on output_picture only once
+        outputChecker = true;       // assures that the transform gets applied on output_picture only once
         initializeTimer();
     }
 
@@ -155,6 +155,17 @@ public class CameraController {
                  ~ Try to restart the application;
                  ~ Try to restart the computer;
                  ~ Pray (trust me, it doesn't work).""");
+        alert.showAndWait();
+    }
+
+    void showFatalError() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.getDialogPane().setMinWidth(675);
+        alert.getDialogPane().setMaxWidth(675);
+        alert.setTitle("Fatal Error");
+        alert.setHeaderText("An error has occurred.");
+        alert.setContentText("The application ran into a fatal error.\n" +
+                "Try to restart it or the computer.");
         alert.showAndWait();
     }
 }
