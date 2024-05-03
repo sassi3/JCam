@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="433.0" maxWidth="633.0" minHeight="433.0" minWidth="633.0" prefHeight="433.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.cameraapi.controller.CameraController">
+<AnchorPane maxHeight="433.0" maxWidth="633.0" minHeight="433.0" minWidth="633.0" prefHeight="433.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cameraapi.controller.CameraController">
    <children>
       <Button fx:id="captureButton" layoutX="281.0" layoutY="372.0" mnemonicParsing="false" onAction="#takePicture" prefHeight="40.0" prefWidth="71.0" text="Capture" />
       <ImageView fx:id="output_picture" fitHeight="58.0" fitWidth="71.0" layoutX="546.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true" />

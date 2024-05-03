@@ -1,6 +1,8 @@
-package org.example.cameraapi.model;
+package org.cameraapi.model;
 
+import javafx.animation.AnimationTimer;
 import org.bytedeco.javacv.*;
+import org.cameraapi.common.AlertWindows;
 
 public class Camera {
     private FrameGrabber grabber;
@@ -10,7 +12,7 @@ public class Camera {
         try {
             System.out.println("Default webcam detected.");
             grabber = FrameGrabber.createDefault(0);
-            start();
+            grabber.start();
         } catch (FrameGrabber.Exception e) {
             System.out.println("No webcam detected.");
             grabber = null;
@@ -34,11 +36,27 @@ public class Camera {
     }
 
     // -------------- START & STOP --------------
-    public void start() throws FrameGrabber.Exception {
-        grabber.start();
+    public void start(AnimationTimer timer) {
+        try {
+            this.getGrabber().start();
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
+            System.err.println("Camera.start(): Failed to restart camera.");
+            System.exit(1);
+        }
+        timer.start();
+        System.out.println("webcamRestart(): Webcam restarted.");
     }
-
-    public void stop() throws FrameGrabber.Exception {
-        grabber.stop();
+    public void stop(AnimationTimer timer) {
+        try {
+            this.getGrabber().stop();
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
+            System.err.println("webcamStop(): Failed to stop camera.");
+            timer.stop();
+            AlertWindows.showFatalError();
+            System.exit(1);
+        }
+        System.out.println("Camera.stop(): Webcam stopped.");
     }
 }

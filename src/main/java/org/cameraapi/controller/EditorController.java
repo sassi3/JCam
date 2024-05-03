@@ -1,4 +1,4 @@
-package org.example.cameraapi.controller;
+package org.cameraapi.controller;
 
 import javafx.fxml.FXML;
 

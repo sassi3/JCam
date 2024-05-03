@@ -1,4 +1,4 @@
-package org.example.cameraapi;
+package org.cameraapi;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
