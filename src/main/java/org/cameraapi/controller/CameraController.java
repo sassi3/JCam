@@ -1,21 +1,27 @@
-package org.example.cameraapi.controller;
+package org.cameraapi.controller;
 
+import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
+
+import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.animation.AnimationTimer;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
+import javafx.stage.Modality;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 import org.bytedeco.javacv.JavaFXFrameConverter;
-import org.example.cameraapi.model.Camera;
-import org.example.cameraapi.Effects;
+import org.cameraapi.common.AlertWindows;
+import org.cameraapi.model.Camera;
+import org.cameraapi.common.Effects;
 
 public class CameraController {
     private AnimationTimer timer;
-    private final Camera camera;
+    private Camera camera;
     @FXML private Canvas cameraCanvas;
 
     // --------- IMAGES' CONTAINERS ---------
@@ -24,21 +30,19 @@ public class CameraController {
     @FXML private ImageView printablePicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
-    @FXML private ButtonBar effectsBar;
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
     private boolean outputChecker;
 
-    // By default, the camera preview is shown on program startup
-    public CameraController() {
+    public void initialize() {
         camera = new Camera();
         printablePicture = new ImageView();
-        outputChecker = true;   // assures that the transform gets applied on output_picture only once
+        outputChecker = true;       // assures that the transform gets applied on output_picture only once
         initializeTimer();
     }
 
-    // -------------- DISARMER --------------
+    // ------------- GUI DISARMER -------------
     public void disableInterface() {
         captureButton.disarm();
         freezeToggleButton.disarm();
@@ -47,17 +51,12 @@ public class CameraController {
 
     // ------------ WEBCAM HANDLERS ------------
     @FXML
-    private void webcamStop() throws FrameGrabber.Exception {
-        camera.stop();
-        timer.stop();
-        System.out.println("Webcam stopped.");
+    private void webcamStop() {
+        camera.stop(timer);
     }
-
     @FXML
-    private void webcamRestart() throws FrameGrabber.Exception {
-        camera.start();
-        timer.start();
-        System.out.println("Webcam restarted.");
+    private void webcamRestart() {
+        camera.start(timer);
     }
 
     // ------ TAKING, SHOWING & SAVING PICTURES ------
@@ -68,7 +67,7 @@ public class CameraController {
     }
 
     @FXML
-    private void takePicture() throws FrameGrabber.Exception {
+    private void takePicture() {
         // ? Are you sure ?
         if (outputChecker) {
             outputChecker = false;
@@ -80,13 +79,16 @@ public class CameraController {
             rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
             previewPicture(rawPicture);
             currentPicture = rawPicture;
-        } catch (FrameGrabber.Exception fex) {
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
             webcamStop();
-            showFailedToTakePictureAlert();
+            AlertWindows.showFailedToTakePictureAlert();
             webcamRestart();
             return;
         }
-        // Operations to open the editor window
+        webcamStop();
+        handleEditor();
+        webcamRestart();
     }
 
     @FXML
@@ -112,7 +114,15 @@ public class CameraController {
 
     // --------- UNIVERSAL CANVAS PRINTERS ---------
     private void printWebcamFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
-        canvas.getGraphicsContext2D().drawImage(converter.convert(grabber.grab()), 0, 0, canvas.getWidth(), canvas.getHeight());
+        try {
+            Image frame = converter.convert(grabber.grab());
+            canvas.getGraphicsContext2D().drawImage(frame, 0, 0, canvas.getWidth(), canvas.getHeight());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("CameraController.printWebcamFrame(): Failed to print grabbed frames.");
+            AlertWindows.showFatalError();
+            System.exit(2);
+        }
         if (!Effects.isFlipped()) Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
     }
 
@@ -133,6 +143,7 @@ public class CameraController {
                         printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     throw new RuntimeException(e);
                 }
             }
@@ -140,21 +151,29 @@ public class CameraController {
         timer.start();
     }
 
-    // --------------- ALERTS ---------------
-    void showFailedToTakePictureAlert() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.getDialogPane().setMinWidth(675);
-        alert.getDialogPane().setMaxWidth(675);
-        alert.setTitle("Warning!");
-        alert.setHeaderText("Unable to take picture");
-        alert.setContentText("""
-                The application is unable to take the picture.
-                Quick fixes:
-                 ~ Retry to take the photo;
-                 ~ Check if your webcam works properly. Maybe try to switch to another device using the "Device List" dropdown menu;
-                 ~ Try to restart the application;
-                 ~ Try to restart the computer;
-                 ~ Pray (trust me, it doesn't work).""");
-        alert.showAndWait();
+    // --------------- DIALOGS ---------------
+    @FXML
+    public void handleEditor() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("editor-controller-view.fxml"));
+            DialogPane editor = loader.load();
+            EditorController editorController = loader.getController();
+
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Editor");
+            dialog.initModality(Modality.WINDOW_MODAL);
+            dialog.setDialogPane(editor);
+
+            Optional<ButtonType> clickedButton = dialog.showAndWait();
+            if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
+                // something...
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("CameraController.handleEditor(): Failed to load editor's FXML file.");
+            AlertWindows.showFatalError();
+            System.exit(3);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package org.example.cameraapi;
+package org.cameraapi.common;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;

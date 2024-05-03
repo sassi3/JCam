@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="433.0" maxWidth="633.0" minHeight="433.0" minWidth="633.0" prefHeight="433.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cameraapi.controller.CameraController">
+   <children>
+      <Button fx:id="captureButton" layoutX="281.0" layoutY="372.0" mnemonicParsing="false" onAction="#takePicture" prefHeight="40.0" prefWidth="71.0" text="Capture" />
+      <ImageView fx:id="output_picture" fitHeight="58.0" fitWidth="71.0" layoutX="546.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="toGallery" layoutX="528.0" layoutY="350.0" mnemonicParsing="false" opacity="0.0" prefHeight="58.0" prefWidth="71.0" />
+      <Canvas fx:id="cameraCanvas" height="331.0" layoutX="72.0" layoutY="19.0" width="489.0" />
+      <ButtonBar fx:id="effectsBar" layoutX="15.0" layoutY="372.0" prefHeight="40.0" prefWidth="173.0">
+         <buttons>
+            <ToggleButton fx:id="flipToggleButton" mnemonicParsing="false" onAction="#flipCamera" text="Flip" />
+            <ToggleButton fx:id="freezeToggleButton" mnemonicParsing="false" onAction="#freezeCamera" text="Freeze" />
+         </buttons>
+      </ButtonBar>
+   </children>
+</AnchorPane>
