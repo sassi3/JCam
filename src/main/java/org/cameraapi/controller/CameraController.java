@@ -68,7 +68,7 @@ public class CameraController {
 
     @FXML
     private void takePicture() {
-        // ? Are you sure ?
+        // ? Are you sure ? Pretty much, it worked last time
         if (outputChecker) {
             outputChecker = false;
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
@@ -86,9 +86,9 @@ public class CameraController {
             webcamRestart();
             return;
         }
-        webcamStop();
+        //webcamStop();
         handleEditor();
-        webcamRestart();
+        //webcamRestart();
     }
 
     @FXML
