@@ -126,6 +126,9 @@ public class CameraController {
         if (!Effects.isFlipped()) {
             Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
         }
+        else {
+            Effects.imgUnflipper(cameraCanvas.getGraphicsContext2D());
+        }
     }
 
     private void printImg(Canvas canvas, Image img)  {
