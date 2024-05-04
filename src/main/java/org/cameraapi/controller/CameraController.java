@@ -123,7 +123,9 @@ public class CameraController {
             AlertWindows.showFatalError();
             System.exit(2);
         }
-        if (!Effects.isFlipped()) Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        if (!Effects.isFlipped()) {
+            Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        }
     }
 
     private void printImg(Canvas canvas, Image img)  {

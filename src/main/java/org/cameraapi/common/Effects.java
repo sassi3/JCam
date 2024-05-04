@@ -41,6 +41,12 @@ public class Effects {
          * by the canvas. We can fix that by moving the whole image to the right by its width.
          */
     }
+    private static Affine unflipperMaker(){
+        return new Affine(1, 0, 0, 0, 1, 0);
+    }
+    public static void imgUnflipper(GraphicsContext graphicsContext2D) {
+        graphicsContext2D.setTransform(unflipperMaker());
+    }
 
     public static void flip() {
         flipped = !flipped;
