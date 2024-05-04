@@ -51,6 +51,7 @@ public class Effects {
     public static void freeze(AnimationTimer timer) {
         if (freezed) timer.start(); else timer.stop();
         freezed = !freezed;
+        System.out.println("freeze: " + freezed);
     }
 
     // Unused mat2Image converter, but maybe useful for
