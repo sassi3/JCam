@@ -68,7 +68,7 @@ public class CameraController {
 
     @FXML
     private void takePicture() {
-        // ? Are you sure ?
+        // ? Are you sure ? Pretty much, it worked last time
         if (outputChecker) {
             outputChecker = false;
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
@@ -86,9 +86,9 @@ public class CameraController {
             webcamRestart();
             return;
         }
-        webcamStop();
+        //webcamStop();
         handleEditor();
-        webcamRestart();
+        //webcamRestart();
     }
 
     @FXML
@@ -123,7 +123,12 @@ public class CameraController {
             AlertWindows.showFatalError();
             System.exit(2);
         }
-        if (!Effects.isFlipped()) Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        if (!Effects.isFlipped()) {
+            Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        }
+        else {
+            Effects.imgUnflipper(cameraCanvas.getGraphicsContext2D());
+        }
     }
 
     private void printImg(Canvas canvas, Image img)  {
