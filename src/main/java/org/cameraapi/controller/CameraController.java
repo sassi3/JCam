@@ -183,6 +183,7 @@ public class CameraController {
             }
             editorController.initialize();
 
+
             //-------- DIALOG SET-UP AND EXIT ----------
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setTitle("Editor");
@@ -191,7 +192,7 @@ public class CameraController {
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
             if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
-                //something...
+                savePicture(editorController.getPicture());
             }
         } catch (IOException e) {
             e.printStackTrace();
