@@ -1,4 +1,4 @@
-package org.cameraapi.controller;
+package org.cameraapi;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -12,7 +12,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 import org.bytedeco.javacv.JavaFXFrameConverter;
@@ -163,7 +162,7 @@ public class CameraController {
                         printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     } else {
                         disableInterface();
-                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("errImg/ErrImg.png"))));
+                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("controller/errImg/ErrImg.png"))));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -1,4 +1,4 @@
-package org.cameraapi.controller;
+package org.cameraapi;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Dialog;
@@ -7,7 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class EditorController {
-    final Image APPLICATION_ICON = new Image("src/main/resources/org/cameraapi/controller/icons/editorIcon.png");
+    final Image APPLICATION_ICON = new Image("controller/icons/editorIcon.png");
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private ImageView picturePreview;
