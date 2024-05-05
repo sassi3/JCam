@@ -66,7 +66,7 @@ public class CameraController {
 
     @FXML
     private void takePicture() {
-        // ? Are you sure ? Pretty much, it worked last time
+
         if (!Effects.isFlipped()) {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
@@ -145,11 +145,11 @@ public class CameraController {
             @Override
             public void handle(long now) {
                 try {
-                    if (Objects.isNull(camera.getGrabber())) {
+                    if (Objects.nonNull(camera.getGrabber())) {
+                        printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
+                    } else {
                         disableInterface();
                         printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/ErrImg.png"))));
-                    } else {
-                        printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
