@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
 import org.bytedeco.javacv.JavaFXFrameConverter;
@@ -216,6 +217,9 @@ public class CameraController {
             dialog.setTitle("Editor");
             dialog.initModality(Modality.WINDOW_MODAL);
             dialog.setDialogPane(editor);
+            dialog.initOwner(cameraCanvas.getScene().getWindow());
+            //Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            //stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/EditorIcon.png"))));
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
             if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
