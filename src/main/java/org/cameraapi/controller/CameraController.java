@@ -37,7 +37,6 @@ public class CameraController {
     public void initialize() {
         camera = new Camera();
         printablePicture = new ImageView();
-        outputChecker = true;       // assures that the transform gets applied on output_picture only once
         initializeTimer();
     }
 
