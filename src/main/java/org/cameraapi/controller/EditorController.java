@@ -1,11 +1,13 @@
 package org.cameraapi.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 public class EditorController {
-
+    final Image APPLICATION_ICON = new Image("src/main/resources/org/cameraapi/controller/icons/editorIcon.png");
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private ImageView picturePreview;
@@ -32,5 +34,12 @@ public class EditorController {
 
     public void setPicturePreview(Image picture) {
         picturePreview.setImage(picture);
+    }
+
+
+    public <T> void addDialogIconTo(Dialog<T> dialog) {
+        // Add custom Image to Dialog's title bar
+        Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        dialogStage.getIcons().add(APPLICATION_ICON);
     }
 }

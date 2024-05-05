@@ -163,7 +163,7 @@ public class CameraController {
                         printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     } else {
                         disableInterface();
-                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/ErrImg.png"))));
+                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("errImg/ErrImg.png"))));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -215,11 +215,10 @@ public class CameraController {
             //-------- DIALOG SET-UP AND EXIT ----------
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setTitle("Editor");
+            editorController.addDialogIconTo(dialog);
             dialog.initModality(Modality.WINDOW_MODAL);
             dialog.setDialogPane(editor);
             dialog.initOwner(cameraCanvas.getScene().getWindow());
-            //Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-            //stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/EditorIcon.png"))));
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
             if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
