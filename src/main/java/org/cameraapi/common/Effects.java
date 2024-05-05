@@ -5,11 +5,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Affine;
 
 public class Effects {
-    private static boolean freezed = false;
+    private static boolean frozen = false;
     private static boolean flipped = false;
 
-    public static boolean isFreezed() {
-        return freezed;
+    public static boolean isFrozen() {
+        return frozen;
     }
 
     public static boolean isFlipped() {
@@ -41,6 +41,7 @@ public class Effects {
          * by the canvas. We can fix that by moving the whole image to the right by its width.
          */
     }
+    //Identity matrix
     private static Affine unflipperMaker(){
         return new Affine(1, 0, 0, 0, 1, 0);
     }
@@ -55,9 +56,9 @@ public class Effects {
 
     // ---------------- FREEZE ----------------
     public static void freeze(AnimationTimer timer) {
-        if (freezed) timer.start(); else timer.stop();
-        freezed = !freezed;
-        System.out.println("freeze: " + freezed);
+        if (frozen) timer.start(); else timer.stop();
+        frozen = !frozen;
+        System.out.println("freeze: " + frozen);
     }
 
     // Unused mat2Image converter, but maybe useful for

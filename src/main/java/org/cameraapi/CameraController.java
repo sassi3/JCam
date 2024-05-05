@@ -1,4 +1,4 @@
-package org.cameraapi.controller;
+package org.cameraapi;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -22,23 +22,23 @@ import org.cameraapi.common.Effects;
 public class CameraController {
     private AnimationTimer timer;
     private Camera camera;
+    private boolean frozenFlipStatus;
     @FXML private Canvas cameraCanvas;
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private Image rawPicture;
     @FXML private Image currentPicture;
     @FXML private ImageView printablePicture;
+    private Image frozenPicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
-    private boolean outputChecker;
 
     public void initialize() {
         camera = new Camera();
         printablePicture = new ImageView();
-        outputChecker = true;       // assures that the transform gets applied on output_picture only once
         initializeTimer();
     }
 
@@ -68,13 +68,19 @@ public class CameraController {
 
     @FXML
     private void takePicture() {
-        // ? Are you sure ? Pretty much, it worked last time
-        if (outputChecker) {
-            outputChecker = false;
+
+        if (!Effects.isFlipped()) {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
         }
+        else {
+            printablePicture.getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
+            //Identity matrix
+        }
+
+
+
         try {
             rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
             previewPicture(rawPicture);
@@ -86,9 +92,8 @@ public class CameraController {
             webcamRestart();
             return;
         }
-        //webcamStop();
+
         handleEditor();
-        //webcamRestart();
     }
 
     @FXML
@@ -100,7 +105,7 @@ public class CameraController {
     @FXML
     private void flipCamera() {
         Effects.flip();
-        if (Effects.isFreezed()) {
+        if (Effects.isFrozen()) {
             Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
         }
         flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
@@ -109,6 +114,18 @@ public class CameraController {
     @FXML
     private void freezeCamera() {
         Effects.freeze(timer);
+        if(Effects.isFrozen()) {
+            try {
+                frozenPicture = camera.getConverter().convert(camera.getGrabber().grab());
+                                                        // saves the displayed frame when the freeze button
+                                                        // is pressed
+
+                frozenFlipStatus = Effects.isFlipped(); // saves the status of the flip
+                                                        // button when the freeze button is pressed
+            } catch (FrameGrabber.Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
 
@@ -141,11 +158,11 @@ public class CameraController {
             @Override
             public void handle(long now) {
                 try {
-                    if (Objects.isNull(camera.getGrabber())) {
-                        disableInterface();
-                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/ErrImg.png"))));
-                    } else {
+                    if (Objects.nonNull(camera.getGrabber())) {
                         printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
+                    } else {
+                        disableInterface();
+                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("errImg/ErrImg.png"))));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -160,19 +177,51 @@ public class CameraController {
     @FXML
     public void handleEditor() {
         try {
+            //---------- SCENE LOADING --------
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("editor-controller-view.fxml"));
             DialogPane editor = loader.load();
             EditorController editorController = loader.getController();
 
+            //---------- CONTROLLER ACCESS METHODS --------
+
+            // Checks if the cam is currently frozen and decides which picture to show and whether to flip it or not
+            if(Effects.isFrozen()) {
+                editorController.setPicture(frozenPicture); // show picture taken when cam froze
+                if (!frozenFlipStatus) { // Checks if the cam was flipped when froze
+                    editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
+                    // flips what's displayed by the image view around the y-axis
+                    // and then translates it right (through the x-axis) by the width of the image view itself
+                } else {
+                    editorController.getPicturePreview().getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
+                    //Identity matrix
+                }
+            }
+            else {
+                editorController.setPicture(currentPicture); // Else set picture currently displayed
+                if (!Effects.isFlipped()) { // Check if cam is currently flipped
+                    editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
+                    // flips what's displayed by the image view around the y-axis
+                    // and then translates it right (through the x-axis) by the width of the image view itself
+                } else {
+                    editorController.getPicturePreview().getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
+                    //Identity matrix
+                }
+            }
+            editorController.initialize();
+
+
+            //-------- DIALOG SET-UP AND EXIT ----------
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setTitle("Editor");
+            editorController.addDialogIconTo(dialog);
             dialog.initModality(Modality.WINDOW_MODAL);
             dialog.setDialogPane(editor);
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
             if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
-                // something...
+                // if the dialog button pressed is the OK button calls savePicture method
+                savePicture(editorController.getPicture());
             }
         } catch (IOException e) {
             e.printStackTrace();
