@@ -164,14 +164,26 @@ public class CameraController {
     @FXML
     public void handleEditor() {
         try {
+            //---------- SCENE LOADING --------
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("editor-controller-view.fxml"));
             DialogPane editor = loader.load();
             EditorController editorController = loader.getController();
 
+            //---------- CONTROLLER ACCESS METHODS --------
             editorController.setPicture(currentPicture);
+            if (!Effects.isFlipped()) {
+                editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
+                // flips what's displayed by the image view around the y-axis
+                // and then translates it right (through the x-axis) by the width of the image view itself
+            }
+            else {
+                editorController.getPicturePreview().getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
+                //Identity matrix
+            }
             editorController.initialize();
 
+            //-------- DIALOG SET-UP AND EXIT ----------
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setTitle("Editor");
             dialog.initModality(Modality.WINDOW_MODAL);
