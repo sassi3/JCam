@@ -5,6 +5,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class EditorController {
+
+    
+    // --------- IMAGES' CONTAINERS ---------
     @FXML private ImageView picturePreview;
     private Image picture;
 
