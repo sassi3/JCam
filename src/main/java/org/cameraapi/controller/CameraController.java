@@ -27,6 +27,7 @@ public class CameraController {
     // --------- IMAGES' CONTAINERS ---------
     @FXML private Image rawPicture;
     @FXML private Image currentPicture;
+    private Image frozenPicture;
     @FXML private ImageView printablePicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
@@ -113,6 +114,13 @@ public class CameraController {
     @FXML
     private void freezeCamera() {
         Effects.freeze(timer);
+        if(Effects.isFreezed()) {
+            try {
+                frozenPicture =camera.getConverter().convert(camera.getGrabber().grab());
+            } catch (FrameGrabber.Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
 
@@ -171,7 +179,13 @@ public class CameraController {
             EditorController editorController = loader.getController();
 
             //---------- CONTROLLER ACCESS METHODS --------
-            editorController.setPicture(currentPicture);
+            if(Effects.isFreezed()) {
+                editorController.setPicture(frozenPicture);
+
+            }
+            else {
+                editorController.setPicture(currentPicture);
+            }
             if (!Effects.isFlipped()) {
                 editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
                 // flips what's displayed by the image view around the y-axis
