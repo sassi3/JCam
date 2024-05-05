@@ -28,6 +28,7 @@ public class CameraController {
     @FXML private Image rawPicture;
     @FXML private Image currentPicture;
     private Image frozenPicture;
+    private boolean frozenFlipStatus;
     @FXML private ImageView printablePicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
@@ -116,7 +117,8 @@ public class CameraController {
         Effects.freeze(timer);
         if(Effects.isFrozen()) {
             try {
-                frozenPicture =camera.getConverter().convert(camera.getGrabber().grab());
+                frozenPicture = camera.getConverter().convert(camera.getGrabber().grab());
+                frozenFlipStatus = Effects.isFlipped();
             } catch (FrameGrabber.Exception e) {
                 throw new RuntimeException(e);
             }
@@ -181,19 +183,26 @@ public class CameraController {
             //---------- CONTROLLER ACCESS METHODS --------
             if(Effects.isFrozen()) {
                 editorController.setPicture(frozenPicture);
-
+                if (!frozenFlipStatus) {
+                    editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
+                    // flips what's displayed by the image view around the y-axis
+                    // and then translates it right (through the x-axis) by the width of the image view itself
+                } else {
+                    editorController.getPicturePreview().getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
+                    //Identity matrix
+                }
             }
             else {
                 editorController.setPicture(currentPicture);
-            }
-            if (!Effects.isFlipped()) {
-                editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
-                // flips what's displayed by the image view around the y-axis
-                // and then translates it right (through the x-axis) by the width of the image view itself
-            }
-            else {
-                editorController.getPicturePreview().getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
-                //Identity matrix
+
+                if (!Effects.isFlipped()) {
+                    editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
+                    // flips what's displayed by the image view around the y-axis
+                    // and then translates it right (through the x-axis) by the width of the image view itself
+                } else {
+                    editorController.getPicturePreview().getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
+                    //Identity matrix
+                }
             }
             editorController.initialize();
 
