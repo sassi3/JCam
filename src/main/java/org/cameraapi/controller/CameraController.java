@@ -22,14 +22,14 @@ import org.cameraapi.common.Effects;
 public class CameraController {
     private AnimationTimer timer;
     private Camera camera;
+    private boolean frozenFlipStatus;
     @FXML private Canvas cameraCanvas;
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private Image rawPicture;
     @FXML private Image currentPicture;
-    private Image frozenPicture;
-    private boolean frozenFlipStatus;
     @FXML private ImageView printablePicture;
+    private Image frozenPicture;
 
     // --------- BUTTONS & CHECKBOXES ---------
     @FXML private ToggleButton freezeToggleButton;
@@ -92,9 +92,8 @@ public class CameraController {
             webcamRestart();
             return;
         }
-        //webcamStop();
+
         handleEditor();
-        //webcamRestart();
     }
 
     @FXML
@@ -118,7 +117,11 @@ public class CameraController {
         if(Effects.isFrozen()) {
             try {
                 frozenPicture = camera.getConverter().convert(camera.getGrabber().grab());
-                frozenFlipStatus = Effects.isFlipped();
+                                                        // saves the displayed frame when the freeze button
+                                                        // is pressed
+
+                frozenFlipStatus = Effects.isFlipped(); // saves the status of the flip
+                                                        // button when the freeze button is pressed
             } catch (FrameGrabber.Exception e) {
                 throw new RuntimeException(e);
             }
@@ -181,9 +184,11 @@ public class CameraController {
             EditorController editorController = loader.getController();
 
             //---------- CONTROLLER ACCESS METHODS --------
+
+            // Checks if the cam is currently frozen and decides which picture to show and whether to flip it or not
             if(Effects.isFrozen()) {
-                editorController.setPicture(frozenPicture);
-                if (!frozenFlipStatus) {
+                editorController.setPicture(frozenPicture); // show picture taken when cam froze
+                if (!frozenFlipStatus) { // Checks if the cam was flipped when froze
                     editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
                     // flips what's displayed by the image view around the y-axis
                     // and then translates it right (through the x-axis) by the width of the image view itself
@@ -193,9 +198,8 @@ public class CameraController {
                 }
             }
             else {
-                editorController.setPicture(currentPicture);
-
-                if (!Effects.isFlipped()) {
+                editorController.setPicture(currentPicture); // Else set picture currently displayed
+                if (!Effects.isFlipped()) { // Check if cam is currently flipped
                     editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
                     // flips what's displayed by the image view around the y-axis
                     // and then translates it right (through the x-axis) by the width of the image view itself
@@ -215,6 +219,7 @@ public class CameraController {
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
             if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
+                // if the dialog button pressed is the OK button calls savePicture method
                 savePicture(editorController.getPicture());
             }
         } catch (IOException e) {
