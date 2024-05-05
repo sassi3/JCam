@@ -7,11 +7,14 @@ import javafx.scene.image.ImageView;
 public class EditorController {
     @FXML private ImageView picturePreview;
     private Image picture;
+
+
     @FXML
     public void initialize() {
         setPicturePreview(picture);
     }
 
+    //---------- GETTERS AND SETTERS ----------
     public ImageView getPicturePreview() {
         return picturePreview;
     }
