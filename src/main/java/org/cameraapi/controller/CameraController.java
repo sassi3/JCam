@@ -105,7 +105,7 @@ public class CameraController {
     @FXML
     private void flipCamera() {
         Effects.flip();
-        if (Effects.isFreezed()) {
+        if (Effects.isFrozen()) {
             Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
         }
         flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
@@ -114,7 +114,7 @@ public class CameraController {
     @FXML
     private void freezeCamera() {
         Effects.freeze(timer);
-        if(Effects.isFreezed()) {
+        if(Effects.isFrozen()) {
             try {
                 frozenPicture =camera.getConverter().convert(camera.getGrabber().grab());
             } catch (FrameGrabber.Exception e) {
@@ -179,7 +179,7 @@ public class CameraController {
             EditorController editorController = loader.getController();
 
             //---------- CONTROLLER ACCESS METHODS --------
-            if(Effects.isFreezed()) {
+            if(Effects.isFrozen()) {
                 editorController.setPicture(frozenPicture);
 
             }
