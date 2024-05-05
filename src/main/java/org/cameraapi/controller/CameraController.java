@@ -33,7 +33,6 @@ public class CameraController {
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
-    private boolean outputChecker;
 
     public void initialize() {
         camera = new Camera();
@@ -69,12 +68,18 @@ public class CameraController {
     @FXML
     private void takePicture() {
         // ? Are you sure ? Pretty much, it worked last time
-        if (outputChecker) {
-            outputChecker = false;
+        if (!Effects.isFlipped()) {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
         }
+        else {
+            printablePicture.getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
+            //Identity matrix
+        }
+
+
+
         try {
             rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
             previewPicture(rawPicture);
