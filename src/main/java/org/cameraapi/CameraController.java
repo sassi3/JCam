@@ -68,7 +68,6 @@ public class CameraController {
 
     @FXML
     private void takePicture() {
-
         if (!Effects.isFlipped()) {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
@@ -78,8 +77,6 @@ public class CameraController {
             printablePicture.getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
             //Identity matrix
         }
-
-
 
         try {
             rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
