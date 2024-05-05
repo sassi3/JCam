@@ -6,8 +6,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class EditorController {
-    final Image APPLICATION_ICON = new Image("controller/icons/editorIcon.png");
+    final Image APPLICATION_ICON = new Image(Objects.requireNonNull(EditorController.class.getResourceAsStream("icons/editorIcon.png")));
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private ImageView picturePreview;

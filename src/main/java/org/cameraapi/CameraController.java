@@ -162,7 +162,7 @@ public class CameraController {
                         printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
                     } else {
                         disableInterface();
-                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("controller/errImg/ErrImg.png"))));
+                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("errImg/ErrImg.png"))));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -217,7 +217,6 @@ public class CameraController {
             editorController.addDialogIconTo(dialog);
             dialog.initModality(Modality.WINDOW_MODAL);
             dialog.setDialogPane(editor);
-            dialog.initOwner(cameraCanvas.getScene().getWindow());
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
             if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
