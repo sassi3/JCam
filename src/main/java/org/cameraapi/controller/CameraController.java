@@ -169,6 +169,9 @@ public class CameraController {
             DialogPane editor = loader.load();
             EditorController editorController = loader.getController();
 
+            editorController.setPicture(currentPicture);
+            editorController.initialize();
+
             Dialog<ButtonType> dialog = new Dialog<>();
             dialog.setTitle("Editor");
             dialog.initModality(Modality.WINDOW_MODAL);
@@ -176,7 +179,7 @@ public class CameraController {
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
             if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
-                // something...
+                //something...
             }
         } catch (IOException e) {
             e.printStackTrace();
