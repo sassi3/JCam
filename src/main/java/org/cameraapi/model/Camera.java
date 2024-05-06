@@ -4,43 +4,22 @@ import javafx.animation.AnimationTimer;
 import org.bytedeco.javacv.*;
 import org.cameraapi.common.AlertWindows;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.Integer.MAX_VALUE;
-
 public class Camera {
-    private final List<FrameGrabber> grabber;
+    private FrameGrabber grabber;
     private final JavaFXFrameConverter converter;
 
     public Camera() {
-        grabber = new ArrayList<>();
         try {
             System.out.println("Default webcam detected.");
-            grabber.addFirst(FrameGrabber.createDefault(0));
-            grabber.getFirst().start();
-        } catch (Exception e) {
+            grabber = FrameGrabber.createDefault(0);
+            grabber.start();
+        } catch (FrameGrabber.Exception e) {
             System.out.println("No webcam detected.");
+            grabber = null;
         } finally {
             converter = new JavaFXFrameConverter();
             System.out.println("Starting background routine for webcam detection...");
-
             // Background routine for webcam detection. It runs even in case there is a default webcam
-            Thread cameraDetector = new Thread(() -> {
-                for (int i = grabber.size(); i < MAX_VALUE; i++) {
-                    try {
-                        grabber.addFirst(FrameGrabber.createDefault(i));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        if (!grabber.isEmpty()) {
-                            System.out.println("Number of webcams detected: " + grabber.size());
-                            break;
-                        }
-                    }
-                }
-            });
-            cameraDetector.setPriority(Thread.MIN_PRIORITY);
-            cameraDetector.start();
         }
     }
 
@@ -49,11 +28,11 @@ public class Camera {
     }
 
     public FrameGrabber getGrabber() {
-        return grabber.getLast();
+        return grabber;
     }
 
     public void setGrabber(FrameGrabber grabber) {
-        this.grabber.addFirst(grabber);
+        this.grabber = grabber;
     }
 
     // -------------- START & STOP --------------
