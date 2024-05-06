@@ -3,12 +3,10 @@ package org.cameraapi.model;
 import javafx.animation.AnimationTimer;
 import org.bytedeco.javacv.*;
 import org.cameraapi.common.AlertWindows;
+import org.cameraapi.common.CameraDetector;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Thread.*;
 
 public class Camera implements AutoCloseable {
     private final List<FrameGrabber> grabber;
@@ -17,43 +15,27 @@ public class Camera implements AutoCloseable {
 
     public Camera() {
         grabber = new ArrayList<>();
-        try {
-            System.out.println("Default webcam detected.");
-            grabber.addFirst(FrameGrabber.createDefault(0));
-            grabber.getFirst().start();
-        } catch (Exception e) {
-            System.out.println("No webcam detected.");
-        } finally {
-            converter = new JavaFXFrameConverter();
-            System.out.println("Starting background routine for webcam detection...");
-
-            // Background routine for webcam detection. It runs even in case there is a default webcam
-            Thread cameraDetector = getDetector();
-            cameraDetector.setPriority(Thread.MIN_PRIORITY);
-            cameraDetector.start();
+        startWebcamDetection();
+        if (grabber.isEmpty()) {
+            System.out.println("No webcam detected. Waiting for webcam detection...");
+            cameraDetector.setPriority(Thread.MAX_PRIORITY);
+            try {
+                cameraDetector.join();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+                System.err.println("Camera detection interrupted.");
+                System.exit(6);
+            }
+            System.out.println("Webcam detected. Proceeding...");
         }
+        converter = new JavaFXFrameConverter();
     }
 
     @Override
     public void close() {
-        cameraDetector.interrupt();
-    }
-
-    private Thread getDetector() {
-        cameraDetector = new Thread(() -> {
-            for (int i = grabber.size(); !interrupted(); i++) {
-                try {
-                    grabber.addFirst(FrameGrabber.createDefault(i));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    if (!grabber.isEmpty()) {
-                        System.out.println("Number of webcams detected: " + grabber.size());
-                        i = grabber.size();
-                    }
-                }
-            }
-        });
-        return cameraDetector;
+        if (cameraDetector != null) {
+            cameraDetector.interrupt();
+        }
     }
 
     public JavaFXFrameConverter getConverter() {
@@ -66,6 +48,15 @@ public class Camera implements AutoCloseable {
 
     public void setGrabber(FrameGrabber grabber) {
         this.grabber.addFirst(grabber);
+    }
+
+    public void startWebcamDetection() {
+        System.out.println("Starting background routine for webcam detection...");
+        if (cameraDetector == null) {
+            cameraDetector = new CameraDetector("WebcamDetector", grabber);
+            cameraDetector.setPriority(Thread.MIN_PRIORITY);
+        }
+        cameraDetector.start();
     }
 
     // -------------- START & STOP --------------
