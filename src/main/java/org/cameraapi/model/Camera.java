@@ -8,12 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Thread.*;
 
-public class Camera implements AutoCloseable {
+public class Camera {
     private final List<FrameGrabber> grabber;
     private final JavaFXFrameConverter converter;
-    Thread cameraDetector;
 
     public Camera() {
         grabber = new ArrayList<>();
@@ -28,32 +26,22 @@ public class Camera implements AutoCloseable {
             System.out.println("Starting background routine for webcam detection...");
 
             // Background routine for webcam detection. It runs even in case there is a default webcam
-            Thread cameraDetector = getDetector();
+            Thread cameraDetector = new Thread(() -> {
+                for (int i = grabber.size(); i < MAX_VALUE; i++) {
+                    try {
+                        grabber.addFirst(FrameGrabber.createDefault(i));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (!grabber.isEmpty()) {
+                            System.out.println("Number of webcams detected: " + grabber.size());
+                            break;
+                        }
+                    }
+                }
+            });
             cameraDetector.setPriority(Thread.MIN_PRIORITY);
             cameraDetector.start();
         }
-    }
-
-    @Override
-    public void close() {
-        cameraDetector.interrupt();
-    }
-
-    private Thread getDetector() {
-        cameraDetector = new Thread(() -> {
-            for (int i = grabber.size(); !interrupted(); i++) {
-                try {
-                    grabber.addFirst(FrameGrabber.createDefault(i));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    if (!grabber.isEmpty()) {
-                        System.out.println("Number of webcams detected: " + grabber.size());
-                        i = grabber.size();
-                    }
-                }
-            }
-        });
-        return cameraDetector;
     }
 
     public JavaFXFrameConverter getConverter() {
