@@ -65,6 +65,7 @@ public class WebcamController {
 
         // Enabling live effects
         Flip.enable();
+        Flip.setRotationValue(180);
         Freeze.enable();
     }
 

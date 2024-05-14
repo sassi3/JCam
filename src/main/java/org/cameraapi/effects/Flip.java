@@ -4,18 +4,32 @@ import javafx.geometry.Point3D;
 import javafx.scene.image.ImageView;
 
 public class Flip extends Effect {
+    private static double rotationValue = 0;
+
     public static void flip(ImageView picture) {
-        apply();
+        if (getRotationValue() == 180) {
+            setRotationValue(0);
+        } else {
+            setRotationValue(180);
+        }
         viewportFlipper(picture);
+        apply();
         System.out.println("flip: " + isApplied());
     }
 
     public static void viewportFlipper(ImageView picture) {
         picture.setRotationAxis(new Point3D(0, 1, 0));
-        picture.setRotate(180);
+        picture.setRotate(rotationValue);
     }
 
-    // I don't want to delete this for now, it can be useful
+    public static double getRotationValue() {
+        return rotationValue;
+    }
+
+    public static void setRotationValue(double rotationValue) {
+        Flip.rotationValue = rotationValue;
+    }
+// I don't want to delete this for now, it can be useful
 //    public static void imgFlipper(GraphicsContext graphicsContext2D) {
 //        graphicsContext2D.setTransform(flipperMaker(graphicsContext2D.getCanvas().getWidth()));
 //    }
