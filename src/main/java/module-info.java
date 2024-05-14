@@ -5,6 +5,7 @@ module org.example.cameraapi {
     requires org.bytedeco.opencv;
     requires java.desktop;
     requires webcam.capture;
+    requires javafx.swing;
 
 
     opens org.cameraapi to javafx.fxml;
