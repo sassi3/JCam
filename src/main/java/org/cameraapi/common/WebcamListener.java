@@ -3,6 +3,7 @@ package org.cameraapi.common;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamDiscoveryEvent;
 import com.github.sarxos.webcam.WebcamDiscoveryListener;
+import org.cameraapi.CameraController;
 
 public class WebcamListener implements WebcamDiscoveryListener {
     public WebcamListener() {

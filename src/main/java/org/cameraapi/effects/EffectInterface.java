@@ -2,9 +2,8 @@ package org.cameraapi.effects;
 
 public interface EffectInterface {
     void enable();
-    boolean isEnabled();
     void disable();
-    boolean isDisabled();
+    boolean isEnabled();
     void apply();
     boolean isApplied();
 }
