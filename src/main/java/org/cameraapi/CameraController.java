@@ -1,29 +1,37 @@
 package org.cameraapi;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
-import javafx.animation.AnimationTimer;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
-import org.bytedeco.javacv.FrameGrabber;
 import javafx.fxml.FXML;
-import org.bytedeco.javacv.JavaFXFrameConverter;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.model.Camera;
 import org.cameraapi.effects.Effect;
 
+import static java.lang.Thread.interrupted;
+
 public class CameraController {
-    private AnimationTimer timer;
-    private Camera camera;
     private boolean frozenFlipStatus;
-    @FXML private Canvas cameraCanvas;
+    @FXML private ImageView webcamDisplay;
+    @FXML private ImageView resultImage;
+    @FXML private ChoiceBox<Webcam> webcamList;
+    private static ObservableList<Webcam> webcams;
+    private Webcam activeWebcam;
+    private Thread frameShowThread;
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private Image rawPicture;
@@ -37,10 +45,89 @@ public class CameraController {
     @FXML private Button captureButton;
 
     public void initialize() {
-        camera = new Camera();
-        printablePicture = new ImageView();
-        initializeTimer();
+        webcams = FXCollections.observableArrayList();
+        new WebcamListener();
+        webcamList.setItems(webcams);
+        webcamList.getSelectionModel().selectFirst();
+        /*webcamList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            activeWebcam = newValue;
+        });*/
+        try {
+            activeWebcam = webcamList.getSelectionModel().getSelectedItem();
+            // by default decided to select the first available webcam
+            webcamList.setValue(activeWebcam);
+        } catch (NoSuchElementException e) {
+            System.err.println("Error: no webcams found.");
+            System.exit(1);
+        }
+        try {
+            openWebcam(activeWebcam);
+            startShowingFrame();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            System.exit(1);
+        }
     }
+
+    private void openWebcam(Webcam webcam) {
+        webcam.open();
+        if (!webcam.isOpen()) {
+            throw new IllegalStateException("Failed to open webcam.");
+        }
+    }
+    private void closeWebcam(Webcam webcam) {
+        if (Objects.isNull(activeWebcam)) {
+            throw new IllegalStateException("Webcam is null.");
+        }
+        activeWebcam.close();
+        if (webcam.isOpen()) {
+            throw new IllegalStateException("Failed to close webcam.");
+        }
+    }
+
+    private void startShowingFrame() {
+        if (Objects.isNull(frameShowThread)) {
+            frameShowThread = new Thread(new Runnable() {
+                @Override
+                public synchronized void run() {
+                    while (!interrupted()) {
+                        try {
+                            activeWebcam = webcamList.getSelectionModel().getSelectedItem();
+                            if(!activeWebcam.isOpen()) {
+                                openWebcam(activeWebcam);
+                            }
+                            Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
+                            webcamDisplay.setImage(image);
+                        } catch (Exception e) {
+                            System.out.println("Skipped frame");
+                        }
+                    }
+                }
+            });
+            frameShowThread.setDaemon(true);
+            frameShowThread.setName("Camera Frame Showing");
+        }
+        frameShowThread.start();
+        if (!frameShowThread.isAlive()) {
+            throw new IllegalThreadStateException("Failed to start showing frame.");
+        }
+    }
+    private void stopShowingFrame() {
+        if (Objects.nonNull(frameShowThread)) {
+            frameShowThread.interrupt();
+            if (frameShowThread.isAlive()) {
+                throw new IllegalThreadStateException("Failed to stop frameShowThread.");
+            }
+        } else {
+            System.out.println("frameShowThread is null. There is nothing to stop.");
+        }
+    }
+
+    public static ObservableList<Webcam> getWebcams() {
+        return webcams;
+    }
+
+
 
     // ------------- GUI DISARMER -------------
     public void disableInterface() {
@@ -50,14 +137,7 @@ public class CameraController {
     }
 
     // ------------ WEBCAM HANDLERS ------------
-    @FXML
-    private void webcamStop() {
-        camera.stop(timer);
-    }
-    @FXML
-    private void webcamRestart() {
-        camera.start(timer);
-    }
+
 
     // ------ TAKING, SHOWING & SAVING PICTURES ------
     @FXML
@@ -78,20 +158,7 @@ public class CameraController {
             printablePicture.getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
             //Identity matrix
         }
-
-
-
-        try {
-            rawPicture = camera.getConverter().convert(camera.getGrabber().grab());
-            previewPicture(rawPicture);
-            currentPicture = rawPicture;
-        } catch (FrameGrabber.Exception e) {
-            e.printStackTrace();
-            webcamStop();
-            AlertWindows.showFailedToTakePictureAlert();
-            webcamRestart();
-            return;
-        }
+        printablePicture.setImage(webcamDisplay.getImage());
 
         handleEditor();
     }
@@ -113,65 +180,25 @@ public class CameraController {
 
     @FXML
     private void freezeCamera() {
-        Effect.freeze(timer);
-        if(Effect.isFrozen()) {
-            try {
-                frozenPicture = camera.getConverter().convert(camera.getGrabber().grab());
+        Effects.freeze(timer);
+        if(Effects.isFrozen()) {
+            frozenPicture = webcamDisplay.getImage();
                                                         // saves the displayed frame when the freeze button
                                                         // is pressed
 
-                frozenFlipStatus = Effect.isFlipped(); // saves the status of the flip
+            frozenFlipStatus = Effects.isFlipped(); // saves the status of the flip
                                                         // button when the freeze button is pressed
-            } catch (FrameGrabber.Exception e) {
-                throw new RuntimeException(e);
-            }
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
 
     // --------- UNIVERSAL CANVAS PRINTERS ---------
-    private void printWebcamFrame(Canvas canvas, FrameGrabber grabber, JavaFXFrameConverter converter) throws Exception {
-        try {
-            Image frame = converter.convert(grabber.grab());
-            canvas.getGraphicsContext2D().drawImage(frame, 0, 0, canvas.getWidth(), canvas.getHeight());
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("CameraController.printWebcamFrame(): Failed to print grabbed frames.");
-            AlertWindows.showFatalError();
-            System.exit(2);
-        }
-        if (!Effect.isFlipped()) {
-            Effect.imgFlipper(cameraCanvas.getGraphicsContext2D());
-        }
-        else {
-            Effect.imgUnflipper(cameraCanvas.getGraphicsContext2D());
-        }
-    }
-
     private void printImg(Canvas canvas, Image img)  {
         canvas.getGraphicsContext2D().drawImage(img, 0, 0);
     }
 
     // -------------- TIMER --------------
-    private void initializeTimer() {
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                try {
-                    if (Objects.nonNull(camera.getGrabber())) {
-                        printWebcamFrame(cameraCanvas, camera.getGrabber(), camera.getConverter());
-                    } else {
-                        disableInterface();
-                        printImg(cameraCanvas, new Image(Objects.requireNonNull(getClass().getResourceAsStream("errImg/ErrImg.png"))));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
-            }
-        };
-        timer.start();
-    }
+
 
     // --------------- DIALOGS ---------------
     @FXML
