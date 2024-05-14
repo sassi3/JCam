@@ -97,7 +97,7 @@ public class WebcamController {
                             }
                             Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
                             webcamDisplay.setImage(image);
-                            Flip.viewportFlipper(webcamDisplay, 180);
+                            Flip.viewportFlipper(webcamDisplay);
                         } catch (Exception e) {
                             System.out.println("Skipped frame");
                         }
