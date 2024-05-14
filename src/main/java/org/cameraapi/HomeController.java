@@ -24,7 +24,7 @@ import org.cameraapi.effects.Freeze;
 
 import static java.lang.Thread.interrupted;
 
-public class WebcamController {
+public class HomeController {
     private boolean frozenFlipStatus;
     @FXML private ImageView webcamDisplay;
     @FXML private ImageView resultImage;
@@ -244,7 +244,7 @@ public class WebcamController {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("WebcamController.handleEditor(): Failed to load editor's FXML file.");
+            System.err.println("HomeController.handleEditor(): Failed to load editor's FXML file.");
             AlertWindows.showFatalError();
             System.exit(3);
         }
