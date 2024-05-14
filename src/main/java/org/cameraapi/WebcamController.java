@@ -24,7 +24,7 @@ import org.cameraapi.effects.Freeze;
 
 import static java.lang.Thread.interrupted;
 
-public class CameraController {
+public class WebcamController {
     private boolean frozenFlipStatus;
     @FXML private ImageView webcamDisplay;
     @FXML private ImageView resultImage;
@@ -45,6 +45,7 @@ public class CameraController {
     @FXML private Button captureButton;
 
     public void initialize() {
+        // Starting webcam
         webcams = FXCollections.observableArrayList();
         new WebcamListener();
         webcamList.setItems(webcams);
@@ -61,6 +62,10 @@ public class CameraController {
             System.err.println("Error: " + e.getMessage());
             System.exit(1);
         }
+
+        // Enabling live effects
+        Flip.enable();
+        Freeze.enable();
     }
 
     private void openWebcam(Webcam webcam) {
@@ -92,7 +97,7 @@ public class CameraController {
                             }
                             Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
                             webcamDisplay.setImage(image);
-                            Flip.viewportFlipper(webcamDisplay);
+                            Flip.viewportFlipper(webcamDisplay, 180);
                         } catch (Exception e) {
                             System.out.println("Skipped frame");
                         }
@@ -238,7 +243,7 @@ public class CameraController {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("CameraController.handleEditor(): Failed to load editor's FXML file.");
+            System.err.println("WebcamController.handleEditor(): Failed to load editor's FXML file.");
             AlertWindows.showFatalError();
             System.exit(3);
         }
