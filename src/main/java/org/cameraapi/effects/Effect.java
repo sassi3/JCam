@@ -1,10 +1,10 @@
-package org.cameraapi.common;
+package org.cameraapi.effects;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Affine;
 
-public class Effects {
+public abstract class Effect {
     private static boolean frozen = false;
     private static boolean flipped = false;
 
