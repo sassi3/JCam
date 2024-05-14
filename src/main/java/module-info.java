@@ -14,4 +14,6 @@ module org.example.cameraapi {
     opens org.cameraapi.model to javafx.fxml;
     exports org.cameraapi.common;
     opens org.cameraapi.common to javafx.fxml;
+    exports org.cameraapi.effects;
+    opens org.cameraapi.effects to javafx.fxml;
 }

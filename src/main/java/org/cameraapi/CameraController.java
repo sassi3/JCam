@@ -19,7 +19,8 @@ import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
 import javafx.fxml.FXML;
 import org.cameraapi.common.AlertWindows;
-import org.cameraapi.common.Effects;
+import org.cameraapi.model.Camera;
+import org.cameraapi.effects.Effect;
 
 import static java.lang.Thread.interrupted;
 
@@ -148,7 +149,7 @@ public class CameraController {
     @FXML
     private void takePicture() {
 
-        if (!Effects.isFlipped()) {
+        if (!Effect.isFlipped()) {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
@@ -170,9 +171,9 @@ public class CameraController {
     // ------------ EFFECTS HANDLERS ------------
     @FXML
     private void flipCamera() {
-        Effects.flip();
-        if (Effects.isFrozen()) {
-            Effects.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        Effect.flip();
+        if (Effect.isFrozen()) {
+            Effect.imgFlipper(cameraCanvas.getGraphicsContext2D());
         }
         flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
@@ -192,8 +193,6 @@ public class CameraController {
     }
 
     // --------- UNIVERSAL CANVAS PRINTERS ---------
-
-
     private void printImg(Canvas canvas, Image img)  {
         canvas.getGraphicsContext2D().drawImage(img, 0, 0);
     }
@@ -214,7 +213,7 @@ public class CameraController {
             //---------- CONTROLLER ACCESS METHODS --------
 
             // Checks if the cam is currently frozen and decides which picture to show and whether to flip it or not
-            if(Effects.isFrozen()) {
+            if(Effect.isFrozen()) {
                 editorController.setPicture(frozenPicture); // show picture taken when cam froze
                 if (!frozenFlipStatus) { // Checks if the cam was flipped when froze
                     editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
@@ -227,7 +226,7 @@ public class CameraController {
             }
             else {
                 editorController.setPicture(currentPicture); // Else set picture currently displayed
-                if (!Effects.isFlipped()) { // Check if cam is currently flipped
+                if (!Effect.isFlipped()) { // Check if cam is currently flipped
                     editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
                     // flips what's displayed by the image view around the y-axis
                     // and then translates it right (through the x-axis) by the width of the image view itself
