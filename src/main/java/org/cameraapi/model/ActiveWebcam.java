@@ -41,5 +41,6 @@ public class ActiveWebcam {
 
     public void setActiveWebcam(Webcam activeWebcam) {
         this.activeWebcam = activeWebcam;
+        this.name = activeWebcam.getName();
     }
 }
