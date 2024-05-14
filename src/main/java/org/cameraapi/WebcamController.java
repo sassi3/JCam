@@ -24,7 +24,7 @@ import org.cameraapi.effects.Freeze;
 
 import static java.lang.Thread.interrupted;
 
-public class CameraController {
+public class WebcamController {
     private boolean frozenFlipStatus;
     @FXML private ImageView webcamDisplay;
     @FXML private ImageView resultImage;
@@ -45,28 +45,28 @@ public class CameraController {
     @FXML private Button captureButton;
 
     public void initialize() {
+        // Starting webcam
         webcams = FXCollections.observableArrayList();
         new WebcamListener();
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
-        /*webcamList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            activeWebcam = newValue;
-        });*/
+        // webcamList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        //     activeWebcam = newValue;
+        // });
         try {
             activeWebcam = webcamList.getSelectionModel().getSelectedItem();
-            // by default decided to select the first available webcam
             webcamList.setValue(activeWebcam);
-        } catch (NoSuchElementException e) {
-            System.err.println("Error: no webcams found.");
-            System.exit(1);
-        }
-        try {
             openWebcam(activeWebcam);
             startShowingFrame();
-        } catch (Exception e) {
+        } catch (IllegalStateException | NoSuchElementException e) {
             System.err.println("Error: " + e.getMessage());
             System.exit(1);
         }
+
+        // Enabling live effects
+        Flip.enable();
+        Flip.setRotationValue(180);
+        Freeze.enable();
     }
 
     private void openWebcam(Webcam webcam) {
@@ -98,6 +98,7 @@ public class CameraController {
                             }
                             Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
                             webcamDisplay.setImage(image);
+                            Flip.viewportFlipper(webcamDisplay);
                         } catch (Exception e) {
                             System.out.println("Skipped frame");
                         }
@@ -143,7 +144,6 @@ public class CameraController {
 
     @FXML
     private void takePicture() {
-
         if (!Flip.isApplied()) {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
@@ -153,7 +153,8 @@ public class CameraController {
             printablePicture.getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
             //Identity matrix
         }
-        printablePicture.setImage(webcamDisplay.getImage());
+        Image takenImage = webcamDisplay.getImage();
+        printablePicture.setImage(takenImage);
 
         handleEditor();
     }
@@ -166,22 +167,22 @@ public class CameraController {
     // ------------ EFFECTS HANDLERS ------------
     @FXML
     private void flipCamera() {
-        Flip.flip();
-        if (Freeze.isApplied()) {
-            Flip.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        if (!Flip.isEnabled()) {
+            throw new RuntimeException("Flip is currently disabled.");
         }
+        Flip.flip(webcamDisplay);
         flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
     @FXML
     private void freezeCamera() {
+        if (!Freeze.isEnabled()) {
+            throw new RuntimeException("Freeze is currently disabled.");
+        }
         Freeze.freeze();
         if(Freeze.isApplied()) {
-            frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button
-                                                        // is pressed
-
-            frozenFlipStatus = Flip.isApplied();    // saves the status of the flip
-                                                    // button when the freeze button is pressed
+            frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button is pressed
+            frozenFlipStatus = Flip.isApplied();    // saves the status of the flip button when the freeze button is pressed
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
@@ -243,7 +244,7 @@ public class CameraController {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("CameraController.handleEditor(): Failed to load editor's FXML file.");
+            System.err.println("WebcamController.handleEditor(): Failed to load editor's FXML file.");
             AlertWindows.showFatalError();
             System.exit(3);
         }

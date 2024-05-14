@@ -4,11 +4,11 @@ import javafx.animation.AnimationTimer;
 import org.bytedeco.javacv.*;
 import org.cameraapi.common.AlertWindows;
 
-public class Camera {
+public class WebcamInfo {
     private FrameGrabber grabber;
     private final JavaFXFrameConverter converter;
 
-    public Camera() {
+    public WebcamInfo() {
         try {
             System.out.println("Default webcam detected.");
             grabber = FrameGrabber.createDefault(0);
@@ -41,7 +41,7 @@ public class Camera {
             this.getGrabber().start();
         } catch (FrameGrabber.Exception e) {
             e.printStackTrace();
-            System.err.println("Camera.start(): Failed to restart camera.");
+            System.err.println("WebcamInfo.start(): Failed to restart camera.");
             System.exit(1);
         }
         timer.start();
@@ -57,6 +57,6 @@ public class Camera {
             AlertWindows.showFatalError();
             System.exit(1);
         }
-        System.out.println("Camera.stop(): Webcam stopped.");
+        System.out.println("WebcamInfo.stop(): Webcam stopped.");
     }
 }
