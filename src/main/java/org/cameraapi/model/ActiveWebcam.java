@@ -1,62 +1,45 @@
 package org.cameraapi.model;
 
-import javafx.animation.AnimationTimer;
-import org.bytedeco.javacv.*;
-import org.cameraapi.common.AlertWindows;
+import com.github.sarxos.webcam.Webcam;
 
 public class ActiveWebcam {
-    private FrameGrabber grabber;
-    private final JavaFXFrameConverter converter;
+    String name;
+    double rotation;
+    Webcam activeWebcam;
 
-    public ActiveWebcam() {
-        try {
-            System.out.println("Default webcam detected.");
-            grabber = FrameGrabber.createDefault(0);
-            grabber.start();
-        } catch (FrameGrabber.Exception e) {
-            System.out.println("No webcam detected.");
-            grabber = null;
-        } finally {
-            converter = new JavaFXFrameConverter();
-            System.out.println("Starting background routine for webcam detection...");
-            // Background routine for webcam detection. It runs even in case there is a default webcam
-        }
+    public ActiveWebcam(Webcam activeWebcam) {
+        this.activeWebcam = activeWebcam;
+        this.name = activeWebcam.getName();
+        rotation = 180;
     }
 
-    public JavaFXFrameConverter getConverter() {
-        return converter;
+    public ActiveWebcam(String name, Webcam activeWebcam) {
+        this.name = name;
+        this.activeWebcam = activeWebcam;
+        rotation = 180;
     }
 
-    public FrameGrabber getGrabber() {
-        return grabber;
+    public String getName() {
+        return name;
     }
 
-    public void setGrabber(FrameGrabber grabber) {
-        this.grabber = grabber;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    // -------------- START & STOP --------------
-    public void start(AnimationTimer timer) {
-        try {
-            this.getGrabber().start();
-        } catch (FrameGrabber.Exception e) {
-            e.printStackTrace();
-            System.err.println("ActiveWebcam.start(): Failed to restart camera.");
-            System.exit(1);
-        }
-        timer.start();
-        System.out.println("webcamRestart(): Webcam restarted.");
+    public double getRotation() {
+        return rotation;
     }
-    public void stop(AnimationTimer timer) {
-        try {
-            this.getGrabber().stop();
-        } catch (FrameGrabber.Exception e) {
-            e.printStackTrace();
-            System.err.println("webcamStop(): Failed to stop camera.");
-            timer.stop();
-            AlertWindows.showFatalError();
-            System.exit(1);
-        }
-        System.out.println("ActiveWebcam.stop(): Webcam stopped.");
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
+    }
+
+    public Webcam getActiveWebcam() {
+        return activeWebcam;
+    }
+
+    public void setActiveWebcam(Webcam activeWebcam) {
+        this.activeWebcam = activeWebcam;
     }
 }
