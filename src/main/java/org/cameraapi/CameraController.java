@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamListener;
+import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -19,8 +19,8 @@ import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
 import javafx.fxml.FXML;
 import org.cameraapi.common.AlertWindows;
-import org.cameraapi.model.Camera;
-import org.cameraapi.effects.Effect;
+import org.cameraapi.effects.Flip;
+import org.cameraapi.effects.Freeze;
 
 import static java.lang.Thread.interrupted;
 
@@ -126,18 +126,13 @@ public class CameraController {
     public static ObservableList<Webcam> getWebcams() {
         return webcams;
     }
-
-
-
+    
     // ------------- GUI DISARMER -------------
     public void disableInterface() {
         captureButton.disarm();
         freezeToggleButton.disarm();
         flipToggleButton.disarm();
     }
-
-    // ------------ WEBCAM HANDLERS ------------
-
 
     // ------ TAKING, SHOWING & SAVING PICTURES ------
     @FXML
@@ -149,7 +144,7 @@ public class CameraController {
     @FXML
     private void takePicture() {
 
-        if (!Effect.isFlipped()) {
+        if (!Flip.isApplied()) {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
@@ -171,23 +166,22 @@ public class CameraController {
     // ------------ EFFECTS HANDLERS ------------
     @FXML
     private void flipCamera() {
-        Effect.flip();
-        if (Effect.isFrozen()) {
-            Effect.imgFlipper(cameraCanvas.getGraphicsContext2D());
+        Flip.flip();
+        if (Freeze.isApplied()) {
+            Flip.imgFlipper(cameraCanvas.getGraphicsContext2D());
         }
         flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
     @FXML
     private void freezeCamera() {
-        Effects.freeze(timer);
-        if(Effects.isFrozen()) {
-            frozenPicture = webcamDisplay.getImage();
-                                                        // saves the displayed frame when the freeze button
+        Freeze.freeze();
+        if(Freeze.isApplied()) {
+            frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button
                                                         // is pressed
 
-            frozenFlipStatus = Effects.isFlipped(); // saves the status of the flip
-                                                        // button when the freeze button is pressed
+            frozenFlipStatus = Flip.isApplied();    // saves the status of the flip
+                                                    // button when the freeze button is pressed
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
@@ -196,9 +190,6 @@ public class CameraController {
     private void printImg(Canvas canvas, Image img)  {
         canvas.getGraphicsContext2D().drawImage(img, 0, 0);
     }
-
-    // -------------- TIMER --------------
-
 
     // --------------- DIALOGS ---------------
     @FXML
@@ -213,7 +204,7 @@ public class CameraController {
             //---------- CONTROLLER ACCESS METHODS --------
 
             // Checks if the cam is currently frozen and decides which picture to show and whether to flip it or not
-            if(Effect.isFrozen()) {
+            if(Freeze.isApplied()) {
                 editorController.setPicture(frozenPicture); // show picture taken when cam froze
                 if (!frozenFlipStatus) { // Checks if the cam was flipped when froze
                     editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
@@ -226,7 +217,7 @@ public class CameraController {
             }
             else {
                 editorController.setPicture(currentPicture); // Else set picture currently displayed
-                if (!Effect.isFlipped()) { // Check if cam is currently flipped
+                if (!Freeze.isApplied()) { // Check if cam is currently flipped
                     editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
                     // flips what's displayed by the image view around the y-axis
                     // and then translates it right (through the x-axis) by the width of the image view itself
