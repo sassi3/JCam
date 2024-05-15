@@ -1,6 +1,6 @@
 package org.cameraapi.effects;
 
-public abstract class Effect {
+public abstract class LiveEffect {
     private static boolean enabled;
     private static boolean applied;
 
