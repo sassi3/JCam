@@ -94,7 +94,7 @@ public class HomeController {
 
     private void startShowingFrame() {
         if (Objects.isNull(frameShowThread)) {
-            frameShowThread = new Thread(new Runnable() {
+            frameShowThread = new Thread() {
                 @Override
                 public synchronized void run() {
                     while (!interrupted()) {
@@ -111,7 +111,7 @@ public class HomeController {
                         }
                     }
                 }
-            });
+            };
             frameShowThread.setDaemon(true);
             frameShowThread.setName("Camera Frame Showing");
         }
@@ -155,8 +155,7 @@ public class HomeController {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
-        }
-        else {
+        } else {
             printablePicture.getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
             //Identity matrix
         }
@@ -250,8 +249,7 @@ public class HomeController {
                 savePicture(editorController.getPicture());
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("HomeController.handleEditor(): Failed to load editor's FXML file.");
+            System.err.println("Error: " + e.getMessage());
             AlertWindows.showFatalError();
             System.exit(3);
         }
