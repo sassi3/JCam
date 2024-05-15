@@ -12,8 +12,8 @@ public abstract class LiveEffect {
         enabled = false;
     }
 
-    public static boolean isEnabled() {
-        return enabled;
+    public static boolean isDisabled() {
+        return !enabled;
     }
 
     public static void apply() {

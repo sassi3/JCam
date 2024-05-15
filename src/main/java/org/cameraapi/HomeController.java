@@ -22,8 +22,6 @@ import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
 
-import static java.lang.Thread.interrupted;
-
 public class HomeController {
     private boolean frozenFlipStatus;
     @FXML private ImageView webcamDisplay;
@@ -173,7 +171,7 @@ public class HomeController {
     // ------------ EFFECTS HANDLERS ------------
     @FXML
     private void flipCamera() {
-        if (!Flip.isEnabled()) {
+        if (Flip.isDisabled()) {
             throw new RuntimeException("Flip is currently disabled.");
         }
         Flip.flip(webcamDisplay);
@@ -182,7 +180,7 @@ public class HomeController {
 
     @FXML
     private void freezeCamera() {
-        if (!Freeze.isEnabled()) {
+        if (Freeze.isDisabled()) {
             throw new RuntimeException("Freeze is currently disabled.");
         }
         Freeze.freeze();
