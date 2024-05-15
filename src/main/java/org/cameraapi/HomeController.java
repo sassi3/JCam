@@ -45,8 +45,11 @@ public class HomeController {
     @FXML private Button captureButton;
 
     public void initialize() {
-        // Starting webcam
+        // Allocations
+        webcamDisplay = new ImageView();
         webcams = FXCollections.observableArrayList();
+
+        // Fetching webcams
         new WebcamListener();
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
@@ -69,7 +72,11 @@ public class HomeController {
         Freeze.enable();
     }
 
+    // ---------------- OPEN & CLOSE ----------------
     private void openWebcam(Webcam webcam) {
+        if (webcam.isOpen()) {
+            throw new RuntimeException("Webcam is already open.");
+        }
         webcam.open();
         if (!webcam.isOpen()) {
             throw new IllegalStateException("Failed to open webcam.");
@@ -93,7 +100,7 @@ public class HomeController {
                     while (!interrupted()) {
                         try {
                             activeWebcam = webcamList.getSelectionModel().getSelectedItem();
-                            if(!activeWebcam.isOpen()) {
+                            if (!activeWebcam.isOpen()) {
                                 openWebcam(activeWebcam);
                             }
                             Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
