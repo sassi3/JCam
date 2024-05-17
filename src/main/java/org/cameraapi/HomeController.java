@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-
 import com.github.sarxos.webcam.Webcam;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
@@ -33,7 +32,7 @@ public class HomeController {
     @FXML private ChoiceBox<Webcam> webcamList;
     private static ObservableList<Webcam> webcams;
     private Webcam activeWebcam;
-    private HashMap<Integer, LiveEffect> liveEffects = new HashMap<>();
+    private final HashMap<Integer, LiveEffect> liveEffects = new HashMap<>();
     private Thread frameShowThread;
 
     // --------- IMAGES' CONTAINERS ---------
@@ -105,6 +104,7 @@ public class HomeController {
                     if(!activeWebcam.isOpen()) {
                         openWebcam(activeWebcam);
                     }
+                    handleWebcamChangeDialog();
                 });
 
                 while (!interrupted()) {
@@ -288,4 +288,35 @@ public class HomeController {
             System.exit(3);
         }
     }
+
+    @FXML
+    public void handleWebcamChangeDialog() {
+        //---------- SCENE LOADING --------
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("webcam-change-dialog.fxml"));
+        try {
+            DialogPane changePane = loader.load();
+
+            WebcamChangeDialogController ChangeDialogController = loader.getController();
+
+            //-------- DIALOG SET-UP AND EXIT ----------
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setDialogPane(changePane);
+            dialog.setTitle("Warning");
+            dialog.initModality(Modality.WINDOW_MODAL);
+
+            Optional<ButtonType> clickedButton = dialog.showAndWait();
+            if (clickedButton.orElse(ButtonType.NO) == ButtonType.YES) {
+                // if the dialog button pressed is the YES button it will reset the effect
+                ChangeDialogController.reset(liveEffects);
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+
 }

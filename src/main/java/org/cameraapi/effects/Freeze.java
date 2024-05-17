@@ -1,8 +1,9 @@
 package org.cameraapi.effects;
 
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.cameraapi.HomeController;
+
 
 public class Freeze extends LiveEffect {
 
@@ -14,7 +15,7 @@ public class Freeze extends LiveEffect {
         apply();
         System.out.println("freeze: " + isApplied());
     }
-
+    
     // ---------------- FREEZE ----------------
     public static void freeze( ImageView imageView,Image image) {
         imageView.setImage(image);
