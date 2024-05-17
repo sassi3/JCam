@@ -128,7 +128,7 @@ public class HomeController {
             Thread.yield();
         }
         if (!frameShowThread.isAlive()) {
-            throw new IllegalThreadStateException("Failed to start showing frame.");
+            throw new IllegalThreadStateException("Failed to start showing frames.");
         }
     }
     private void stopShowingFrame() throws InterruptedException {

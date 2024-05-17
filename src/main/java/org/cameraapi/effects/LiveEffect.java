@@ -6,6 +6,7 @@ public abstract class LiveEffect implements LIveEffectsInterface {
     // ---- Status variables---
     private boolean enabled;
     private boolean applied;
+
     // ---- Identification variables -----
     public static final int FLIP = 0;
     public static final int FREEZE = 1;
