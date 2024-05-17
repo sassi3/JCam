@@ -67,13 +67,11 @@ public class HomeController {
     });
 
     public void initialize() {
-
         // Starting webcam
         frameShowThread.setDaemon(true);
         frameShowThread.setName("Camera Frame Showing");
 
         // Allocations
-        webcamDisplay = new ImageView();
         webcams = FXCollections.observableArrayList();
 
         // Fetching webcams
