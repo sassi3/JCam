@@ -1,6 +1,7 @@
 package org.cameraapi;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import javafx.fxml.FXML;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
+import org.cameraapi.effects.LiveEffect;
 
 import static java.lang.Thread.interrupted;
 
@@ -31,6 +33,7 @@ public class HomeController {
     @FXML private ChoiceBox<Webcam> webcamList;
     private static ObservableList<Webcam> webcams;
     private Webcam activeWebcam;
+    private HashMap<Integer, LiveEffect> liveEffects = new HashMap<>();
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private Image rawPicture;
@@ -178,6 +181,14 @@ public class HomeController {
     }
 
     // ------------ EFFECTS HANDLERS ------------
+
+    public void initializeLiveEffects(){
+        liveEffects.put(LiveEffect.FLIP,new Flip(true,false));
+        liveEffects.put(LiveEffect.FREEZE,new Freeze(true ,false));
+        // you could add more...
+    }
+
+
     @FXML
     private void flipCamera() {
         if (Flip.isDisabled()) {
