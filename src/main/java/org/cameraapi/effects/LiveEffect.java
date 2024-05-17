@@ -45,4 +45,5 @@ public abstract class LiveEffect implements LIveEffectsInterface {
     @Override
     public void applyEffect(ImageView imageView) {
     }
+
 }
