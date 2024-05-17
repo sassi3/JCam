@@ -6,8 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.github.sarxos.webcam.Webcam;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,6 +46,13 @@ public class HomeController {
     private final Thread frameShowThread = new Thread(new Runnable() {
         @Override
         public synchronized void run() {
+            webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
+                activeWebcam = newWebcam;
+                if(!activeWebcam.isOpen()) {
+                    openWebcam(activeWebcam);
+                }
+            });
+
             while (!interrupted()) {
                 try {
                     Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
@@ -55,7 +60,7 @@ public class HomeController {
                     Flip.viewportFlipper(webcamDisplay);
                 } catch (Exception e) {
                     System.out.println("Skipped frame" + e.getMessage());
-                    System.exit(1);
+                    break;
                 }
             }
         }
@@ -69,19 +74,7 @@ public class HomeController {
         new WebcamListener();
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
-        webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, webcam, newWebcam) -> {
-            try {
-                stopShowingFrame();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            activeWebcam = newWebcam;
-            if(!activeWebcam.isOpen()) {
-                openWebcam(activeWebcam);
-            }
-            startShowingFrame();
 
-        });
         try {
             activeWebcam = webcamList.getSelectionModel().getSelectedItem();
             webcamList.setValue(activeWebcam);
