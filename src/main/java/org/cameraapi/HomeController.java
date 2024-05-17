@@ -34,6 +34,7 @@ public class HomeController {
     private static ObservableList<Webcam> webcams;
     private Webcam activeWebcam;
     private HashMap<Integer, LiveEffect> liveEffects = new HashMap<>();
+    private Thread frameShowThread;
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private Image rawPicture;
@@ -46,34 +47,9 @@ public class HomeController {
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
 
-    private final Thread frameShowThread = new Thread(new Runnable() {
-        @Override
-        public synchronized void run() {
-            webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
-                activeWebcam = newWebcam;
-                if(!activeWebcam.isOpen()) {
-                    openWebcam(activeWebcam);
-                }
-            });
-
-            while (!interrupted()) {
-                try {
-                    Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
-                    webcamDisplay.setImage(image);
-                    Flip.viewportFlipper(webcamDisplay);
-                } catch (Exception e) {
-                    System.out.println("Skipped frame" + e.getMessage());
-                    break;
-                }
-            }
-        }
-    });
 
     public void initialize() {
 
-        // Starting webcam
-        frameShowThread.setDaemon(true);
-        frameShowThread.setName("Camera Frame Showing");
 
         // Allocations
         webcams = FXCollections.observableArrayList();
@@ -83,6 +59,7 @@ public class HomeController {
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
 
+        // Starting webcam
         try {
             activeWebcam = webcamList.getSelectionModel().getSelectedItem();
             webcamList.setValue(activeWebcam);
@@ -96,6 +73,7 @@ public class HomeController {
         // Initializing live effects
         initializeLiveEffects();
         Flip.setRotationValue(180);
+
     }
 
     // ---------------- OPEN & CLOSE ----------------
@@ -117,11 +95,37 @@ public class HomeController {
             throw new IllegalStateException("Failed to close webcam.");
         }
     }
-
+    // ---- HANDLE WEBCAM DISPLAY THREAD ----
     private void startShowingFrame() {
+        frameShowThread = new Thread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
+                    activeWebcam = newWebcam;
+                    if(!activeWebcam.isOpen()) {
+                        openWebcam(activeWebcam);
+                    }
+                });
+
+                while (!interrupted()) {
+                    try {
+                        Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
+                        webcamDisplay.setImage(image);
+                        Flip.viewportFlipper(webcamDisplay);
+                    } catch (Exception e) {
+                        System.out.println("Skipped frame" + e.getMessage());
+                        break;
+                    }
+                }
+            }
+        });
+
+        frameShowThread.setDaemon(true);
+        frameShowThread.setName("Camera Frame Showing");
 
         if (!frameShowThread.isAlive()) {
             frameShowThread.start();
+            Thread.yield();
         }
         if (!frameShowThread.isAlive()) {
             throw new IllegalThreadStateException("Failed to start showing frame.");
@@ -139,6 +143,7 @@ public class HomeController {
         }
     }
 
+    // --------- WEBCAMS LIST GETTER ----------
     public static ObservableList<Webcam> getWebcams() {
         return webcams;
     }
@@ -209,6 +214,15 @@ public class HomeController {
         if(liveEffects.get(LiveEffect.FREEZE).isApplied()) {
             frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button is pressed
             frozenFlipStatus = liveEffects.get(LiveEffect.FLIP).isApplied();    // saves the status of the flip button when the freeze button is pressed
+            try {
+                stopShowingFrame();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            Freeze.freeze(webcamDisplay,frozenPicture);
+        }
+        else {
+            startShowingFrame();
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
