@@ -6,11 +6,11 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
+import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -21,9 +21,11 @@ import javafx.fxml.FXML;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
-import org.cameraapi.effects.LiveEffect;
 
+import org.cameraapi.effects.LiveEffect;
 import static java.lang.Thread.interrupted;
+import org.cameraapi.model.WebcamUtils;
+
 
 public class HomeController {
     private boolean frozenFlipStatus;
@@ -47,13 +49,11 @@ public class HomeController {
     @FXML private Button captureButton;
 
 
-    public void initialize() {
 
+    public void initialize() {
 
         // Allocations
         webcams = FXCollections.observableArrayList();
-
-        // Fetching webcams
         new WebcamListener();
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
@@ -62,7 +62,10 @@ public class HomeController {
         try {
             activeWebcam = webcamList.getSelectionModel().getSelectedItem();
             webcamList.setValue(activeWebcam);
-            openWebcam(activeWebcam);
+            WebcamUtils.openWebcam(activeWebcam);
+            frameShowThread = new Thread(new FrameShowThread(webcamList, activeWebcam, webcamDisplay));
+            frameShowThread.setDaemon(true);
+            frameShowThread.setName("Camera Frame Showing");
             startShowingFrame();
         } catch (IllegalStateException | NoSuchElementException e) {
             System.err.println("Error: " + e.getMessage());
@@ -74,6 +77,7 @@ public class HomeController {
         Flip.setRotationValue(180);
 
     }
+
 
     // ---------------- OPEN & CLOSE ----------------
     private void openWebcam(Webcam webcam) {
