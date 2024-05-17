@@ -1,6 +1,6 @@
 package org.cameraapi.effects;
 
-public class Freeze extends Effect {
+public class Freeze extends LiveEffect {
     // ---------------- FREEZE ----------------
     public static void freeze() {
         apply();
