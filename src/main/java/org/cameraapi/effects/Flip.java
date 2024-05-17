@@ -3,7 +3,7 @@ package org.cameraapi.effects;
 import javafx.geometry.Point3D;
 import javafx.scene.image.ImageView;
 
-public class Flip extends Effect {
+public class Flip extends LiveEffect {
     private static double rotationValue = 0;
 
     public static void flip(ImageView picture) {

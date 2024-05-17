@@ -21,8 +21,7 @@ import javafx.fxml.FXML;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
-
-import static java.lang.Thread.interrupted;
+import org.cameraapi.effects.LiveEffect;
 
 public class HomeController {
     private boolean frozenFlipStatus;
@@ -67,10 +66,16 @@ public class HomeController {
     });
 
     public void initialize() {
+
         // Starting webcam
         frameShowThread.setDaemon(true);
         frameShowThread.setName("Camera Frame Showing");
+
+        // Allocations
+        webcamDisplay = new ImageView();
         webcams = FXCollections.observableArrayList();
+
+        // Fetching webcams
         new WebcamListener();
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
@@ -91,7 +96,11 @@ public class HomeController {
         Freeze.enable();
     }
 
+    // ---------------- OPEN & CLOSE ----------------
     private void openWebcam(Webcam webcam) {
+        if (webcam.isOpen()) {
+            throw new RuntimeException("Webcam is already open.");
+        }
         webcam.open();
         if (!webcam.isOpen()) {
             throw new IllegalStateException("Failed to open webcam.");
@@ -108,6 +117,7 @@ public class HomeController {
     }
 
     private void startShowingFrame() {
+
         if (!frameShowThread.isAlive()) {
             frameShowThread.start();
         }
@@ -151,8 +161,7 @@ public class HomeController {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
-        }
-        else {
+        } else {
             printablePicture.getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
             //Identity matrix
         }
@@ -170,7 +179,7 @@ public class HomeController {
     // ------------ EFFECTS HANDLERS ------------
     @FXML
     private void flipCamera() {
-        if (!Flip.isEnabled()) {
+        if (Flip.isDisabled()) {
             throw new RuntimeException("Flip is currently disabled.");
         }
         Flip.flip(webcamDisplay);
@@ -179,7 +188,7 @@ public class HomeController {
 
     @FXML
     private void freezeCamera() {
-        if (!Freeze.isEnabled()) {
+        if (Freeze.isDisabled()) {
             throw new RuntimeException("Freeze is currently disabled.");
         }
         Freeze.freeze();
@@ -246,8 +255,7 @@ public class HomeController {
                 savePicture(editorController.getPicture());
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("HomeController.handleEditor(): Failed to load editor's FXML file.");
+            System.err.println("Error: " + e.getMessage());
             AlertWindows.showFatalError();
             System.exit(3);
         }
