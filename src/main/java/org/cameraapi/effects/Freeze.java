@@ -1,15 +1,13 @@
 package org.cameraapi.effects;
 
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-
 public class Freeze extends LiveEffect {
-
     public Freeze(boolean enabled, boolean applied) {
         super(enabled, applied);
     }
+
     @Override
     public void applyEffect(ImageView imageView){
         apply();
@@ -17,11 +15,9 @@ public class Freeze extends LiveEffect {
     }
     
     // ---------------- FREEZE ----------------
-    public static void freeze( ImageView imageView,Image image) {
+    public static void freeze(ImageView imageView, Image image) {
         imageView.setImage(image);
     }
-
-
 
     // Unused mat2Image converter, but maybe useful for
     /* private static Image mat2Image(Mat mat) {
