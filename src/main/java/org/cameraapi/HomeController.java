@@ -21,6 +21,7 @@ import javafx.fxml.FXML;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
+import org.cameraapi.effects.LiveEffect;
 
 public class HomeController {
     private boolean frozenFlipStatus;
