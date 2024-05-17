@@ -76,7 +76,6 @@ public class HomeController {
         frameShowThread.setName("Camera Frame Showing");
 
         // Allocations
-        webcamDisplay = new ImageView();
         webcams = FXCollections.observableArrayList();
 
         // Fetching webcams
@@ -94,10 +93,9 @@ public class HomeController {
             System.exit(1);
         }
 
-        // Enabling live effects
-        Flip.enable();
+        // Initializing live effects
+        initializeLiveEffects();
         Flip.setRotationValue(180);
-        Freeze.enable();
     }
 
     // ---------------- OPEN & CLOSE ----------------
@@ -130,14 +128,14 @@ public class HomeController {
         }
     }
     private void stopShowingFrame() throws InterruptedException {
-        if (Objects.nonNull(frameShowThread)) {
+        if (frameShowThread.isAlive()) {
             frameShowThread.interrupt();
             frameShowThread.join();
             if (frameShowThread.isAlive()) {
                 throw new IllegalThreadStateException("Failed to stop frameShowThread.");
             }
         } else {
-            System.out.println("frameShowThread is null. There is nothing to stop.");
+            System.out.println("frameShowThread is not running. There is nothing to stop.");
         }
     }
 
@@ -161,7 +159,7 @@ public class HomeController {
 
     @FXML
     private void takePicture() {
-        if (!Flip.isApplied()) {
+        if (!liveEffects.get(LiveEffect.FLIP).isApplied()) {
             printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
             // flips what's displayed by the image view around the y-axis
             // and then translates it right (through the x-axis) by the width of the image view itself
@@ -186,27 +184,31 @@ public class HomeController {
         liveEffects.put(LiveEffect.FLIP,new Flip(true,false));
         liveEffects.put(LiveEffect.FREEZE,new Freeze(true ,false));
         // you could add more...
+
+        // Enabling effects
+        liveEffects.get(LiveEffect.FLIP).enable();
+        liveEffects.get(LiveEffect.FREEZE).enable();
     }
 
 
     @FXML
     private void flipCamera() {
-        if (Flip.isDisabled()) {
+        if (liveEffects.get(LiveEffect.FLIP).isDisabled()) {
             throw new RuntimeException("Flip is currently disabled.");
         }
-        Flip.flip(webcamDisplay);
+        liveEffects.get(LiveEffect.FLIP).applyEffect(webcamDisplay);
         flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
     @FXML
     private void freezeCamera() {
-        if (Freeze.isDisabled()) {
+        if (liveEffects.get(LiveEffect.FREEZE).isDisabled()) {
             throw new RuntimeException("Freeze is currently disabled.");
         }
-        Freeze.freeze();
-        if(Freeze.isApplied()) {
+        liveEffects.get(LiveEffect.FREEZE).applyEffect(webcamDisplay);
+        if(liveEffects.get(LiveEffect.FREEZE).isApplied()) {
             frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button is pressed
-            frozenFlipStatus = Flip.isApplied();    // saves the status of the flip button when the freeze button is pressed
+            frozenFlipStatus = liveEffects.get(LiveEffect.FLIP).isApplied();    // saves the status of the flip button when the freeze button is pressed
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
@@ -229,7 +231,7 @@ public class HomeController {
             //---------- CONTROLLER ACCESS METHODS --------
 
             // Checks if the cam is currently frozen and decides which picture to show and whether to flip it or not
-            if(Freeze.isApplied()) {
+            if(liveEffects.get(LiveEffect.FREEZE).isApplied()) {
                 editorController.setPicture(frozenPicture); // show picture taken when cam froze
                 if (!frozenFlipStatus) { // Checks if the cam was flipped when froze
                     editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
@@ -242,7 +244,7 @@ public class HomeController {
             }
             else {
                 editorController.setPicture(currentPicture); // Else set picture currently displayed
-                if (!Freeze.isApplied()) { // Check if cam is currently flipped
+                if (!liveEffects.get(LiveEffect.FLIP).isApplied()) { // Check if cam is currently flipped
                     editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
                     // flips what's displayed by the image view around the y-axis
                     // and then translates it right (through the x-axis) by the width of the image view itself
