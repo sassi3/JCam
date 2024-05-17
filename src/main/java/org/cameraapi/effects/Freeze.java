@@ -1,8 +1,13 @@
 package org.cameraapi.effects;
 
 public class Freeze extends LiveEffect {
+
+    public Freeze(boolean enabled, boolean applied) {
+        super(enabled, applied);
+    }
+
     // ---------------- FREEZE ----------------
-    public static void freeze() {
+    public void freeze() {
         apply();
         System.out.println("freeze: " + isApplied());
     }
