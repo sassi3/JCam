@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.github.sarxos.webcam.Webcam;
+import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,6 +22,7 @@ import javafx.fxml.FXML;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
+import org.cameraapi.model.WebcamUtils;
 
 import static java.lang.Thread.interrupted;
 
@@ -43,38 +45,11 @@ public class HomeController {
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
 
-    private final Thread frameShowThread = new Thread(new Runnable() {
-        @Override
-        public synchronized void run() {
-            webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
-                activeWebcam = newWebcam;
-                if(!activeWebcam.isOpen()) {
-                    openWebcam(activeWebcam);
-                }
-            });
-
-            while (!interrupted()) {
-                try {
-                    Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
-                    webcamDisplay.setImage(image);
-                    Flip.viewportFlipper(webcamDisplay);
-                } catch (Exception e) {
-                    System.out.println("Skipped frame" + e.getMessage());
-                    break;
-                }
-            }
-        }
-    });
+    private Thread frameShowThread;
 
     public void initialize() {
-        // Starting webcam
-        frameShowThread.setDaemon(true);
-        frameShowThread.setName("Camera Frame Showing");
-
-        // Allocations
         webcams = FXCollections.observableArrayList();
 
-        // Fetching webcams
         new WebcamListener();
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
@@ -82,41 +57,22 @@ public class HomeController {
         try {
             activeWebcam = webcamList.getSelectionModel().getSelectedItem();
             webcamList.setValue(activeWebcam);
-            openWebcam(activeWebcam);
+            WebcamUtils.openWebcam(activeWebcam);
+            frameShowThread = new Thread(new FrameShowThread(webcamList, activeWebcam, webcamDisplay));
+            frameShowThread.setDaemon(true);
+            frameShowThread.setName("Camera Frame Showing");
             startShowingFrame();
         } catch (IllegalStateException | NoSuchElementException e) {
             System.err.println("Error: " + e.getMessage());
             System.exit(1);
         }
 
-        // Enabling live effects
         Flip.enable();
         Flip.setRotationValue(180);
         Freeze.enable();
     }
 
-    // ---------------- OPEN & CLOSE ----------------
-    private void openWebcam(Webcam webcam) {
-        if (webcam.isOpen()) {
-            throw new RuntimeException("Webcam is already open.");
-        }
-        webcam.open();
-        if (!webcam.isOpen()) {
-            throw new IllegalStateException("Failed to open webcam.");
-        }
-    }
-    private void closeWebcam(Webcam webcam) {
-        if (Objects.isNull(activeWebcam)) {
-            throw new IllegalStateException("Webcam is null.");
-        }
-        activeWebcam.close();
-        if (webcam.isOpen()) {
-            throw new IllegalStateException("Failed to close webcam.");
-        }
-    }
-
     private void startShowingFrame() {
-
         if (!frameShowThread.isAlive()) {
             frameShowThread.start();
         }
