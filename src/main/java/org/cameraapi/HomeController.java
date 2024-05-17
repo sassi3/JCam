@@ -30,7 +30,6 @@ public class HomeController {
     @FXML private ChoiceBox<Webcam> webcamList;
     private static ObservableList<Webcam> webcams;
     private Webcam activeWebcam;
-    private Thread frameShowThread;
 
     // --------- IMAGES' CONTAINERS ---------
     @FXML private Image rawPicture;
@@ -43,7 +42,35 @@ public class HomeController {
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
 
+    private final Thread frameShowThread = new Thread(new Runnable() {
+        @Override
+        public synchronized void run() {
+            webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
+                activeWebcam = newWebcam;
+                if(!activeWebcam.isOpen()) {
+                    openWebcam(activeWebcam);
+                }
+            });
+
+            while (!interrupted()) {
+                try {
+                    Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
+                    webcamDisplay.setImage(image);
+                    Flip.viewportFlipper(webcamDisplay);
+                } catch (Exception e) {
+                    System.out.println("Skipped frame" + e.getMessage());
+                    break;
+                }
+            }
+        }
+    });
+
     public void initialize() {
+
+        // Starting webcam
+        frameShowThread.setDaemon(true);
+        frameShowThread.setName("Camera Frame Showing");
+
         // Allocations
         webcamDisplay = new ImageView();
         webcams = FXCollections.observableArrayList();
@@ -52,9 +79,7 @@ public class HomeController {
         new WebcamListener();
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
-        // webcamList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-        //     activeWebcam = newValue;
-        // });
+
         try {
             activeWebcam = webcamList.getSelectionModel().getSelectedItem();
             webcamList.setValue(activeWebcam);
@@ -92,36 +117,18 @@ public class HomeController {
     }
 
     private void startShowingFrame() {
-        if (Objects.isNull(frameShowThread)) {
-            frameShowThread = new Thread() {
-                @Override
-                public synchronized void run() {
-                    while (!interrupted()) {
-                        try {
-                            activeWebcam = webcamList.getSelectionModel().getSelectedItem();
-                            if (!activeWebcam.isOpen()) {
-                                openWebcam(activeWebcam);
-                            }
-                            Image image = SwingFXUtils.toFXImage(activeWebcam.getImage(), null);
-                            webcamDisplay.setImage(image);
-                            Flip.viewportFlipper(webcamDisplay);
-                        } catch (Exception e) {
-                            System.out.println("Skipped frame");
-                        }
-                    }
-                }
-            };
-            frameShowThread.setDaemon(true);
-            frameShowThread.setName("Camera Frame Showing");
+
+        if (!frameShowThread.isAlive()) {
+            frameShowThread.start();
         }
-        frameShowThread.start();
         if (!frameShowThread.isAlive()) {
             throw new IllegalThreadStateException("Failed to start showing frame.");
         }
     }
-    private void stopShowingFrame() {
+    private void stopShowingFrame() throws InterruptedException {
         if (Objects.nonNull(frameShowThread)) {
             frameShowThread.interrupt();
+            frameShowThread.join();
             if (frameShowThread.isAlive()) {
                 throw new IllegalThreadStateException("Failed to stop frameShowThread.");
             }
