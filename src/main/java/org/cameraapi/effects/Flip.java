@@ -10,6 +10,10 @@ public class Flip extends LiveEffect {
         super(enabled, applied);
     }
 
+    @Override
+    public void applyEffect(ImageView picture){
+        flip(picture);
+    }
 
 
     public void flip(ImageView picture) {

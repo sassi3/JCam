@@ -1,5 +1,7 @@
 package org.cameraapi.effects;
 
+import javafx.scene.image.ImageView;
+
 public abstract class LiveEffect implements LIveEffectsInterface {
     // ---- Status variables---
     private boolean enabled;
@@ -10,7 +12,7 @@ public abstract class LiveEffect implements LIveEffectsInterface {
 
 
 
-    
+
     public LiveEffect(boolean enabled, boolean applied) {
         this.enabled = enabled;
         this.applied = applied;
@@ -38,5 +40,9 @@ public abstract class LiveEffect implements LIveEffectsInterface {
 
     public boolean isApplied() {
         return applied;
+    }
+
+    @Override
+    public void applyEffect(ImageView imageView) {
     }
 }

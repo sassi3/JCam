@@ -1,5 +1,8 @@
 package org.cameraapi.effects;
 
+
+import javafx.scene.image.ImageView;
+
 public interface LIveEffectsInterface {
     void enable();
 
@@ -10,4 +13,6 @@ public interface LIveEffectsInterface {
     void apply();
 
     boolean isApplied();
+
+    void applyEffect(ImageView view);
 }
