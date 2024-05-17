@@ -6,15 +6,25 @@ import javafx.scene.image.ImageView;
 public class Flip extends LiveEffect {
     private static double rotationValue = 0;
 
-    public static void flip(ImageView picture) {
+    public Flip(boolean enabled, boolean applied) {
+        super(enabled, applied);
+    }
+
+    @Override
+    public void applyEffect(ImageView picture){
+        flip(picture);
+    }
+
+
+    public void flip(ImageView picture) {
         if (getRotationValue() == 180) {
             setRotationValue(0);
         } else {
             setRotationValue(180);
         }
         viewportFlipper(picture);
-        apply();
-        System.out.println("flip: " + isApplied());
+        this.apply();
+        System.out.println("flip: " + this.isApplied());
     }
 
     public static void viewportFlipper(ImageView picture) {

@@ -1,26 +1,56 @@
 package org.cameraapi.effects;
 
-public abstract class LiveEffect {
-    private static boolean enabled;
-    private static boolean applied;
+import javafx.scene.image.ImageView;
 
-    public static void enable() {
+public abstract class LiveEffect implements LIveEffectsInterface {
+    // ---- Status variables---
+    private boolean enabled;
+    private boolean applied;
+
+    // ---- Identification variables -----
+    public static final int FLIP = 0;
+    public static final int FREEZE = 1;
+
+
+
+
+    public LiveEffect(boolean enabled, boolean applied) {
+        this.enabled = enabled;
+        this.applied = applied;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void enable() {
         enabled = true;
     }
 
-    public static void disable() {
+    public void disable() {
         enabled = false;
     }
 
-    public static boolean isDisabled() {
+    public boolean isDisabled() {
         return !enabled;
     }
 
-    public static void apply() {
+    public void apply() {
         applied = !applied;
     }
 
-    public static boolean isApplied() {
+    public boolean isApplied() {
         return applied;
     }
+
+    @Override
+    public void applyEffect(ImageView imageView) {
+    }
+
+
+    public void resetStatus(){
+        applied = false;
+        enabled = true;
+    }
+
 }
