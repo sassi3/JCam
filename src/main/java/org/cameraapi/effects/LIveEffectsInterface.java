@@ -15,4 +15,6 @@ public interface LIveEffectsInterface {
     boolean isApplied();
 
     void applyEffect(ImageView view);
+
+    void resetStatus();
 }

@@ -47,4 +47,10 @@ public abstract class LiveEffect implements LIveEffectsInterface {
     public void applyEffect(ImageView imageView) {
     }
 
+
+    public void resetStatus(){
+        applied = false;
+        enabled = true;
+    }
+
 }

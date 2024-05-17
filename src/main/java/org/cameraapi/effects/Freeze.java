@@ -21,6 +21,7 @@ public class Freeze extends LiveEffect {
     }
 
 
+
     // Unused mat2Image converter, but maybe useful for
     /* private static Image mat2Image(Mat mat) {
         MatOfByte buffer = new MatOfByte();
