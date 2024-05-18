@@ -11,8 +11,8 @@ public class Flip extends LiveEffect {
     }
 
     @Override
-    public void applyEffect(ImageView picture){
-        flip(picture);
+    public void applyEffect(ImageView imageAffected){
+        flip(imageAffected);
     }
 
 
