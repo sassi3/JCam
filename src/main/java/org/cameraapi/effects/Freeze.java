@@ -4,17 +4,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Freeze extends LiveEffect {
-    public Freeze(boolean enabled, boolean applied) {
-        super(enabled, applied);
-    }
+    public Freeze() {}
 
     @Override
-    public void applyEffect(ImageView imageAffected){
-        apply();
+    public void apply(ImageView imageAffected) {
         System.out.println("freeze: " + isApplied());
     }
-    
-    // ---------------- FREEZE ----------------
+
     public static void freeze(ImageView imageView, Image image) {
         imageView.setImage(image);
     }
