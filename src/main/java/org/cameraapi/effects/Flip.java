@@ -11,7 +11,7 @@ public class Flip extends LiveEffect {
     }
 
     @Override
-    public void apply(ImageView imageAffected){
+    public void toggle(ImageView imageAffected){
         flip(imageAffected);
         setApplied(!isApplied());
     }

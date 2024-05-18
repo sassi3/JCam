@@ -8,7 +8,7 @@ public interface LIveEffectsInterface {
     void disable();
     boolean isDisabled();
     boolean isEnabled();
-    void apply(ImageView imageAffected);
+    void toggle(ImageView imageAffected);
     boolean isApplied();
     void resetStatus();
 }

@@ -127,7 +127,7 @@ public class HomeController {
         if (liveEffects.get(Flip.class).isDisabled()) {
             throw new RuntimeException("Flip is currently disabled.");
         }
-        liveEffects.get(Flip.class).apply(webcamDisplay);
+        liveEffects.get(Flip.class).toggle(webcamDisplay);
         flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
@@ -136,7 +136,7 @@ public class HomeController {
         if (liveEffects.get(Freeze.class).isDisabled()) {
             throw new RuntimeException("Freeze is currently disabled.");
         }
-        liveEffects.get(Freeze.class).apply(webcamDisplay);
+        liveEffects.get(Freeze.class).toggle(webcamDisplay);
         if(liveEffects.get(Freeze.class).isApplied()) {
             frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button is pressed
             frozenFlipStatus = liveEffects.get(Freeze.class).isApplied();    // saves the status of the flip button when the freeze button is pressed

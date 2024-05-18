@@ -7,7 +7,8 @@ public class Freeze extends LiveEffect {
     public Freeze() {}
 
     @Override
-    public void apply(ImageView imageAffected) {
+    public void toggle(ImageView imageAffected) {
+        setApplied(!isApplied());
         System.out.println("freeze: " + isApplied());
     }
 
