@@ -4,8 +4,16 @@ public abstract class LiveEffect implements LIveEffectsInterface {
     private boolean enabled;
     private boolean applied;
 
-    public LiveEffect(boolean enabled, boolean applied) {
+    public LiveEffect() {
+        this.enabled = true;
+        this.applied = false;
+    }
+
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void setApplied(boolean applied) {
         this.applied = applied;
     }
 
@@ -30,11 +38,6 @@ public abstract class LiveEffect implements LIveEffectsInterface {
     }
 
     @Override
-    public void apply() {
-        applied = !applied;
-    }
-
-    @Override
     public boolean isApplied() {
         return applied;
     }
@@ -44,5 +47,4 @@ public abstract class LiveEffect implements LIveEffectsInterface {
         applied = false;
         enabled = true;
     }
-
 }
