@@ -8,9 +8,7 @@ import javafx.scene.image.ImageView;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.model.WebcamUtils;
 
-import static java.lang.Thread.interrupted;
-
-public class FrameShowThread implements Runnable {
+public class FrameShowThread extends Thread {
     private final ChoiceBox<Webcam> webcamList;
     private Webcam activeWebcam;
     private final ImageView webcamDisplay;
@@ -39,6 +37,27 @@ public class FrameShowThread implements Runnable {
                 System.out.println("Skipped frame: " + e.getMessage());
                 break;
             }
+        }
+    }
+
+    public void startShowingFrame() {
+        if (!isAlive()) {
+            start();
+        }
+        if (!isAlive()) {
+            throw new IllegalThreadStateException("Failed to start showing frames.");
+        }
+    }
+
+    public void stopShowingFrame() throws InterruptedException {
+        if (isAlive()) {
+            interrupt();
+            join();
+            if (isAlive()) {
+                throw new IllegalThreadStateException("Failed to stop frameShowThread.");
+            }
+        } else {
+            System.out.println("frameShowThread is not running. There is nothing to stop.");
         }
     }
 }
