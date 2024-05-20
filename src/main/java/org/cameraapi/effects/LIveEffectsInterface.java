@@ -1,6 +1,5 @@
 package org.cameraapi.effects;
 
-
 import javafx.scene.image.ImageView;
 
 public interface LIveEffectsInterface {
