@@ -8,6 +8,6 @@ import java.util.HashMap;
 public class WebcamChangeDialogController {
     @FXML public Label palle;
 
-    public void reset(HashMap<Integer, LiveEffect> liveEffects){
+    public void reset(HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects){
     }
 }
