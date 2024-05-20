@@ -66,7 +66,7 @@ public class HomeController {
         }
     }
 
-    private <T extends FrameShowThread> void initializeFrameShowThread(T thread) {
+    private void initializeFrameShowThread(FrameShowThread thread) {
         Objects.requireNonNull(thread, "Thread cannot be null");
         thread.setDaemon(true);
         thread.setName("FrameShowThread");
