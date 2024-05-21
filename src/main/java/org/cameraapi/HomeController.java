@@ -27,7 +27,6 @@ import org.cameraapi.model.WebcamUtils;
 
 public class HomeController {
     private static ObservableList<Webcam> webcams;
-    private Webcam activeWebcam;
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
 
     @FXML private ImageView webcamDisplay;
@@ -53,8 +52,8 @@ public class HomeController {
             webcamList.setItems(webcams);
             webcamList.getSelectionModel().selectFirst();
             webcams.addListener((ListChangeListener<Webcam>) change -> webcamList.setItems(webcams));
-            
-            activeWebcam = webcamList.getSelectionModel().getSelectedItem();
+
+            Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
             webcamList.setValue(activeWebcam);
             WebcamUtils.openWebcam(activeWebcam);
 

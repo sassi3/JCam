@@ -56,6 +56,9 @@ public class FrameShowThread implements Runnable {
         if(frameShowThread.isAlive()) {
             throw new IllegalStateException("Frame showing thread already started");
         }
+        if(!activeWebcam.isOpen()) {
+            activeWebcam.open();
+        }
         frameShowThread = new Thread(this);
         frameShowThread.setDaemon(true);
         frameShowThread.setName("Webcam Frame Showing-Thread");
@@ -71,6 +74,7 @@ public class FrameShowThread implements Runnable {
         if (frameShowThread.isAlive()) {
             frameShowThread.interrupt();
             frameShowThread.join();
+            WebcamUtils.closeWebcam(activeWebcam);
             if (frameShowThread.isAlive()) {
                 throw new IllegalThreadStateException("Failed to stop frameShowThread.");
             }
