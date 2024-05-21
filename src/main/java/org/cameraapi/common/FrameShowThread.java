@@ -75,7 +75,7 @@ public class FrameShowThread implements Runnable {
                 throw new IllegalThreadStateException("Failed to stop frameShowThread.");
             }
         } else {
-            System.out.println("frameShowThread is not running. There is nothing to stop.");
+            throw new IllegalThreadStateException("Frame showing thread already stopped.");
         }
     }
 }
