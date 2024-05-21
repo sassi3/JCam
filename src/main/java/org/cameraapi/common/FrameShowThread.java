@@ -15,7 +15,7 @@ public class FrameShowThread implements Runnable {
     private final ChoiceBox<Webcam> webcamList;
     private Webcam activeWebcam;
     private final ImageView webcamDisplay;
-    private Thread frameShowThread;
+    private Thread frameShowThread = new Thread(this);
 
     public FrameShowThread(ChoiceBox<Webcam> webcamList, Webcam activeWebcam, ImageView webcamDisplay) {
         this.webcamList = webcamList;
@@ -45,6 +45,9 @@ public class FrameShowThread implements Runnable {
     }
 
     public void startShowingFrame() {
+        if(frameShowThread.isAlive()) {
+            throw new IllegalStateException("Frame showing thread already started");
+        }
         frameShowThread = new Thread(this);
         frameShowThread.setDaemon(true);
         frameShowThread.setName("Webcam Frame Showing-Thread");
