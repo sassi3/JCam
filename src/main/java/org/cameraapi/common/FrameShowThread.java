@@ -74,7 +74,6 @@ public class FrameShowThread implements Runnable {
         if (frameShowThread.isAlive()) {
             frameShowThread.interrupt();
             frameShowThread.join();
-            WebcamUtils.closeWebcam(activeWebcam);
             if (frameShowThread.isAlive()) {
                 throw new IllegalThreadStateException("Failed to stop frameShowThread.");
             }
