@@ -18,7 +18,8 @@ public class FrameShowThread implements Runnable {
     private final ChoiceBox<Webcam> webcamList;
     private Webcam activeWebcam;
     private final ImageView webcamDisplay;
-    private Thread frameShowThread = new Thread(this);
+    private Thread frameShowThread;
+    private BufferedImage image;
 
     public FrameShowThread(ChoiceBox<Webcam> webcamList, Webcam activeWebcam, ImageView webcamDisplay) {
         this.webcamList = webcamList;
@@ -34,16 +35,16 @@ public class FrameShowThread implements Runnable {
                 WebcamUtils.openWebcam(activeWebcam);
             }
         });
-        BufferedImage image = null;
         while (!interrupted()) {
+            image = activeWebcam.getImage();
             try {
-                image = activeWebcam.getImage();
                 webcamDisplay.setImage(SwingFXUtils.toFXImage(image, null));
-                image.flush(); // This prevents memory leakage, it was actually a big deal, but we didn't realize.
             } catch (Exception e) {
                 System.out.println("Skipped frame: " + e.getMessage());
                 break;
             }
+            image.flush(); // This prevents memory leakage, it was actually a big deal, but we didn't realize.
+
         }
         if(Objects.nonNull(image)) {
             image.flush();  // This is to be sure the image is properly flushed,
@@ -53,8 +54,10 @@ public class FrameShowThread implements Runnable {
     }
 
     public void startShowingFrame() {
-        if(frameShowThread.isAlive()) {
-            throw new IllegalStateException("Frame showing thread already started");
+        if(Objects.nonNull(frameShowThread)) {
+            if (frameShowThread.isAlive()) {
+                throw new IllegalStateException("Frame showing thread already started");
+            }
         }
         if(!activeWebcam.isOpen()) {
             activeWebcam.open();
