@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
+import javafx.collections.ListChangeListener;
 import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
@@ -51,7 +52,8 @@ public class HomeController {
             new WebcamListener();
             webcamList.setItems(webcams);
             webcamList.getSelectionModel().selectFirst();
-
+            webcams.addListener((ListChangeListener<Webcam>) change -> webcamList.setItems(webcams));
+            
             activeWebcam = webcamList.getSelectionModel().getSelectedItem();
             webcamList.setValue(activeWebcam);
             WebcamUtils.openWebcam(activeWebcam);
