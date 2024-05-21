@@ -77,8 +77,9 @@ public class HomeController {
         liveEffects.put(Flip.class, new Flip());
         liveEffects.put(Freeze.class, new Freeze());
 
-        liveEffects.get(Flip.class).enable();
-        liveEffects.get(Freeze.class).enable();
+        for (LiveEffect effect : liveEffects.values()) {
+            effect.enable();
+        }
     }
 
     public void disableInterface() {
