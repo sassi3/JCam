@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
+import javafx.collections.ListChangeListener;
 import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
@@ -26,7 +27,6 @@ import org.cameraapi.model.WebcamUtils;
 
 public class HomeController {
     private static ObservableList<Webcam> webcams;
-    private Webcam activeWebcam;
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
 
     @FXML private ImageView webcamDisplay;
@@ -51,8 +51,9 @@ public class HomeController {
             new WebcamListener();
             webcamList.setItems(webcams);
             webcamList.getSelectionModel().selectFirst();
+            webcams.addListener((ListChangeListener<Webcam>) change -> webcamList.setItems(webcams));
 
-            activeWebcam = webcamList.getSelectionModel().getSelectedItem();
+            Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
             webcamList.setValue(activeWebcam);
             WebcamUtils.openWebcam(activeWebcam);
 
@@ -137,7 +138,7 @@ public class HomeController {
         liveEffects.get(Freeze.class).toggle(webcamDisplay);
         if(liveEffects.get(Freeze.class).isApplied()) {
             frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button is pressed
-            frozenFlipStatus = liveEffects.get(Freeze.class).isApplied();    // saves the status of the flip button when the freeze button is pressed
+            frozenFlipStatus = liveEffects.get(Flip.class).isApplied();    // saves the status of the flip button when the freeze button is pressed
             try {
                 frameShowThread.stopShowingFrame();
             } catch (InterruptedException e) {
