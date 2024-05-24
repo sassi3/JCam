@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamMotionDetector;
 import javafx.collections.ListChangeListener;
 import org.cameraapi.common.FrameShowThread;
+import org.cameraapi.common.StabilizerThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,7 +26,6 @@ import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
 import org.cameraapi.model.WebcamUtils;
 
-
 public class HomeController {
     private static ObservableList<Webcam> webcams;
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
@@ -39,11 +40,15 @@ public class HomeController {
     @FXML private Button captureButton;
     @FXML private ChoiceBox<Webcam> webcamList;
 
+    private final int INTERVAL = 100;
+    private int threshold = 25;
+    private int inertia = 1000;
+    private WebcamMotionDetector motionDetector;
+    @FXML RadioButton stabilized;
+
     private boolean frozenFlipStatus;
 
     private FrameShowThread frameShowThread;
-
-
 
     public void initialize() {
         try {
@@ -61,6 +66,15 @@ public class HomeController {
             initializeFrameShowThread(frameShowThread);
 
             initializeLiveEffects();
+
+            stabilized.setSelected(true);
+            stabilized.disarm();
+            motionDetector = new WebcamMotionDetector(activeWebcam, threshold, inertia);
+            motionDetector.setInterval(INTERVAL);
+            motionDetector.start();
+            Thread stabilizedThread = new Thread(new StabilizerThread(motionDetector, stabilized));
+            stabilizedThread.setDaemon(true);
+            stabilizedThread.start();
         } catch (Exception e) {
             System.err.println("Error initializing controller " + this.getClass() + ": " + e.getMessage());
             System.exit(1);
@@ -79,7 +93,6 @@ public class HomeController {
 
         for (LiveEffect effect : liveEffects.values()) {
             effect.enable();
-            
         }
     }
 
