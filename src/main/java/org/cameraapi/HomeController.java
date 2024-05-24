@@ -42,9 +42,6 @@ public class HomeController {
     @FXML private Button captureButton;
     @FXML private ChoiceBox<Webcam> webcamList;
 
-    private final int INTERVAL = 100;
-    private int threshold = 25;
-    private int inertia = 8;
     private WebcamMotionDetector motionDetector;
     private boolean isStable;
     @FXML private RadioButton stabilizedTray;
@@ -54,14 +51,9 @@ public class HomeController {
     private FrameShowThread frameShowThread;
 
     public void initialize() {
-        try {
-            initializeWebcamList();
-            initializeLiveEffects();
-            initializeMotionMonitor();
-        } catch (Exception e) {
-            System.err.println("Error initializing controller " + this.getClass() + ": " + e.getMessage());
-            System.exit(1);
-        }
+        initializeWebcamList();
+        initializeLiveEffects();
+        initializeMotionMonitor();
     }
 
     private void initializeWebcamList() {
@@ -98,11 +90,30 @@ public class HomeController {
         isStable = true;
         stabilizedTray.setSelected(isStable);
         stabilizedTray.disarm();
+
+        int interval = 100;
+        int threshold = 25;
+        int inertia = 8;
         motionDetector = new WebcamMotionDetector(webcamList.getSelectionModel().getSelectedItem(), threshold, inertia);
-        motionDetector.setInterval(INTERVAL);
+        motionDetector.setInterval(interval);
         motionDetector.start();
         Thread stabilizedThread = getStabilizedThread();
         stabilizedThread.start();
+    }
+    private Thread getStabilizedThread() {
+        Thread stabilizedThread = new Thread(() -> {
+            System.out.println("StabilizedThread started.");
+            while (!interrupted() || Objects.isNull(motionDetector)) {
+                if (motionDetector.isMotion() == isStable) {
+                    isStable = !isStable;
+                    stabilizedTray.setSelected(isStable);
+                    System.out.println("A t'ho vest");
+                }
+            }
+            System.out.println("StabilizedThread stopped.");
+        });
+        stabilizedThread.setDaemon(true);
+        return stabilizedThread;
     }
 
     public void disableInterface() {
@@ -121,22 +132,6 @@ public class HomeController {
 
     public static ObservableList<Webcam> getWebcams() {
         return webcams;
-    }
-
-    private Thread getStabilizedThread() {
-        Thread stabilizedThread = new Thread(() -> {
-            System.out.println("StabilizedThread started.");
-            while (!interrupted() || Objects.isNull(motionDetector)) {
-                if (motionDetector.isMotion() == isStable) {
-                    isStable = !isStable;
-                    stabilizedTray.setSelected(isStable);
-                    System.out.println("A t'ho vest");
-                }
-            }
-            System.out.println("StabilizedThread stopped.");
-        });
-        stabilizedThread.setDaemon(true);
-        return stabilizedThread;
     }
 
     @FXML
