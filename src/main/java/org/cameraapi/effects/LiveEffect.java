@@ -1,6 +1,6 @@
 package org.cameraapi.effects;
 
-public abstract class LiveEffect implements LIveEffectsInterface {
+public abstract class LiveEffect implements LiveEffectsInterface {
     private boolean enabled;
     private boolean applied;
 
