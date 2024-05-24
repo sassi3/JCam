@@ -43,7 +43,7 @@ public class HomeController {
     @FXML private ChoiceBox<Webcam> webcamList;
 
     private WebcamMotionDetector motionDetector;
-    private boolean isStable;
+    private boolean isMotion;
     @FXML private RadioButton stabilizedTray;
 
     private boolean frozenFlipStatus;
@@ -52,8 +52,8 @@ public class HomeController {
 
     public void initialize() {
         initializeWebcamList();
-        initializeLiveEffects();
-        initializeMotionMonitor();
+        initLiveEffects();
+        initMotionMonitor();
     }
 
     private void initializeWebcamList() {
@@ -68,15 +68,15 @@ public class HomeController {
         WebcamUtils.openWebcam(activeWebcam);
 
         frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
-        initializeFrameShowThread(frameShowThread);
+        initFrameShowThread(frameShowThread);
     }
 
-    private void initializeFrameShowThread(FrameShowThread thread) {
+    private void initFrameShowThread(FrameShowThread thread) {
         Objects.requireNonNull(thread, "Thread cannot be null");
         thread.startShowingFrame();
     }
 
-    private void initializeLiveEffects() {
+    private void initLiveEffects() {
         liveEffects = new HashMap<>();
         liveEffects.put(Flip.class, new Flip());
         liveEffects.put(Freeze.class, new Freeze());
@@ -86,13 +86,13 @@ public class HomeController {
         }
     }
 
-    private void initializeMotionMonitor() {
-        isStable = true;
-        stabilizedTray.setSelected(isStable);
+    private void initMotionMonitor() {
+        isMotion = false;
+        stabilizedTray.setSelected(!isMotion);
         stabilizedTray.disarm();
 
         int interval = 100;
-        int threshold = 25;
+        int threshold = 5;
         int inertia = 8;
         motionDetector = new WebcamMotionDetector(webcamList.getSelectionModel().getSelectedItem(), threshold, inertia);
         motionDetector.setInterval(interval);
@@ -104,9 +104,9 @@ public class HomeController {
         Thread stabilizedThread = new Thread(() -> {
             System.out.println("StabilizedThread started.");
             while (!interrupted() || Objects.isNull(motionDetector)) {
-                if (motionDetector.isMotion() == isStable) {
-                    isStable = !isStable;
-                    stabilizedTray.setSelected(isStable);
+                if (motionDetector.isMotion() != isMotion) {
+                    isMotion = !isMotion;
+                    stabilizedTray.setSelected(!isMotion);
                     System.out.println("A t'ho vest");
                 }
             }
