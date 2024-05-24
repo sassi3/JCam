@@ -26,7 +26,6 @@ import org.cameraapi.effects.LiveEffect;
 import org.cameraapi.model.WebcamUtils;
 
 import static java.lang.Thread.interrupted;
-import static java.lang.Thread.sleep;
 
 public class HomeController {
     private static ObservableList<Webcam> webcams;
@@ -43,8 +42,8 @@ public class HomeController {
     @FXML private ChoiceBox<Webcam> webcamList;
 
     private WebcamMotionDetector motionDetector;
-    private boolean isMotion;
-    @FXML private RadioButton stabilizedTray;
+    private boolean moving;
+    @FXML private RadioButton stabilityTray;
 
     private boolean frozenFlipStatus;
 
@@ -87,9 +86,8 @@ public class HomeController {
     }
 
     private void initMotionMonitor() {
-        isMotion = false;
-        stabilizedTray.setSelected(!isMotion);
-        stabilizedTray.disarm();
+        stabilityTray.setSelected(true);
+        stabilityTray.disarm();
 
         int interval = 100;
         int threshold = 5;
@@ -104,10 +102,10 @@ public class HomeController {
         Thread stabilizedThread = new Thread(() -> {
             System.out.println("StabilizedThread started.");
             while (!interrupted() || Objects.isNull(motionDetector)) {
-                if (motionDetector.isMotion() != isMotion) {
-                    isMotion = !isMotion;
-                    stabilizedTray.setSelected(!isMotion);
-                    System.out.println("A t'ho vest");
+                boolean previousStabilityStatus = stabilityTray.isSelected();
+                boolean currentStabilityStatus = !motionDetector.isMotion();
+                if (currentStabilityStatus != previousStabilityStatus) {
+                    stabilityTray.setSelected(currentStabilityStatus);
                 }
             }
             System.out.println("StabilizedThread stopped.");
