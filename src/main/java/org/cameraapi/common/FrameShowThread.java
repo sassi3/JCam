@@ -1,6 +1,8 @@
 package org.cameraapi.common;
 
 import com.github.sarxos.webcam.Webcam;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
@@ -20,6 +22,7 @@ public class FrameShowThread implements Runnable {
     private final ImageView webcamDisplay;
     private Thread frameShowThread;
     private BufferedImage image;
+    private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
     public FrameShowThread(ChoiceBox<Webcam> webcamList, Webcam activeWebcam, ImageView webcamDisplay) {
         this.webcamList = webcamList;
@@ -36,20 +39,13 @@ public class FrameShowThread implements Runnable {
             }
         });
         while (!interrupted()) {
-            image = activeWebcam.getImage();
             try {
-                webcamDisplay.setImage(SwingFXUtils.toFXImage(image, null));
+                imageProperty.set(SwingFXUtils.toFXImage(activeWebcam.getImage(), null));
             } catch (Exception e) {
                 System.out.println("Skipped frame: " + e.getMessage());
                 break;
             }
-            image.flush(); // This prevents memory leakage, it was actually a big deal, but we didn't realize.
 
-        }
-        if(Objects.nonNull(image)) {
-            image.flush();  // This is to be sure the image is properly flushed,
-                            // even if the loop above is interrupted because of an exception threw in the toFXImage method
-                            // (which would stop the image from be flushed).
         }
     }
 
@@ -65,6 +61,7 @@ public class FrameShowThread implements Runnable {
         frameShowThread = new Thread(this);
         frameShowThread.setDaemon(true);
         frameShowThread.setName("Webcam Frame Showing-Thread");
+        webcamDisplay.imageProperty().bind(imageProperty);
         if (!frameShowThread.isAlive()) {
             frameShowThread.start();
         }
