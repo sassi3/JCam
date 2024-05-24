@@ -1,6 +1,8 @@
 package org.cameraapi.common;
 
 import com.github.sarxos.webcam.Webcam;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
@@ -18,7 +20,9 @@ public class FrameShowThread implements Runnable {
     private final ChoiceBox<Webcam> webcamList;
     private Webcam activeWebcam;
     private final ImageView webcamDisplay;
-    private Thread frameShowThread = new Thread(this);
+    private Thread frameShowThread;
+    private BufferedImage image;
+    private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
     public FrameShowThread(ChoiceBox<Webcam> webcamList, Webcam activeWebcam, ImageView webcamDisplay) {
         this.webcamList = webcamList;
@@ -34,27 +38,22 @@ public class FrameShowThread implements Runnable {
                 WebcamUtils.openWebcam(activeWebcam);
             }
         });
-        BufferedImage image = null;
         while (!interrupted()) {
             try {
-                image = activeWebcam.getImage();
-                webcamDisplay.setImage(SwingFXUtils.toFXImage(image, null));
-                image.flush(); // This prevents memory leakage, it was actually a big deal, but we didn't realize.
+                imageProperty.set(SwingFXUtils.toFXImage(activeWebcam.getImage(), null));
             } catch (Exception e) {
                 System.out.println("Skipped frame: " + e.getMessage());
                 break;
             }
-        }
-        if(Objects.nonNull(image)) {
-            image.flush();  // This is to be sure the image is properly flushed,
-                            // even if the loop above is interrupted because of an exception threw in the toFXImage method
-                            // (which would stop the image from be flushed).
+
         }
     }
 
     public void startShowingFrame() {
-        if(frameShowThread.isAlive()) {
-            throw new IllegalStateException("Frame showing thread already started");
+        if(Objects.nonNull(frameShowThread)) {
+            if (frameShowThread.isAlive()) {
+                throw new IllegalStateException("Frame showing thread already started");
+            }
         }
         if(!activeWebcam.isOpen()) {
             activeWebcam.open();
@@ -62,6 +61,7 @@ public class FrameShowThread implements Runnable {
         frameShowThread = new Thread(this);
         frameShowThread.setDaemon(true);
         frameShowThread.setName("Webcam Frame Showing-Thread");
+        webcamDisplay.imageProperty().bind(imageProperty);
         if (!frameShowThread.isAlive()) {
             frameShowThread.start();
         }

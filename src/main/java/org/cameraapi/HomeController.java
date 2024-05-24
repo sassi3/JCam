@@ -79,6 +79,7 @@ public class HomeController {
 
         for (LiveEffect effect : liveEffects.values()) {
             effect.enable();
+            
         }
     }
 
