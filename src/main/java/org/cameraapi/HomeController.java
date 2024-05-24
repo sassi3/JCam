@@ -8,7 +8,6 @@ import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
 import javafx.collections.ListChangeListener;
 import org.cameraapi.common.FrameShowThread;
-import org.cameraapi.common.StabilizerThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,6 +25,8 @@ import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
 import org.cameraapi.model.WebcamUtils;
 
+import static java.lang.Thread.interrupted;
+
 public class HomeController {
     private static ObservableList<Webcam> webcams;
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
@@ -42,9 +43,10 @@ public class HomeController {
 
     private final int INTERVAL = 100;
     private int threshold = 25;
-    private int inertia = 1000;
+    private int inertia = 100;
     private WebcamMotionDetector motionDetector;
-    @FXML RadioButton stabilized;
+    private boolean isStable;
+    @FXML private RadioButton stabilizedTray;
 
     private boolean frozenFlipStatus;
 
@@ -52,33 +54,28 @@ public class HomeController {
 
     public void initialize() {
         try {
-            webcams = FXCollections.observableArrayList();
-            new WebcamListener();
-            webcamList.setItems(webcams);
-            webcamList.getSelectionModel().selectFirst();
-            webcams.addListener((ListChangeListener<Webcam>) change -> webcamList.setItems(webcams));
-
-            Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
-            webcamList.setValue(activeWebcam);
-            WebcamUtils.openWebcam(activeWebcam);
-
-            frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
-            initializeFrameShowThread(frameShowThread);
-
+            initializeWebcamList();
             initializeLiveEffects();
-
-            stabilized.setSelected(true);
-            stabilized.disarm();
-            motionDetector = new WebcamMotionDetector(activeWebcam, threshold, inertia);
-            motionDetector.setInterval(INTERVAL);
-            motionDetector.start();
-            Thread stabilizedThread = new Thread(new StabilizerThread(motionDetector, stabilized));
-            stabilizedThread.setDaemon(true);
-            stabilizedThread.start();
+            initializeMotionMonitor();
         } catch (Exception e) {
             System.err.println("Error initializing controller " + this.getClass() + ": " + e.getMessage());
             System.exit(1);
         }
+    }
+
+    private void initializeWebcamList() {
+        webcams = FXCollections.observableArrayList();
+        new WebcamListener();
+        webcamList.setItems(webcams);
+        webcamList.getSelectionModel().selectFirst();
+        webcams.addListener((ListChangeListener<Webcam>) change -> webcamList.setItems(webcams));
+
+        Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
+        webcamList.setValue(activeWebcam);
+        WebcamUtils.openWebcam(activeWebcam);
+
+        frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
+        initializeFrameShowThread(frameShowThread);
     }
 
     private void initializeFrameShowThread(FrameShowThread thread) {
@@ -86,7 +83,7 @@ public class HomeController {
         thread.startShowingFrame();
     }
 
-    public void initializeLiveEffects() {
+    private void initializeLiveEffects() {
         liveEffects = new HashMap<>();
         liveEffects.put(Flip.class, new Flip());
         liveEffects.put(Freeze.class, new Freeze());
@@ -96,22 +93,47 @@ public class HomeController {
         }
     }
 
+    private void initializeMotionMonitor() {
+        stabilizedTray.setSelected(true);
+        stabilizedTray.disarm();
+        motionDetector = new WebcamMotionDetector(webcamList.getSelectionModel().getSelectedItem(), threshold, inertia);
+        motionDetector.setInterval(INTERVAL);
+        motionDetector.start();
+        Thread stabilizedThread = getStabilizedThread();
+        stabilizedThread.start();
+    }
+
     public void disableInterface() {
         captureButton.disarm();
         freezeToggleButton.disarm();
         flipToggleButton.disarm();
-        System.out.println("Disabled interface");
+        System.out.println("Interface disabled.");
     }
 
     public void enableInterface() {
         captureButton.arm();
         freezeToggleButton.arm();
         flipToggleButton.arm();
-        System.out.println("Enabled interface");
+        System.out.println("Interface enabled.");
     }
 
     public static ObservableList<Webcam> getWebcams() {
         return webcams;
+    }
+
+    private Thread getStabilizedThread() {
+        Thread stabilizedThread = new Thread(() -> {
+            System.out.println("StabilizedThread started.");
+            while (!interrupted() || Objects.isNull(motionDetector)) {
+                if (motionDetector.isMotion() != isStable) {
+                    isStable = motionDetector.isMotion();
+                    stabilizedTray.setSelected(isStable);
+                }
+            }
+            System.out.println("StabilizedThread stopped.");
+        });
+        stabilizedThread.setDaemon(true);
+        return stabilizedThread;
     }
 
     @FXML
