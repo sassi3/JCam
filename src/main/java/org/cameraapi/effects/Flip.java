@@ -4,16 +4,17 @@ import javafx.geometry.Point3D;
 import javafx.scene.image.ImageView;
 
 public class Flip extends LiveEffect {
-    private static double rotationValue = 0;
+    private static double rotationValue;
 
     public Flip() {
-        rotationValue = 180;
+        setApplied(true);
+        rotationValue = 0.0;
     }
 
     @Override
     public void toggle(ImageView imageAffected){
-        flip(imageAffected);
         setApplied(!isApplied());
+        flip(imageAffected);
     }
 
     public void flip(ImageView picture) {
