@@ -5,7 +5,7 @@ public abstract class LiveEffect implements LiveEffectsInterface {
     private boolean applied;
 
     public LiveEffect() {
-        this.enabled = true;
+        this.enabled = false;
         this.applied = false;
     }
 

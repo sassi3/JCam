@@ -50,12 +50,12 @@ public class HomeController {
     private FrameShowThread frameShowThread;
 
     public void initialize() {
-        initializeWebcamList();
+        initializeWebcam();
         initLiveEffects();
         initMotionMonitor();
     }
 
-    private void initializeWebcamList() {
+    private void initializeWebcam() {
         webcams = FXCollections.observableArrayList();
         new WebcamListener();
         webcamList.setItems(webcams);
@@ -83,6 +83,7 @@ public class HomeController {
         for (LiveEffect effect : liveEffects.values()) {
             effect.enable();
         }
+        liveEffects.get(Flip.class).toggle(webcamDisplay);
     }
 
     private void initMotionMonitor() {
@@ -140,18 +141,7 @@ public class HomeController {
 
     @FXML
     private void takePicture() {
-        if (!liveEffects.get(Flip.class).isApplied()) {
-            printablePicture.getTransforms().add(new Affine(-1, 0, printablePicture.getFitWidth(), 0, 1, 0));
-            // flips what's displayed by the image view around the y-axis
-            // and then translates it right (through the x-axis) by the width of the image view itself
-        } else {
-            printablePicture.getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
-            //Identity matrix
-        }
-        Image takenImage = webcamDisplay.getImage();
-        printablePicture.setImage(takenImage);
 
-        handleEditor();
     }
 
     @FXML
