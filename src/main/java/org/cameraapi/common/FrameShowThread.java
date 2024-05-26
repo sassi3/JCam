@@ -19,6 +19,9 @@ public class FrameShowThread implements Runnable {
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
     public FrameShowThread(ChoiceBox<Webcam> webcamList, Webcam activeWebcam, ImageView webcamDisplay) {
+        Objects.requireNonNull(webcamList);
+        Objects.requireNonNull(activeWebcam);
+        Objects.requireNonNull(webcamDisplay);
         this.webcamList = webcamList;
         this.activeWebcam = activeWebcam;
         this.webcamDisplay = webcamDisplay;
