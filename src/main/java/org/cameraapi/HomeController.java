@@ -42,7 +42,6 @@ public class HomeController {
     @FXML private ChoiceBox<Webcam> webcamList;
 
     private WebcamMotionDetector motionDetector;
-    private boolean moving;
     @FXML private RadioButton stabilityTray;
 
     private boolean frozenFlipStatus;
@@ -50,12 +49,12 @@ public class HomeController {
     private FrameShowThread frameShowThread;
 
     public void initialize() {
-        initializeWebcam();
+        initWebcam();
         initLiveEffects();
         initMotionMonitor();
     }
 
-    private void initializeWebcam() {
+    private void initWebcam() {
         webcams = FXCollections.observableArrayList();
         new WebcamListener();
         webcamList.setItems(webcams);
@@ -64,7 +63,7 @@ public class HomeController {
 
         Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
         webcamList.setValue(activeWebcam);
-        WebcamUtils.openWebcam(activeWebcam);
+        WebcamUtils.openWebcam(activeWebcam, null);
 
         frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
         initFrameShowThread(frameShowThread);
@@ -90,8 +89,8 @@ public class HomeController {
         stabilityTray.setSelected(true);
         stabilityTray.disarm();
 
-        int interval = 100;
-        int threshold = 5;
+        int interval = 120;
+        int threshold = 6;
         int inertia = 8;
         motionDetector = new WebcamMotionDetector(webcamList.getSelectionModel().getSelectedItem(), threshold, inertia);
         motionDetector.setInterval(interval);
