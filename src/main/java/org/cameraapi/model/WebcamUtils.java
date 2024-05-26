@@ -2,10 +2,12 @@ package org.cameraapi.model;
 
 import com.github.sarxos.webcam.Webcam;
 
+import java.awt.*;
 import java.util.Objects;
 
 public class WebcamUtils {
     public static void openWebcam(Webcam webcam) {
+        webcam.setViewSize(new Dimension(640, 480));
         if (webcam.isOpen()) {
             throw new RuntimeException("Webcam is already open.");
         }
