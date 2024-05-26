@@ -66,6 +66,7 @@ public class HomeController {
     private void initWebcam() {
         Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
         webcamList.setValue(activeWebcam);
+        // Detection of webcam's resolution (find a way)
         WebcamUtils.openWebcam(activeWebcam, null);
         frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
         initFrameShowThread(frameShowThread);
