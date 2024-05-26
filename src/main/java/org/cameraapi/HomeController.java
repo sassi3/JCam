@@ -49,22 +49,25 @@ public class HomeController {
     private FrameShowThread frameShowThread;
 
     public void initialize() {
+        initWebcamChoiceBox();
         initWebcam();
         initLiveEffects();
         initMotionMonitor();
     }
 
-    private void initWebcam() {
+    private void initWebcamChoiceBox() {
         webcams = FXCollections.observableArrayList();
         new WebcamListener();
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
         webcams.addListener((ListChangeListener<Webcam>) change -> webcamList.setItems(webcams));
+    }
 
+    private void initWebcam() {
         Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
         webcamList.setValue(activeWebcam);
+        // Detection of webcam's resolution (find a way)
         WebcamUtils.openWebcam(activeWebcam, null);
-
         frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
         initFrameShowThread(frameShowThread);
     }

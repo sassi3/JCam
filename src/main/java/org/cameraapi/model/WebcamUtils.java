@@ -35,7 +35,6 @@ public class WebcamUtils {
             resolution = defaultResolution;
         }
         changeResolution(webcam, resolution);
-        webcam.open();
         if (!webcam.isOpen()) {
             throw new IllegalStateException("Failed to open webcam.");
         }
