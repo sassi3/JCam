@@ -3,16 +3,21 @@ package org.cameraapi.effects;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Objects;
+
 public class Freeze extends LiveEffect {
     public Freeze() {}
 
     @Override
     public void toggle(ImageView imageAffected) {
+        Objects.requireNonNull(imageAffected);
         setApplied(!isApplied());
         System.out.println("freeze: " + isApplied());
     }
 
     public static void freeze(ImageView imageView, Image image) {
+        Objects.requireNonNull(imageView);
+        Objects.requireNonNull(image);
         imageView.setImage(image);
     }
 

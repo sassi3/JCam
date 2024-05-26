@@ -7,13 +7,8 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.cameraapi.effects.Flip;
 import org.cameraapi.model.WebcamUtils;
-
-import java.awt.image.BufferedImage;
 import java.util.Objects;
-
-import static java.lang.Thread.currentThread;
 import static java.lang.Thread.interrupted;
 
 public class FrameShowThread implements Runnable {
@@ -21,10 +16,12 @@ public class FrameShowThread implements Runnable {
     private Webcam activeWebcam;
     private final ImageView webcamDisplay;
     private Thread frameShowThread;
-    private BufferedImage image;
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
     public FrameShowThread(ChoiceBox<Webcam> webcamList, Webcam activeWebcam, ImageView webcamDisplay) {
+        Objects.requireNonNull(webcamList);
+        Objects.requireNonNull(activeWebcam);
+        Objects.requireNonNull(webcamDisplay);
         this.webcamList = webcamList;
         this.activeWebcam = activeWebcam;
         this.webcamDisplay = webcamDisplay;
@@ -35,7 +32,7 @@ public class FrameShowThread implements Runnable {
         webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
             activeWebcam = newWebcam;
             if(!activeWebcam.isOpen()) {
-                WebcamUtils.openWebcam(activeWebcam);
+                WebcamUtils.openWebcam(activeWebcam, null);
             }
         });
         while (!interrupted()) {
