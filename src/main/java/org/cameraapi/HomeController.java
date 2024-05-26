@@ -89,9 +89,9 @@ public class HomeController {
         stabilityTray.setSelected(true);
         stabilityTray.disarm();
 
-        int interval = 120;
-        int threshold = 6;
-        int inertia = 8;
+        int interval = 210;
+        int threshold = 10;
+        int inertia = 10;
         motionDetector = new WebcamMotionDetector(webcamList.getSelectionModel().getSelectedItem(), threshold, inertia);
         motionDetector.setInterval(interval);
         motionDetector.start();
