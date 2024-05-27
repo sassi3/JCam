@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
-import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,7 +19,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
 import javafx.fxml.FXML;
 
@@ -55,17 +53,10 @@ public class HomeController {
     private Thread stabilityTrayThread;
 
     public void initialize() {
-        if(start) {
-            initWebcamChoiceBox();
-            initWebcam();
-            initLiveEffects();
-            initMotionMonitor();
-        }
-        else {
-            frameShowThread.startShowingFrame();
-            stabilityTrayThread =  initStabilityTrayThread();
-            stabilityTrayThread.start();
-        }
+        initWebcamChoiceBox();
+        initWebcam();
+        initLiveEffects();
+        initMotionMonitor();
     }
 
     private void initWebcamChoiceBox() {
@@ -114,7 +105,7 @@ public class HomeController {
         initStabilityTrayThread();
         stabilityTrayThread.start();
     }
-    private Thread initStabilityTrayThread() {
+    private void initStabilityTrayThread() {
         stabilityTrayThread = new Thread(() -> {
             System.out.println("StabilityTray thread started.");
             while (!interrupted() || Objects.isNull(motionDetector)) {
@@ -127,7 +118,6 @@ public class HomeController {
             System.out.println("StabilityTray thread stopped.");
         });
         stabilityTrayThread.setDaemon(true);
-        return stabilityTrayThread;
     }
     private void stopStabilityTrayThread() throws InterruptedException {
         if (!stabilityTrayThread.isAlive()) {
@@ -192,7 +182,7 @@ public class HomeController {
             }
         }
         motionDetector.stop();
-        WebcamUtils.shutDownWebcams(webcams);
+        //WebcamUtils.shutDownWebcams(webcams);
     }
 
     @FXML

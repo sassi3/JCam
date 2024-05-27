@@ -58,6 +58,7 @@ public class FrameShowThread implements Runnable {
         frameShowThread = new Thread(this);
         frameShowThread.setDaemon(true);
         frameShowThread.setName("Webcam Frame Showing-Thread");
+        frameShowThread.start();
         webcamDisplay.imageProperty().bind(imageProperty);
         if (!frameShowThread.isAlive()) {
             frameShowThread.start();

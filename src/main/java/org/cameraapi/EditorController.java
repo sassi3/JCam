@@ -30,7 +30,7 @@ public class EditorController {
     private Image capture;
     private AnimationTimer timer;
     private boolean flipped;
-    private Webcam activeWebcam;
+
 
 
     @FXML
@@ -71,10 +71,6 @@ public class EditorController {
         this.flipped = flipped;
     }
 
-    public void setActiveWebcam(Webcam activeWebcam) {
-        this.activeWebcam = activeWebcam;
-    }
-
     @FXML
     public void onReturnButtonClicked() {
         timer.stop();
@@ -96,7 +92,7 @@ public class EditorController {
 
         HomeController controller = loader.getController();
         controller.setStart(false);
-        controller.initialize();
+
 
         Stage stage = (Stage) editorPage.getScene().getWindow();
         double minHeight = stage.getMinHeight();
