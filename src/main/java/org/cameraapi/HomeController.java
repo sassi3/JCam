@@ -159,10 +159,10 @@ public class HomeController {
     private void takePicture() {
         try {
             frameShowThread.stopShowingFrame();
-            stabilityTrayThread.interrupt();
+            stopStabilityTrayThread();
             rawPicture = webcamDisplay.getImage();
             currentPicture = rawPicture;
-            handleEditor(currentPicture);
+            openEditor(currentPicture);
         } catch (InterruptedException | IOException e) {
             AlertWindows.showFailedToTakePictureAlert();
             throw new RuntimeException(e);
@@ -200,10 +200,9 @@ public class HomeController {
     }
 
     @FXML
-    public void handleEditor(Image capture) throws IOException {
+    public void openEditor(Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
         Parent root = loader.load();
-
 
         // Loading the controller
         EditorController controller = loader.getController();
