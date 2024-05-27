@@ -2,6 +2,7 @@ package org.cameraapi.model;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamResolution;
+import javafx.collections.ObservableList;
 
 import java.awt.*;
 import java.util.Objects;
@@ -89,5 +90,11 @@ public class WebcamUtils {
         webcam.setViewSize(resolution);
         System.out.println("Resolution is now set on: " + resolution);
         webcam.open();
+    }
+
+    public static void shutDownWebcams(ObservableList<Webcam> webcams) {
+        for(Webcam webcam: webcams){
+            closeWebcam(webcam);
+        }
     }
 }
