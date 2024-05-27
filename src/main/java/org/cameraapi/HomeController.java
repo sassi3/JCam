@@ -153,13 +153,10 @@ public class HomeController {
     @FXML
     private void takePicture() {
         try {
-            frameShowThread.stopShowingFrame();
-            stopStabilityTrayThread();
             rawPicture = webcamDisplay.getImage();
             currentPicture = rawPicture;
-            closeCameraHomeScene();
             openEditor(currentPicture);
-        } catch (InterruptedException | IOException e) {
+        } catch (IOException e) {
             AlertWindows.showFailedToTakePictureAlert();
             throw new RuntimeException(e);
         }
@@ -211,18 +208,23 @@ public class HomeController {
         controller.setFlipped(liveEffects.get(Flip.class).isApplied());
         controller.initialize();
 
-        Stage stage = (Stage) mainPane.getScene().getWindow();
-        double minHeight = stage.getMinHeight();
-        double minWidth = stage.getMinWidth();
-        double Height = stage.getHeight();
-        double Width = stage.getWidth();
+        Stage oldStage = (Stage) mainPane.getScene().getWindow();
+        double minHeight = oldStage.getMinHeight();
+        double minWidth = oldStage.getMinWidth();
+        double Height = oldStage.getHeight();
+        double Width = oldStage.getWidth();
+
         Scene scene = new Scene(root);
-        stage.setTitle("Editor");
-        stage.setScene(scene);
-        stage.setMinHeight(minHeight);
-        stage.setMinWidth(minWidth);
-        stage.setHeight(Height);
-        stage.setWidth(Width);
+        Stage newStage = new Stage();
+        newStage.setTitle("Editor");
+        newStage.setScene(scene);
+        newStage.setMinHeight(minHeight);
+        newStage.setMinWidth(minWidth);
+        newStage.setHeight(Height);
+        newStage.setWidth(Width);
+        newStage.show();
+
+
     }
 
     @FXML
