@@ -32,8 +32,8 @@ public class HomeController {
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
 
     @FXML private ImageView webcamDisplay;
-    @FXML private Image currentPicture;
-    @FXML private ImageView printablePicture;
+    private Image rawPicture;
+    private Image currentPicture;
     private Image frozenPicture;
 
     @FXML private ToggleButton freezeToggleButton;
@@ -137,13 +137,13 @@ public class HomeController {
 
     @FXML
     private void previewPicture(Image picture) {
-        printablePicture.setImage(picture);
-        printablePicture.setPreserveRatio(true);
+
     }
 
     @FXML
     private void takePicture() {
-
+        rawPicture = webcamDisplay.getImage();
+        currentPicture = rawPicture;
     }
 
     @FXML
