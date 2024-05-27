@@ -11,11 +11,15 @@
    <children>
       <BorderPane layoutX="90.0" layoutY="79.0" prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
-            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#onSaveButtonClicked" text="Save" BorderPane.alignment="CENTER_RIGHT">
+            <AnchorPane prefHeight="34.0" prefWidth="892.0" BorderPane.alignment="CENTER_RIGHT">
                <BorderPane.margin>
-                  <Insets bottom="50.0" right="75.0" />
+                  <Insets bottom="30.0" />
                </BorderPane.margin>
-            </Button>
+               <children>
+                  <Button fx:id="saveButton" layoutX="798.0" layoutY="7.0" mnemonicParsing="false" onAction="#onSaveButtonClicked" text="Save" />
+                  <Button fx:id="returnButton" layoutX="38.0" layoutY="7.0" mnemonicParsing="false" onAction="#onReturnButtonClicked" text="Return" />
+               </children>
+            </AnchorPane>
          </bottom>
          <left>
             <VBox prefHeight="595.0" prefWidth="100.0" BorderPane.alignment="CENTER" />

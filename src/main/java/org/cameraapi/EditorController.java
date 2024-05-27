@@ -13,6 +13,8 @@ public class EditorController {
     Canvas imagePreview;
     @FXML
     Button saveButton;
+    @FXML
+    Button returnButton;
 
     private Image capture;
     private AnimationTimer timer;
@@ -61,5 +63,10 @@ public class EditorController {
         } else {
             imagePreview.setRotate(180);
         }
+    }
+
+    @FXML
+    public void onReturnButtonClicked() {
+        
     }
 }
