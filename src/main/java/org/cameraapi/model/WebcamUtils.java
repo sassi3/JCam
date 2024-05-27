@@ -8,12 +8,34 @@ import java.util.Objects;
 
 public class WebcamUtils {
     private static final Dimension[] nonStandardResolutions = new Dimension[] {
+            WebcamResolution.QQVGA.getSize(),
+            WebcamResolution.HQVGA.getSize(),
+            WebcamResolution.QVGA.getSize(),
+            WebcamResolution.WQVGA.getSize(),
+            WebcamResolution.HVGA.getSize(),
+            WebcamResolution.VGA.getSize(),
+            WebcamResolution.WVGA.getSize(),
+            WebcamResolution.FWVGA.getSize(),
+            WebcamResolution.SVGA.getSize(),
+            WebcamResolution.DVGA.getSize(),
+            WebcamResolution.WSVGA1.getSize(),
+            WebcamResolution.WSVGA2.getSize(),
+            WebcamResolution.XGA.getSize(),
+            WebcamResolution.XGAP.getSize(),
+            WebcamResolution.WXGA1.getSize(),
+            WebcamResolution.WXGA2.getSize(),
+            WebcamResolution.WXGAP.getSize(),
+            WebcamResolution.SXGA.getSize(),
+            WebcamResolution.SXGAP.getSize(),
+            WebcamResolution.WSXGAP.getSize(),
             WebcamResolution.HD.getSize(),
             WebcamResolution.FHD.getSize(),
+            WebcamResolution.UXGA.getSize(),
+            WebcamResolution.WUXGA.getSize(),
             WebcamResolution.QHD.getSize(),
             WebcamResolution.UHD4K.getSize()
     };
-    private static final Dimension defaultResolution = WebcamResolution.HD.getSize();
+    private static final Dimension defaultResolution = nonStandardResolutions[0];
 
     private static boolean isValidResolution(Dimension resolution) {
         Objects.requireNonNull(resolution);
@@ -31,8 +53,14 @@ public class WebcamUtils {
             throw new RuntimeException("Webcam is already open.");
         }
         webcam.setCustomViewSizes(nonStandardResolutions);
+        Dimension[] dimensionsSupported = webcam.getDevice().getResolutions();
+        Dimension maxDimension = dimensionsSupported[dimensionsSupported.length - 1];
         if (Objects.isNull(resolution)) {
-            resolution = defaultResolution;
+            if (Objects.isNull(maxDimension)) {
+                resolution = defaultResolution;
+            } else {
+                resolution = maxDimension;
+            }
         }
         changeResolution(webcam, resolution);
         if (!webcam.isOpen()) {
@@ -58,6 +86,7 @@ public class WebcamUtils {
             closeWebcam(webcam);
         }
         webcam.setViewSize(resolution);
+        System.out.println("Resolution is now set on: " + resolution);
         webcam.open();
     }
 }
