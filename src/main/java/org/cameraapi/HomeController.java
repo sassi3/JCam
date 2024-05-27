@@ -152,10 +152,12 @@ public class HomeController {
 
     @FXML
     private void takePicture() {
-        try {
-            frameShowThread.stopShowingFrame();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if(frameShowThread.getFrameShowThread().isAlive()) {
+            try {
+                frameShowThread.stopShowingFrame();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
         stabilizedThread.interrupt();
         Image capture = webcamDisplay.getImage();
@@ -183,13 +185,7 @@ public class HomeController {
         liveEffects.get(Freeze.class).toggle(webcamDisplay);
         if(liveEffects.get(Freeze.class).isApplied()) {
             frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button is pressed
-            frozenFlipStatus = liveEffects.get(Flip.class).isApplied();    // saves the status of the flip button when the freeze button is pressed
-            try {
-                frameShowThread.stopShowingFrame();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            Freeze.freeze(webcamDisplay, frozenPicture);
+            Freeze.freeze(frameShowThread);
         } else {
             frameShowThread.startShowingFrame();
         }
