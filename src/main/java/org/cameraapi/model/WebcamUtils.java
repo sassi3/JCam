@@ -47,7 +47,7 @@ public class WebcamUtils {
         return false;
     }
 
-    public static void openWebcam(Webcam webcam, Dimension resolution) {
+    public static void startUpWebcam(Webcam webcam, Dimension resolution) {
         Objects.requireNonNull(webcam);
         if (webcam.isOpen()) {
             throw new RuntimeException("Webcam is already open.");
