@@ -32,7 +32,7 @@ public class FrameShowThread implements Runnable {
         webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
             activeWebcam = newWebcam;
             if(!activeWebcam.isOpen()) {
-                WebcamUtils.openWebcam(activeWebcam, null);
+                WebcamUtils.startUpWebcam(activeWebcam, null);
             }
         });
         while (!interrupted()) {

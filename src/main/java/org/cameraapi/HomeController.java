@@ -10,7 +10,6 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
@@ -20,11 +19,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
 import javafx.fxml.FXML;
 
-import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
@@ -74,7 +71,7 @@ public class HomeController {
         Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
         webcamList.setValue(activeWebcam);
         // Detection of webcam's resolution (find a way)
-        WebcamUtils.openWebcam(activeWebcam, null);
+        WebcamUtils.startUpWebcam(activeWebcam, null);
         frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
         initFrameShowThread(frameShowThread);
     }
