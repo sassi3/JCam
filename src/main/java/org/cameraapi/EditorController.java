@@ -35,7 +35,6 @@ public class EditorController {
     public void initialize() {
         initializeCanvas(imagePreview);
         initializeLiveEffects(flipped);
-
     }
 
     @FXML
@@ -89,12 +88,12 @@ public class EditorController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("camera-home-view.fxml"));
         Parent root = loader.load();
 
-
         Stage stage = (Stage) editorPage.getScene().getWindow();
         double minHeight = stage.getMinHeight();
         double minWidth = stage.getMinWidth();
         double Height = stage.getHeight();
         double Width = stage.getWidth();
+
         Scene scene = new Scene(root);
         stage.setTitle("Camera");
         stage.setScene(scene);
@@ -103,5 +102,4 @@ public class EditorController {
         stage.setHeight(Height);
         stage.setWidth(Width);
     }
-
 }
