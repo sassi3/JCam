@@ -60,13 +60,11 @@ public class HomeController {
             initWebcam();
             initLiveEffects();
             initMotionMonitor();
-            start=false;
         }
         else {
-            initWebcamChoiceBox();
             frameShowThread.startShowingFrame();
-            stabilizedThread =getStabilizedThread();
-            stabilizedThread.start();
+            stabilityTrayThread =  initStabilityTrayThread();
+            stabilityTrayThread.start();
         }
     }
 
@@ -116,7 +114,7 @@ public class HomeController {
         initStabilityTrayThread();
         stabilityTrayThread.start();
     }
-    private void initStabilityTrayThread() {
+    private Thread initStabilityTrayThread() {
         stabilityTrayThread = new Thread(() -> {
             System.out.println("StabilityTray thread started.");
             while (!interrupted() || Objects.isNull(motionDetector)) {
@@ -129,6 +127,7 @@ public class HomeController {
             System.out.println("StabilityTray thread stopped.");
         });
         stabilityTrayThread.setDaemon(true);
+        return stabilityTrayThread;
     }
     private void stopStabilityTrayThread() throws InterruptedException {
         if (!stabilityTrayThread.isAlive()) {
@@ -168,12 +167,9 @@ public class HomeController {
 
     @FXML
     private void takePicture() {
-        closeSceneI();
-        Image capture = webcamDisplay.getImage();
+        closeCameraHomeScene();
         try {
-            rawPicture = webcamDisplay.getImage();
-            currentPicture = rawPicture;
-            openEditor(currentPicture);
+            openEditor(webcamDisplay.getImage());
         } catch (IOException e) {
             AlertWindows.showFailedToTakePictureAlert();
             throw new RuntimeException(e);
@@ -184,11 +180,18 @@ public class HomeController {
         if (frameShowThread.getFrameShowThread().isAlive()) {
             try {
                 frameShowThread.stopShowingFrame();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if(stabilityTrayThread.isAlive()){
+            try {
                 stopStabilityTrayThread();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
+        motionDetector.stop();
         WebcamUtils.shutDownWebcams(webcams);
     }
 
@@ -215,6 +218,10 @@ public class HomeController {
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
 
+    public void setStart(boolean start) {
+        this.start = start;
+    }
+
     @FXML
     public void openEditor(Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
@@ -229,21 +236,20 @@ public class HomeController {
         controller.setFlipped(liveEffects.get(Flip.class).isApplied());
         controller.initialize();
 
-        Stage oldStage = (Stage) mainPane.getScene().getWindow();
-        double minHeight = oldStage.getMinHeight();
-        double minWidth = oldStage.getMinWidth();
-        double Height = oldStage.getHeight();
-        double Width = oldStage.getWidth();
+        Stage stage = (Stage) mainPane.getScene().getWindow();
+        double minHeight = stage.getMinHeight();
+        double minWidth = stage.getMinWidth();
+        double Height = stage.getHeight();
+        double Width = stage.getWidth();
 
-        Scene scene = new Scene(root);
-        Stage newStage = new Stage();
-        newStage.setTitle("Editor");
-        newStage.setScene(scene);
-        newStage.setMinHeight(minHeight);
-        newStage.setMinWidth(minWidth);
-        newStage.setHeight(Height);
-        newStage.setWidth(Width);
-        newStage.show();
+
+        stage.setTitle("Editor");
+        stage.setScene(new Scene(root));
+        stage.setMinHeight(minHeight);
+        stage.setMinWidth(minWidth);
+        stage.setHeight(Height);
+        stage.setWidth(Width);
+        stage.show();
     }
 
     @FXML
