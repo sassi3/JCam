@@ -62,6 +62,7 @@ public class WebcamUtils {
                 resolution = maxDimension;
             }
         }
+        webcam.open();
         changeResolution(webcam, resolution);
         if (!webcam.isOpen()) {
             throw new IllegalStateException("Failed to open webcam.");
