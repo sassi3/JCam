@@ -75,9 +75,9 @@
                         <Insets top="14.5" />
                      </HBox.margin>
                   </RadioButton>
-                  <ChoiceBox fx:id="webcamList" prefHeight="25.0" prefWidth="150.0">
+                  <ChoiceBox fx:id="webcamList" prefHeight="25.0" prefWidth="175.0">
                      <HBox.margin>
-                        <Insets left="630.0" top="10.0" />
+                        <Insets left="610.0" top="10.0" />
                      </HBox.margin>
                   </ChoiceBox>
                </children>
