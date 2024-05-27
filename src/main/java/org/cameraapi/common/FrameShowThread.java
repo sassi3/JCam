@@ -78,4 +78,8 @@ public class FrameShowThread implements Runnable {
             throw new IllegalThreadStateException("Frame showing thread already stopped.");
         }
     }
+
+    public Thread getFrameShowThread() {
+        return frameShowThread;
+    }
 }
