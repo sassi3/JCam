@@ -50,8 +50,9 @@ public class WebcamUtils {
     public static void startUpWebcam(Webcam webcam, Dimension resolution) {
         Objects.requireNonNull(webcam);
         if (webcam.isOpen()) {
-            throw new RuntimeException("Webcam is already open.");
+            throw new RuntimeException("Webcam has been already initialized.");
         }
+        webcam.open();
         webcam.setCustomViewSizes(nonStandardResolutions);
         Dimension[] dimensionsSupported = webcam.getDevice().getResolutions();
         Dimension maxDimension = dimensionsSupported[dimensionsSupported.length - 1];
@@ -62,18 +63,9 @@ public class WebcamUtils {
                 resolution = maxDimension;
             }
         }
-        webcam.open();
         changeResolution(webcam, resolution);
         if (!webcam.isOpen()) {
             throw new IllegalStateException("Failed to open webcam.");
-        }
-    }
-
-    public static void closeWebcam(Webcam webcam) {
-        Objects.requireNonNull(webcam);
-        webcam.close();
-        if (webcam.isOpen()) {
-            throw new IllegalStateException("Failed to close webcam.");
         }
     }
 
@@ -83,9 +75,7 @@ public class WebcamUtils {
         if (!isValidResolution(resolution)) {
             throw new IllegalArgumentException("Resolution " + resolution + " is not supported.");
         }
-        if (webcam.isOpen()) {
-            closeWebcam(webcam);
-        }
+        webcam.close();
         webcam.setViewSize(resolution);
         System.out.println("Resolution is now set on: " + resolution);
         webcam.open();
