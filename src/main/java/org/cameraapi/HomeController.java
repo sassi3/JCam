@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -52,10 +53,10 @@ public class HomeController {
     private Thread stabilityTrayThread;
 
     public void initialize() {
-        initWebcamChoiceBox();
-        initWebcam();
+        Platform.runLater(this::initWebcamChoiceBox);
+        Platform.runLater(this::initWebcam);
+        Platform.runLater(this::initMotionMonitor);
         initLiveEffects();
-        initMotionMonitor();
     }
 
     private void initWebcamChoiceBox() {
@@ -239,14 +240,25 @@ public class HomeController {
     }
 
     public void restoreWebcam(Webcam webcam) {
-        webcamList.getSelectionModel().select(webcam);
-        try {
-            frameShowThread.stopShowingFrame();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        frameShowThread = new FrameShowThread(webcamList,webcam,webcamDisplay);
-        frameShowThread.startShowingFrame();
+        Platform.runLater(() -> {
+            while (Objects.isNull(frameShowThread)) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            webcamList.getSelectionModel().select(webcam);
+            try {
+                frameShowThread.stopShowingFrame();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            frameShowThread = new FrameShowThread(webcamList,webcam,webcamDisplay);
+            frameShowThread.startShowingFrame();
+            }
+        );
     }
 
     @FXML
