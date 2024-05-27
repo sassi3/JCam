@@ -21,7 +21,7 @@
             <VBox prefHeight="595.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
          </left>
          <center>
-            <Canvas height="355.0" width="509.0" BorderPane.alignment="CENTER">
+            <Canvas fx:id="imagePreview" height="355.0" width="509.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets right="100.0" top="50.0" />
                </BorderPane.margin>
