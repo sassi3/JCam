@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -223,8 +224,6 @@ public class HomeController {
         newStage.setHeight(Height);
         newStage.setWidth(Width);
         newStage.show();
-
-
     }
 
     @FXML
