@@ -10,7 +10,7 @@ public class AlertWindows {
         alert.setTitle("Warning!");
         alert.setHeaderText("Unable to take picture");
         alert.setContentText("""
-                The application is unable to take the picture.
+                The application is unable to take the picture or to open the editor.
                 Quick fixes:
                  ~ Retry to take the photo;
                  ~ Check if your webcam works properly. Maybe try to switch to another device using the "Device List" dropdown menu;

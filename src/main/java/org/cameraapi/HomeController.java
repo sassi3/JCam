@@ -6,12 +6,13 @@ import java.util.Objects;
 import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
@@ -20,11 +21,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
 import javafx.fxml.FXML;
 
-import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
@@ -34,12 +33,16 @@ import static java.lang.Thread.interrupted;
 
 public class HomeController {
     private static ObservableList<Webcam> webcams;
-    private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
+    private FrameShowThread frameShowThread;
 
     @FXML private ImageView webcamDisplay;
     @FXML private ImageView printablePicture;
     private Image rawPicture;
     private Image currentPicture;
+
+    private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
+    private Image frozenPicture;
+    private boolean frozenFlipStatus;
 
     @FXML private AnchorPane mainPane;
     @FXML private ToggleButton freezeToggleButton;
@@ -49,9 +52,7 @@ public class HomeController {
 
     private WebcamMotionDetector motionDetector;
     @FXML private RadioButton stabilityTray;
-    private Thread stabilizedThread;
-
-    private FrameShowThread frameShowThread;
+    private Thread stabilityTrayThread;
 
     public void initialize() {
         initWebcamChoiceBox();
@@ -103,12 +104,12 @@ public class HomeController {
         motionDetector = new WebcamMotionDetector(webcamList.getSelectionModel().getSelectedItem(), threshold, inertia);
         motionDetector.setInterval(interval);
         motionDetector.start();
-        stabilizedThread = getStabilizedThread();
-        stabilizedThread.start();
+        initStabilityTrayThread();
+        stabilityTrayThread.start();
     }
-    private Thread getStabilizedThread() {
-        Thread stabilizedThread = new Thread(() -> {
-            System.out.println("StabilizedThread started.");
+    private void initStabilityTrayThread() {
+        stabilityTrayThread = new Thread(() -> {
+            System.out.println("StabilityTray thread started.");
             while (!interrupted() || Objects.isNull(motionDetector)) {
                 boolean previousStabilityStatus = stabilityTray.isSelected();
                 boolean currentStabilityStatus = !motionDetector.isMotion();
@@ -116,10 +117,20 @@ public class HomeController {
                     stabilityTray.setSelected(currentStabilityStatus);
                 }
             }
-            System.out.println("StabilizedThread stopped.");
+            System.out.println("StabilityTray thread stopped.");
         });
-        stabilizedThread.setDaemon(true);
-        return stabilizedThread;
+        stabilityTrayThread.setDaemon(true);
+    }
+    private void stopStabilityTrayThread() throws InterruptedException {
+        if (!stabilityTrayThread.isAlive()) {
+            throw new IllegalStateException("StabilityTray thread is not alive.");
+        }
+        stabilityTrayThread.interrupt();
+        stabilityTrayThread.join();
+        if (stabilityTrayThread.isAlive()) {
+            throw new IllegalStateException("StabilityTray thread is still alive.");
+        }
+        stabilityTray.setSelected(false);
     }
 
     public void disableInterface() {
@@ -141,31 +152,26 @@ public class HomeController {
     }
 
     @FXML
-    private void previewPicture(Image picture) {
-        printablePicture.setImage(picture);
-        printablePicture.setPreserveRatio(true);
-    }
-
-    @FXML
     private void takePicture() {
-        closeSceneI();
-        Image capture = webcamDisplay.getImage();
         try {
-            handleEditor(capture);
+            rawPicture = webcamDisplay.getImage();
+            currentPicture = rawPicture;
+            openEditor(currentPicture);
         } catch (IOException e) {
+            AlertWindows.showFailedToTakePictureAlert();
             throw new RuntimeException(e);
         }
     }
 
-    private void closeSceneI(){
-        if(frameShowThread.getFrameShowThread().isAlive()) {
+    private void closeCameraHomeScene() {
+        if (frameShowThread.getFrameShowThread().isAlive()) {
             try {
                 frameShowThread.stopShowingFrame();
+                stopStabilityTrayThread();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        stabilizedThread.interrupt();
         WebcamUtils.shutDownWebcams(webcams);
     }
 
@@ -193,31 +199,31 @@ public class HomeController {
     }
 
     @FXML
-    public void handleEditor(Image capture) throws IOException {
+    public void openEditor(Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
         Parent root = loader.load();
 
-
-        // Loading the controller
         EditorController controller = loader.getController();
 
-        // Here we do operations with the controller before showing the scene
         controller.setCapture(capture);
         controller.setFlipped(liveEffects.get(Flip.class).isApplied());
-        controller.initialize(); // Called after setters to ensure that the variable are all updated before loading the scene
+        controller.initialize();
 
-        Stage stage = (Stage) mainPane.getScene().getWindow();    // In this case we have a VBox as wrapper instead of AnchorPane
-        double minHeight = stage.getMinHeight();
-        double minWidth = stage.getMinWidth();
-        double Height = stage.getHeight();
-        double Width = stage.getWidth();
+        Stage oldStage = (Stage) mainPane.getScene().getWindow();
+        double minHeight = oldStage.getMinHeight();
+        double minWidth = oldStage.getMinWidth();
+        double Height = oldStage.getHeight();
+        double Width = oldStage.getWidth();
+
         Scene scene = new Scene(root);
-        stage.setTitle("Editor");
-        stage.setScene(scene);
-        stage.setMinHeight(minHeight);
-        stage.setMinWidth(minWidth);
-        stage.setHeight(Height);
-        stage.setWidth(Width);
+        Stage newStage = new Stage();
+        newStage.setTitle("Editor");
+        newStage.setScene(scene);
+        newStage.setMinHeight(minHeight);
+        newStage.setMinWidth(minWidth);
+        newStage.setHeight(Height);
+        newStage.setWidth(Width);
+        newStage.show();
     }
 
     @FXML
