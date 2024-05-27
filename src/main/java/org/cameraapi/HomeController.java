@@ -152,6 +152,16 @@ public class HomeController {
 
     @FXML
     private void takePicture() {
+        closeSceneI();
+        Image capture = webcamDisplay.getImage();
+        try {
+            handleEditor(capture);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void closeSceneI(){
         if(frameShowThread.getFrameShowThread().isAlive()) {
             try {
                 frameShowThread.stopShowingFrame();
@@ -160,12 +170,7 @@ public class HomeController {
             }
         }
         stabilizedThread.interrupt();
-        Image capture = webcamDisplay.getImage();
-        try {
-            handleEditor(capture);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        WebcamUtils.shutDownWebcams(webcams);
     }
 
     @FXML

@@ -2,10 +2,18 @@ package org.cameraapi;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import org.cameraapi.effects.Flip;
+
+import java.io.IOException;
 
 
 public class EditorController {
@@ -15,6 +23,8 @@ public class EditorController {
     Button saveButton;
     @FXML
     Button returnButton;
+    @FXML
+    AnchorPane editorPage;
 
     private Image capture;
     private AnimationTimer timer;
@@ -67,6 +77,31 @@ public class EditorController {
 
     @FXML
     public void onReturnButtonClicked() {
-        
+        timer.stop();
+        try {
+            handleHomePage();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+    public void handleHomePage() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("camera-home-view.fxml"));
+        Parent root = loader.load();
+
+
+        Stage stage = (Stage) editorPage.getScene().getWindow();
+        double minHeight = stage.getMinHeight();
+        double minWidth = stage.getMinWidth();
+        double Height = stage.getHeight();
+        double Width = stage.getWidth();
+        Scene scene = new Scene(root);
+        stage.setTitle("Camera");
+        stage.setScene(scene);
+        stage.setMinHeight(minHeight);
+        stage.setMinWidth(minWidth);
+        stage.setHeight(Height);
+        stage.setWidth(Width);
+    }
+
 }
