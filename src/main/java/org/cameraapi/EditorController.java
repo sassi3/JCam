@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.cameraapi.effects.Flip;
 
 import java.io.IOException;
 
@@ -33,16 +32,11 @@ public class EditorController {
 
     @FXML
     public void initialize() {
-        initializeCanvas(imagePreview);
-        initializeLiveEffects(flipped);
+        initCanvas(imagePreview);
+        initLiveEffects(flipped);
     }
 
-    @FXML
-    public void onSaveButtonClicked() {
-
-    }
-
-    private void initializeCanvas(Canvas canvas) {
+    private void initCanvas(Canvas canvas) {
         timer = new AnimationTimer() {
 
             @Override
@@ -57,21 +51,21 @@ public class EditorController {
         canvas.getGraphicsContext2D().drawImage(capture, 0, 0);
     }
 
-    public void setCapture(Image capture) {
-        this.capture = capture;
-    }
-
-    public void setFlipped(boolean flipped) {
-        this.flipped = flipped;
-    }
-
-    private void initializeLiveEffects(boolean flipped) {
+    private void initLiveEffects(boolean flipped) {
         imagePreview.setRotationAxis(new Point3D(0, 1, 0));
         if (flipped) {
             imagePreview.setRotate(0);
         } else {
             imagePreview.setRotate(180);
         }
+    }
+
+    public void setCapture(Image capture) {
+        this.capture = capture;
+    }
+
+    public void setFlipped(boolean flipped) {
+        this.flipped = flipped;
     }
 
     @FXML
@@ -82,6 +76,11 @@ public class EditorController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @FXML
+    public void onSaveButtonClicked() {
+
     }
 
     public void handleHomePage() throws IOException {
