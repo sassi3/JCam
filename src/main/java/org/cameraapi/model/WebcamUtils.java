@@ -72,6 +72,9 @@ public class WebcamUtils {
 
     public static void closeWebcam(Webcam webcam) {
         Objects.requireNonNull(webcam);
+        if(!webcam.isOpen()) {
+            throw new IllegalArgumentException("Webcam is already closed.");
+        }
         webcam.close();
         if (webcam.isOpen()) {
             throw new IllegalStateException("Failed to close webcam.");
@@ -94,7 +97,9 @@ public class WebcamUtils {
 
     public static void shutDownWebcams(ObservableList<Webcam> webcams) {
         for(Webcam webcam: webcams){
-            closeWebcam(webcam);
+            if(webcam.isOpen()){
+                closeWebcam(webcam);
+            }
         }
     }
 }
