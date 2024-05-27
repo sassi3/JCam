@@ -56,7 +56,11 @@ public class WebcamUtils {
         Dimension[] dimensionsSupported = webcam.getDevice().getResolutions();
         Dimension maxDimension = dimensionsSupported[dimensionsSupported.length - 1];
         if (Objects.isNull(resolution)) {
-            resolution = webcam.getViewSize();
+            if (Objects.isNull(maxDimension)) {
+                resolution = defaultResolution;
+            } else {
+                resolution = maxDimension;
+            }
         }
         changeResolution(webcam, resolution);
         if (!webcam.isOpen()) {
@@ -82,6 +86,7 @@ public class WebcamUtils {
             closeWebcam(webcam);
         }
         webcam.setViewSize(resolution);
+        System.out.println("Resolution is now set on: " + resolution);
         webcam.open();
     }
 }
