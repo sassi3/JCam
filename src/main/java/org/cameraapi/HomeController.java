@@ -41,8 +41,6 @@ public class HomeController {
     private Image rawPicture;
     private Image currentPicture;
 
-    private Image frozenPicture;
-
     @FXML private AnchorPane mainPane;
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
@@ -52,8 +50,6 @@ public class HomeController {
     private WebcamMotionDetector motionDetector;
     @FXML private RadioButton stabilityTray;
     private Thread stabilizedThread;
-
-    private boolean frozenFlipStatus;
 
     private FrameShowThread frameShowThread;
 
@@ -189,7 +185,6 @@ public class HomeController {
         }
         liveEffects.get(Freeze.class).toggle(webcamDisplay);
         if(liveEffects.get(Freeze.class).isApplied()) {
-            frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button is pressed
             Freeze.freeze(frameShowThread);
         } else {
             frameShowThread.startShowingFrame();
