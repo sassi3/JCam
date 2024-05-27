@@ -129,6 +129,7 @@ public class HomeController {
         if (stabilityTrayThread.isAlive()) {
             throw new IllegalStateException("StabilityTray thread is still alive.");
         }
+        stabilityTray.setSelected(false);
     }
 
     public void disableInterface() {
@@ -150,19 +151,13 @@ public class HomeController {
     }
 
     @FXML
-    private void previewPicture(Image picture) {
-        printablePicture.setImage(picture);
-        printablePicture.setPreserveRatio(true);
-    }
-
-    @FXML
     private void takePicture() {
         try {
             frameShowThread.stopShowingFrame();
             stopStabilityTrayThread();
             rawPicture = webcamDisplay.getImage();
             currentPicture = rawPicture;
-            closeSceneI();
+            closeCameraHomeScene();
             openEditor(currentPicture);
         } catch (InterruptedException | IOException e) {
             AlertWindows.showFailedToTakePictureAlert();
@@ -170,15 +165,15 @@ public class HomeController {
         }
     }
 
-    private void closeSceneI(){
-        if(frameShowThread.getFrameShowThread().isAlive()) {
+    private void closeCameraHomeScene() {
+        if (frameShowThread.getFrameShowThread().isAlive()) {
             try {
                 frameShowThread.stopShowingFrame();
+                stopStabilityTrayThread();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        stabilizedThread.interrupt();
         WebcamUtils.shutDownWebcams(webcams);
     }
 
@@ -210,15 +205,13 @@ public class HomeController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
         Parent root = loader.load();
 
-        // Loading the controller
         EditorController controller = loader.getController();
 
-        // Here we do operations with the controller before showing the scene
         controller.setCapture(capture);
         controller.setFlipped(liveEffects.get(Flip.class).isApplied());
-        controller.initialize(); // Called after setters to ensure that the variable are all updated before loading the scene
+        controller.initialize();
 
-        Stage stage = (Stage) mainPane.getScene().getWindow();    // In this case we have a VBox as wrapper instead of AnchorPane
+        Stage stage = (Stage) mainPane.getScene().getWindow();
         double minHeight = stage.getMinHeight();
         double minWidth = stage.getMinWidth();
         double Height = stage.getHeight();

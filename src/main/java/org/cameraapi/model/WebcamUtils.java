@@ -83,9 +83,9 @@ public class WebcamUtils {
     }
 
     public static void shutDownWebcams(ObservableList<Webcam> webcams) {
-        for(Webcam webcam: webcams){
-            if(webcam.isOpen()){
-                closeWebcam(webcam);
+        for (Webcam webcam: webcams) {
+            if (webcam.isOpen()) {
+                webcam.close();
             }
         }
     }
