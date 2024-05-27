@@ -7,6 +7,11 @@ import java.util.Optional;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
 import javafx.collections.ListChangeListener;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
@@ -36,6 +41,7 @@ public class HomeController {
     private Image currentPicture;
     private Image frozenPicture;
 
+    @FXML private AnchorPane mainPane;
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
@@ -43,6 +49,7 @@ public class HomeController {
 
     private WebcamMotionDetector motionDetector;
     @FXML private RadioButton stabilityTray;
+    private Thread stabilizedThread;
 
     private boolean frozenFlipStatus;
 
@@ -98,7 +105,7 @@ public class HomeController {
         motionDetector = new WebcamMotionDetector(webcamList.getSelectionModel().getSelectedItem(), threshold, inertia);
         motionDetector.setInterval(interval);
         motionDetector.start();
-        Thread stabilizedThread = getStabilizedThread();
+        stabilizedThread = getStabilizedThread();
         stabilizedThread.start();
     }
     private Thread getStabilizedThread() {
@@ -142,8 +149,17 @@ public class HomeController {
 
     @FXML
     private void takePicture() {
-        rawPicture = webcamDisplay.getImage();
-        currentPicture = rawPicture;
+        try {
+            frameShowThread.stopShowingFrame();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        stabilizedThread.interrupt();
+        try {
+            handleEditor();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML
@@ -177,54 +193,28 @@ public class HomeController {
     }
 
     @FXML
-    public void handleEditor() {
-        try {
-            //---------- SCENE LOADING --------
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("editor-controller-view.fxml"));
-            DialogPane editor = loader.load();
-            EditorController editorController = loader.getController();
+    public void handleEditor() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
+        Parent root = loader.load();
 
-            //---------- CONTROLLER ACCESS METHODS --------
-            // Checks if the cam is currently frozen and decides which picture to show and whether to flip it or not
-            if(liveEffects.get(Freeze.class).isApplied()) {
-                editorController.setPicture(frozenPicture); // show picture taken when cam froze
-                if (!frozenFlipStatus) { // Checks if the cam was flipped when froze
-                    editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
-                    // flips what's displayed by the image view around the y-axis
-                    // and then translates it right (through the x-axis) by the width of the image view itself
-                } else {
-                    editorController.getPicturePreview().getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
-                    //Identity matrix
-                }
-            } else {
-                editorController.setPicture(currentPicture); // Else set picture currently displayed
-                if (!liveEffects.get(Flip.class).isApplied()) { // Check if cam is currently flipped
-                    editorController.getPicturePreview().getTransforms().add(new Affine(-1, 0, editorController.getPicturePreview().getFitWidth(), 0, 1, 0));
-                    // flips what's displayed by the image view around the y-axis
-                    // and then translates it right (through the x-axis) by the width of the image view itself
-                } else {
-                    editorController.getPicturePreview().getTransforms().add(new Affine(1, 0, 0, 0, 1, 0));
-                    //Identity matrix
-                }
-            }
-            editorController.initialize();
 
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setTitle("Editor");
-            editorController.addDialogIconTo(dialog);
-            dialog.initModality(Modality.WINDOW_MODAL);
-            dialog.setDialogPane(editor);
+        // Loading the controller
+        EditorController controller = loader.getController();
 
-            Optional<ButtonType> clickedButton = dialog.showAndWait();
-            if (clickedButton.orElse(ButtonType.CANCEL) == ButtonType.OK) {
-                // if the dialog button pressed is the OK button calls savePicture method
-            }
-        } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
-            AlertWindows.showFatalError();
-            System.exit(3);
-        }
+        // Here we do operations with the controller before showing the scene
+
+        Stage stage = (Stage) mainPane.getScene().getWindow();    // In this case we have a VBox as wrapper instead of AnchorPane
+        double minHeight = stage.getMinHeight();
+        double minWidth = stage.getMinWidth();
+        double Height = stage.getHeight();
+        double Width = stage.getWidth();
+        Scene scene = new Scene(root);
+        stage.setTitle("Editor");
+        stage.setScene(scene);
+        stage.setMinHeight(minHeight);
+        stage.setMinWidth(minWidth);
+        stage.setHeight(Height);
+        stage.setWidth(Width);
     }
 
     @FXML
