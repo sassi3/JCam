@@ -2,6 +2,7 @@ package org.cameraapi.effects;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.cameraapi.common.FrameShowThread;
 
 import java.util.Objects;
 
@@ -15,10 +16,13 @@ public class Freeze extends LiveEffect {
         System.out.println("freeze: " + isApplied());
     }
 
-    public static void freeze(ImageView imageView, Image image) {
-        Objects.requireNonNull(imageView);
-        Objects.requireNonNull(image);
-        imageView.setImage(image);
+    public static void freeze(FrameShowThread thread) {
+        Objects.requireNonNull(thread);
+        try {
+            thread.stopShowingFrame();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // Unused mat2Image converter, but maybe useful for

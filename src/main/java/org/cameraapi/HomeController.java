@@ -37,12 +37,9 @@ public class HomeController {
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
 
     @FXML private ImageView webcamDisplay;
-    private Image capture;
     @FXML private ImageView printablePicture;
     private Image rawPicture;
     private Image currentPicture;
-
-    private Image frozenPicture;
 
     @FXML private AnchorPane mainPane;
     @FXML private ToggleButton freezeToggleButton;
@@ -53,8 +50,6 @@ public class HomeController {
     private WebcamMotionDetector motionDetector;
     @FXML private RadioButton stabilityTray;
     private Thread stabilizedThread;
-
-    private boolean frozenFlipStatus;
 
     private FrameShowThread frameShowThread;
 
@@ -153,18 +148,25 @@ public class HomeController {
 
     @FXML
     private void takePicture() {
-        try {
-            frameShowThread.stopShowingFrame();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        stabilizedThread.interrupt();
-        capture = webcamDisplay.getImage();
+        closeSceneI();
+        Image capture = webcamDisplay.getImage();
         try {
             handleEditor(capture);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void closeSceneI(){
+        if(frameShowThread.getFrameShowThread().isAlive()) {
+            try {
+                frameShowThread.stopShowingFrame();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        stabilizedThread.interrupt();
+        WebcamUtils.shutDownWebcams(webcams);
     }
 
     @FXML
@@ -183,14 +185,7 @@ public class HomeController {
         }
         liveEffects.get(Freeze.class).toggle(webcamDisplay);
         if(liveEffects.get(Freeze.class).isApplied()) {
-            frozenPicture = webcamDisplay.getImage();   // saves the displayed frame when the freeze button is pressed
-            frozenFlipStatus = liveEffects.get(Flip.class).isApplied();    // saves the status of the flip button when the freeze button is pressed
-            try {
-                frameShowThread.stopShowingFrame();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            Freeze.freeze(webcamDisplay, frozenPicture);
+            Freeze.freeze(frameShowThread);
         } else {
             frameShowThread.startShowingFrame();
         }
@@ -209,6 +204,7 @@ public class HomeController {
         // Here we do operations with the controller before showing the scene
         controller.setCapture(capture);
         controller.setFlipped(liveEffects.get(Flip.class).isApplied());
+        controller.initialize(); // Called after setters to ensure that the variable are all updated before loading the scene
 
         Stage stage = (Stage) mainPane.getScene().getWindow();    // In this case we have a VBox as wrapper instead of AnchorPane
         double minHeight = stage.getMinHeight();
