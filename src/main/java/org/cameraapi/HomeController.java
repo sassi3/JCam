@@ -10,6 +10,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
@@ -19,9 +20,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.transform.Affine;
 import javafx.stage.Modality;
 import javafx.fxml.FXML;
 
+import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
@@ -34,8 +37,11 @@ public class HomeController {
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
 
     @FXML private ImageView webcamDisplay;
+    private Image capture;
+    @FXML private ImageView printablePicture;
     private Image rawPicture;
     private Image currentPicture;
+
     private Image frozenPicture;
 
     @FXML private AnchorPane mainPane;
@@ -141,7 +147,8 @@ public class HomeController {
 
     @FXML
     private void previewPicture(Image picture) {
-
+        printablePicture.setImage(picture);
+        printablePicture.setPreserveRatio(true);
     }
 
     @FXML
@@ -152,8 +159,9 @@ public class HomeController {
             throw new RuntimeException(e);
         }
         stabilizedThread.interrupt();
+        capture = webcamDisplay.getImage();
         try {
-            handleEditor();
+            handleEditor(capture);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -190,7 +198,7 @@ public class HomeController {
     }
 
     @FXML
-    public void handleEditor() throws IOException {
+    public void handleEditor(Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
         Parent root = loader.load();
 
@@ -199,6 +207,8 @@ public class HomeController {
         EditorController controller = loader.getController();
 
         // Here we do operations with the controller before showing the scene
+        controller.setCapture(capture);
+        controller.setFlipped(liveEffects.get(Flip.class).isApplied());
 
         Stage stage = (Stage) mainPane.getScene().getWindow();    // In this case we have a VBox as wrapper instead of AnchorPane
         double minHeight = stage.getMinHeight();
