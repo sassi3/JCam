@@ -27,19 +27,17 @@ public class EditorController {
     @FXML
     AnchorPane editorPage;
 
-    private Image capture;
+
     private AnimationTimer timer;
-    private boolean flipped;
+    private Webcam activeWebcam;
 
 
 
     @FXML
     public void initialize() {
-        initCanvas(imagePreview);
-        initLiveEffects(flipped);
     }
 
-    private void initCanvas(Canvas canvas) {
+    public void initCanvas(Canvas canvas, Image capture) {
         timer = new AnimationTimer() {
 
             @Override
@@ -54,7 +52,7 @@ public class EditorController {
         canvas.getGraphicsContext2D().drawImage(capture, 0, 0);
     }
 
-    private void initLiveEffects(boolean flipped) {
+    public void initLiveEffects(boolean flipped) {
         imagePreview.setRotationAxis(new Point3D(0, 1, 0));
         if (flipped) {
             imagePreview.setRotate(0);
@@ -63,12 +61,12 @@ public class EditorController {
         }
     }
 
-    public void setCapture(Image capture) {
-        this.capture = capture;
+    public Canvas getImagePreview() {
+        return imagePreview;
     }
 
-    public void setFlipped(boolean flipped) {
-        this.flipped = flipped;
+    public void setActiveWebcam(Webcam activeWebcam) {
+        this.activeWebcam = activeWebcam;
     }
 
     @FXML
@@ -91,7 +89,7 @@ public class EditorController {
         Parent root = loader.load();
 
         HomeController controller = loader.getController();
-        controller.setStart(false);
+        controller.restoreWebcam(activeWebcam);
 
 
         Stage stage = (Stage) editorPage.getScene().getWindow();

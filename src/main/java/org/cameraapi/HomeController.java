@@ -33,7 +33,6 @@ import static java.lang.Thread.interrupted;
 public class HomeController {
     private static ObservableList<Webcam> webcams;
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
-    private boolean start=true;
     private FrameShowThread frameShowThread;
 
     @FXML private ImageView webcamDisplay;
@@ -208,9 +207,6 @@ public class HomeController {
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
 
-    public void setStart(boolean start) {
-        this.start = start;
-    }
 
     @FXML
     public void openEditor(Image capture) throws IOException {
@@ -222,9 +218,9 @@ public class HomeController {
         EditorController controller = loader.getController();
 
         // Here we do operations with the controller before showing the scene
-        controller.setCapture(capture);
-        controller.setFlipped(liveEffects.get(Flip.class).isApplied());
-        controller.initialize();
+        controller.initCanvas(controller.getImagePreview(),capture);
+        controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
+        controller.setActiveWebcam(webcamList.getSelectionModel().getSelectedItem());
 
         Stage stage = (Stage) mainPane.getScene().getWindow();
         double minHeight = stage.getMinHeight();
@@ -240,6 +236,17 @@ public class HomeController {
         stage.setHeight(Height);
         stage.setWidth(Width);
         stage.show();
+    }
+
+    public void restoreWebcam(Webcam webcam) {
+        webcamList.getSelectionModel().select(webcam);
+        try {
+            frameShowThread.stopShowingFrame();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        frameShowThread = new FrameShowThread(webcamList,webcam,webcamDisplay);
+        frameShowThread.startShowingFrame();
     }
 
     @FXML
