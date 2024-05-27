@@ -35,7 +35,7 @@ import static java.lang.Thread.interrupted;
 public class HomeController {
     private static ObservableList<Webcam> webcams;
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
-
+    private boolean start=true;
     @FXML private ImageView webcamDisplay;
     @FXML private ImageView printablePicture;
     private Image rawPicture;
@@ -54,10 +54,19 @@ public class HomeController {
     private FrameShowThread frameShowThread;
 
     public void initialize() {
-        initWebcamChoiceBox();
-        initWebcam();
-        initLiveEffects();
-        initMotionMonitor();
+        if(start) {
+            initWebcamChoiceBox();
+            initWebcam();
+            initLiveEffects();
+            initMotionMonitor();
+            start=false;
+        }
+        else {
+            initWebcamChoiceBox();
+            frameShowThread.startShowingFrame();
+            stabilizedThread =getStabilizedThread();
+            stabilizedThread.start();
+        }
     }
 
     private void initWebcamChoiceBox() {
