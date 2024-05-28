@@ -207,7 +207,6 @@ public class HomeController {
 
         controller.setCapture(capture);
         controller.setFlipped(liveEffects.get(Flip.class).isApplied());
-        controller.initialize();
 
         ScreenController.addScreen("editor", root);
         ScreenController.activate("editor");
