@@ -11,9 +11,9 @@
 
 <DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cameraapi.SaveDialogController">
     <header>
-      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0">
+      <AnchorPane fx:id="root" minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0">
          <children>
-            <Button fx:id="selectDirButton" layoutX="14.0" layoutY="113.0" mnemonicParsing="false" text="Select directory" />
+            <Button fx:id="selectDirButton" layoutX="14.0" layoutY="113.0" mnemonicParsing="false" onAction="#onSelectDir" text="Select directory" />
             <ImageView fx:id="preview" fitHeight="150.0" fitWidth="200.0" layoutX="220.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true" />
             <TextField fx:id="selectDirTxtField" layoutX="14.0" layoutY="138.0" />
             <TextField fx:id="fileNameTxtField" layoutX="14.0" layoutY="88.0" />

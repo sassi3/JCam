@@ -1,11 +1,15 @@
 package org.cameraapi;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.bytedeco.opencv.presets.opencv_core;
 
@@ -18,6 +22,10 @@ import java.nio.file.Path;
 public class SaveDialogController {
 
     @FXML
+    AnchorPane root;
+    @FXML
+    Button selectDirButton;
+    @FXML
     ChoiceBox<String> typeChoiceBox;
     @FXML
     TextField selectDirTxtField;
@@ -26,19 +34,12 @@ public class SaveDialogController {
     @FXML
     ImageView preview;
 
-    private String fileName;
-    private String dir;
-    private String type;
+    private final DirectoryChooser directoryChooser = new DirectoryChooser();
     private Image imageToSave;
 
     public void initialize() {
         fileNameTxtField.setEditable(true);
-        fileNameTxtField.textProperty().addListener((observable, oldValue, newValue) -> {
-           fileName = newValue;
-        });
-        selectDirTxtField.textProperty().addListener((observable, oldValue, newValue) -> {
-            dir = newValue;
-        });
+        selectDirTxtField.setEditable(false);
     }
 
     public void save(){
@@ -55,6 +56,11 @@ public class SaveDialogController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void onSelectDir() {
+        File dir = directoryChooser.showDialog(root.getScene().getWindow());
+        selectDirTxtField.setText(dir.getAbsolutePath());
     }
 
     private File getFile(String os) {
@@ -76,9 +82,6 @@ public class SaveDialogController {
     public void initTypeChoiceBox() {
         typeChoiceBox.getItems().addAll("png","jpg");
         typeChoiceBox.getSelectionModel().selectFirst();
-        typeChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            type = newValue;
-        });
     }
 
 
