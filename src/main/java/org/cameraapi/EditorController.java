@@ -83,6 +83,7 @@ public class EditorController {
         DialogPane saveDialog = loader.load();
         SaveDialogController controller = loader.getController();
         controller.initPreview(imagePreview.snapshot(null, null));
+        controller.initTypeChoiceBox();
         // snapshot method renders the current node into a WritableImage object
         // (Writable Image extends Image).
 
