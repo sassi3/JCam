@@ -10,16 +10,13 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
-import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.fxml.FXML;
 
+import org.cameraapi.common.WebcamListener;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
@@ -68,7 +66,7 @@ public class HomeController {
 
     private void initWebcamChoiceBox() {
         webcams = FXCollections.observableArrayList();
-        new WebcamListener();
+        new WebcamListener(webcams);
         webcamList.setItems(webcams);
         webcamList.getSelectionModel().selectFirst();
         webcams.addListener((ListChangeListener<Webcam>) change -> webcamList.setItems(webcams));
@@ -77,7 +75,6 @@ public class HomeController {
     private void initWebcam() {
         Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
         webcamList.setValue(activeWebcam);
-        // Detection of webcam's resolution (find a way)
         WebcamUtils.startUpWebcam(activeWebcam, null);
         frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
         initFrameShowThread(frameShowThread);
@@ -150,10 +147,6 @@ public class HomeController {
         freezeToggleButton.arm();
         flipToggleButton.arm();
         System.out.println("Interface enabled.");
-    }
-
-    public static ObservableList<Webcam> getWebcams() {
-        return webcams;
     }
 
     @FXML
