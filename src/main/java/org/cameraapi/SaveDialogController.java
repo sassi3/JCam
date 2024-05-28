@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import org.bytedeco.opencv.presets.opencv_core;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Target;
@@ -44,6 +45,12 @@ public class SaveDialogController {
 
     public void save(){
         String os = System.getProperty("os.name");
+        if(selectDirTxtField.getText().isEmpty()){
+            throw new RuntimeException("No directory selected");
+        }
+        if(fileNameTxtField.getText().isEmpty()){
+            throw new RuntimeException("No file selected");
+        }
         File target = getFile(os);
         try {
             target.createNewFile();
@@ -52,15 +59,20 @@ public class SaveDialogController {
             // You could launch an alert pane...
         }
         try {
-            ImageIO.write(SwingFXUtils.fromFXImage(imageToSave,null), typeChoiceBox.getSelectionModel().getSelectedItem(), target);
+            BufferedImage awtImage = new BufferedImage((int)imageToSave.getWidth(), (int)imageToSave.getHeight(), BufferedImage.TYPE_INT_RGB);
+            SwingFXUtils.fromFXImage(imageToSave,awtImage);
+            ImageIO.write(awtImage, typeChoiceBox.getSelectionModel().getSelectedItem(), target);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void onSelectDir() {
+        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         File dir = directoryChooser.showDialog(root.getScene().getWindow());
-        selectDirTxtField.setText(dir.getAbsolutePath());
+        if (dir != null) {
+            selectDirTxtField.setText(dir.getAbsolutePath());
+        }
     }
 
     private File getFile(String os) {
@@ -73,9 +85,10 @@ public class SaveDialogController {
         }
 
         if(target.exists() || target.isDirectory()){
-            throw new RuntimeException();
+            throw new RuntimeException("File exists or is a directory");
             // You could launch an alert pane...
         }
+
         return target;
     }
 
