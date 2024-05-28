@@ -205,9 +205,8 @@ public class HomeController {
 
         EditorController controller = loader.getController();
 
-        controller.setCapture(capture);
-        controller.setFlipped(liveEffects.get(Flip.class).isApplied());
-        controller.initialize();
+        controller.initCanvas(capture);
+        controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
         ScreenController.addScreen("editor", root);
         ScreenController.activate("editor");
