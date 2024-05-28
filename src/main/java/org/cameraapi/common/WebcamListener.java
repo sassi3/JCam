@@ -3,13 +3,20 @@ package org.cameraapi.common;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamDiscoveryEvent;
 import com.github.sarxos.webcam.WebcamDiscoveryListener;
-import org.cameraapi.HomeController;
+import javafx.collections.ObservableList;
 
 public class WebcamListener implements WebcamDiscoveryListener {
-    public WebcamListener() {
+    ObservableList<Webcam> webcams;
+
+    public WebcamListener(ObservableList<Webcam> webcams) {
+        this.webcams = webcams;
+        initWebcamsDetection();
+    }
+
+    private void initWebcamsDetection() {
         for (Webcam webcam : Webcam.getWebcams()) {
             System.out.println("Webcam detected: " + webcam.getName());
-            HomeController.getWebcams().addLast(webcam);
+            webcams.addLast(webcam);
         }
         Webcam.addDiscoveryListener(this);
         System.out.println("Webcam added. Listening for events...");
@@ -18,12 +25,12 @@ public class WebcamListener implements WebcamDiscoveryListener {
     @Override
     public void webcamFound(WebcamDiscoveryEvent webcamDiscoveryEvent) {
         System.out.println("Webcam connected: " + webcamDiscoveryEvent.getWebcam().getName());
-        HomeController.getWebcams().addLast(webcamDiscoveryEvent.getWebcam());
+        webcams.addLast(webcamDiscoveryEvent.getWebcam());
     }
 
     @Override
     public void webcamGone(WebcamDiscoveryEvent webcamDiscoveryEvent) {
         System.out.println("Webcam disconnected: " + webcamDiscoveryEvent.getWebcam().getName());
-        HomeController.getWebcams().remove(webcamDiscoveryEvent.getWebcam());
+        webcams.remove(webcamDiscoveryEvent.getWebcam());
     }
 }
