@@ -78,7 +78,7 @@ public class EditorController {
 
     private void handleSave() throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("webcam-change-dialog.fxml"));
+        loader.setLocation(getClass().getResource("save-dialog.fxml"));
 
         DialogPane saveDialog = loader.load();
         SaveDialogController controller = loader.getController();
@@ -86,9 +86,8 @@ public class EditorController {
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Save Image");
-        dialog.setDialogPane(saveDialog);
         dialog.initModality(Modality.WINDOW_MODAL);
-        Optional<ButtonType> clickedButton = dialog.showAndWait();
+        dialog.setDialogPane(saveDialog);
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.addEventFilter(ActionEvent.ACTION, event -> {
             controller.save();
