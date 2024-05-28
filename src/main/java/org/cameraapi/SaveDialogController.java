@@ -59,6 +59,9 @@ public class SaveDialogController {
             // You could launch an alert pane...
         }
         try {
+            // Necessary step to work with jpg and jpeg.
+            // You can find the explanation for why it is this way at this link:
+            // https://stackoverflow.com/a/57674578
             BufferedImage awtImage = new BufferedImage((int)imageToSave.getWidth(), (int)imageToSave.getHeight(), BufferedImage.TYPE_INT_RGB);
             SwingFXUtils.fromFXImage(imageToSave,awtImage);
             ImageIO.write(awtImage, typeChoiceBox.getSelectionModel().getSelectedItem(), target);
@@ -93,7 +96,7 @@ public class SaveDialogController {
     }
 
     public void initTypeChoiceBox() {
-        typeChoiceBox.getItems().addAll("png","jpg");
+        typeChoiceBox.getItems().addAll("png","jpg", "jpeg");
         typeChoiceBox.getSelectionModel().selectFirst();
     }
 
