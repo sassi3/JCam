@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
 import org.cameraapi.common.WebcamListener;
 import javafx.collections.FXCollections;
@@ -23,7 +24,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.fxml.FXML;
 
-import org.cameraapi.common.AlertWindows;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
@@ -33,7 +33,6 @@ import static java.lang.Thread.interrupted;
 
 public class HomeController {
     private static ObservableList<Webcam> webcams;
-    private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
     private FrameShowThread frameShowThread;
 
     @FXML private ImageView webcamDisplay;
@@ -41,6 +40,9 @@ public class HomeController {
     private Image rawPicture;
     private Image currentPicture;
 
+    private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
+    private Image frozenPicture;
+    private boolean frozenFlipStatus;
 
     @FXML private AnchorPane mainPane;
     @FXML private ToggleButton freezeToggleButton;
@@ -53,10 +55,10 @@ public class HomeController {
     private Thread stabilityTrayThread;
 
     public void initialize() {
-        Platform.runLater(this::initWebcamChoiceBox);
-        Platform.runLater(this::initWebcam);
-        Platform.runLater(this::initMotionMonitor);
+        initWebcamChoiceBox();
+        initWebcam();
         initLiveEffects();
+        initMotionMonitor();
     }
 
     private void initWebcamChoiceBox() {
@@ -150,16 +152,11 @@ public class HomeController {
     }
 
     @FXML
-    private void previewPicture(Image picture) {
-        printablePicture.setImage(picture);
-        printablePicture.setPreserveRatio(true);
-    }
-
-    @FXML
     private void takePicture() {
-        closeCameraHomeScene();
         try {
-            openEditor(webcamDisplay.getImage());
+            rawPicture = webcamDisplay.getImage();
+            currentPicture = rawPicture;
+            openEditor(currentPicture);
         } catch (IOException e) {
             AlertWindows.showFailedToTakePictureAlert();
             throw new RuntimeException(e);
@@ -170,19 +167,12 @@ public class HomeController {
         if (frameShowThread.getFrameShowThread().isAlive()) {
             try {
                 frameShowThread.stopShowingFrame();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if(stabilityTrayThread.isAlive()){
-            try {
                 stopStabilityTrayThread();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        motionDetector.stop();
-        //WebcamUtils.shutDownWebcams(webcams);
+        WebcamUtils.shutDownWebcams(webcams);
     }
 
     @FXML
@@ -200,7 +190,7 @@ public class HomeController {
             throw new RuntimeException("Freeze is currently disabled.");
         }
         liveEffects.get(Freeze.class).toggle(webcamDisplay);
-        if(liveEffects.get(Freeze.class).isApplied()) {
+        if (liveEffects.get(Freeze.class).isApplied()) {
             Freeze.freeze(frameShowThread);
         } else {
             frameShowThread.startShowingFrame();
@@ -208,57 +198,18 @@ public class HomeController {
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
 
-
     @FXML
     public void openEditor(Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
         Parent root = loader.load();
 
-
-        // Loading the controller
         EditorController controller = loader.getController();
 
-        // Here we do operations with the controller before showing the scene
-        controller.initCanvas(controller.getImagePreview(),capture);
+        controller.initCanvas(capture);
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
-        controller.setActiveWebcam(webcamList.getSelectionModel().getSelectedItem());
 
-        Stage stage = (Stage) mainPane.getScene().getWindow();
-        double minHeight = stage.getMinHeight();
-        double minWidth = stage.getMinWidth();
-        double Height = stage.getHeight();
-        double Width = stage.getWidth();
-
-
-        stage.setTitle("Editor");
-        stage.setScene(new Scene(root));
-        stage.setMinHeight(minHeight);
-        stage.setMinWidth(minWidth);
-        stage.setHeight(Height);
-        stage.setWidth(Width);
-        stage.show();
-    }
-
-    public void restoreWebcam(Webcam webcam) {
-        Platform.runLater(() -> {
-            while (Objects.isNull(frameShowThread)) {
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            webcamList.getSelectionModel().select(webcam);
-            try {
-                frameShowThread.stopShowingFrame();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            frameShowThread = new FrameShowThread(webcamList,webcam,webcamDisplay);
-            frameShowThread.startShowingFrame();
-            }
-        );
+        ScreenController.addScreen("editor", root);
+        ScreenController.activate("editor");
     }
 
     @FXML

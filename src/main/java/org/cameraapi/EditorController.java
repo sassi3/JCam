@@ -1,6 +1,5 @@
 package org.cameraapi;
 
-import com.github.sarxos.webcam.Webcam;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -29,7 +28,6 @@ public class EditorController {
 
 
     private AnimationTimer timer;
-    private Webcam activeWebcam;
 
 
 
@@ -37,19 +35,19 @@ public class EditorController {
     public void initialize() {
     }
 
-    public void initCanvas(Canvas canvas, Image capture) {
+    public void initCanvas(Image capture) {
         timer = new AnimationTimer() {
 
             @Override
             public void handle(long l) {
-                canvas.setHeight(capture.getHeight());
-                canvas.setWidth(capture.getWidth());
-                canvas.getGraphicsContext2D().drawImage(capture, 0, 0);
+                imagePreview.setHeight(capture.getHeight());
+                imagePreview.setWidth(capture.getWidth());
+                imagePreview.getGraphicsContext2D().drawImage(capture, 0, 0);
             }
         };
         timer.start();
 
-        canvas.getGraphicsContext2D().drawImage(capture, 0, 0);
+        //imagePreview.getGraphicsContext2D().drawImage(capture, 0, 0);
     }
 
     public void initLiveEffects(boolean flipped) {
@@ -61,13 +59,6 @@ public class EditorController {
         }
     }
 
-    public Canvas getImagePreview() {
-        return imagePreview;
-    }
-
-    public void setActiveWebcam(Webcam activeWebcam) {
-        this.activeWebcam = activeWebcam;
-    }
 
     @FXML
     public void onReturnButtonClicked() {
@@ -85,25 +76,6 @@ public class EditorController {
     }
 
     public void handleHomePage() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("camera-home-view.fxml"));
-        Parent root = loader.load();
-
-        HomeController controller = loader.getController();
-        controller.restoreWebcam(activeWebcam);
-
-
-        Stage stage = (Stage) editorPage.getScene().getWindow();
-        double minHeight = stage.getMinHeight();
-        double minWidth = stage.getMinWidth();
-        double Height = stage.getHeight();
-        double Width = stage.getWidth();
-
-        Scene scene = new Scene(root);
-        stage.setTitle("Camera");
-        stage.setScene(scene);
-        stage.setMinHeight(minHeight);
-        stage.setMinWidth(minWidth);
-        stage.setHeight(Height);
-        stage.setWidth(Width);
+        ScreenController.activate("home");
     }
 }
