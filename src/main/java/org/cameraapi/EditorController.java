@@ -26,33 +26,31 @@ public class EditorController {
     @FXML
     AnchorPane editorPage;
 
-    private Image capture;
+
     private AnimationTimer timer;
-    private boolean flipped;
+
 
 
     @FXML
     public void initialize() {
-        initCanvas(imagePreview);
-        initLiveEffects(flipped);
     }
 
-    private void initCanvas(Canvas canvas) {
+    public void initCanvas(Image capture) {
         timer = new AnimationTimer() {
 
             @Override
             public void handle(long l) {
-                canvas.setHeight(capture.getHeight());
-                canvas.setWidth(capture.getWidth());
-                canvas.getGraphicsContext2D().drawImage(capture, 0, 0);
+                imagePreview.setHeight(capture.getHeight());
+                imagePreview.setWidth(capture.getWidth());
+                imagePreview.getGraphicsContext2D().drawImage(capture, 0, 0);
             }
         };
         timer.start();
 
-        canvas.getGraphicsContext2D().drawImage(capture, 0, 0);
+        //imagePreview.getGraphicsContext2D().drawImage(capture, 0, 0);
     }
 
-    private void initLiveEffects(boolean flipped) {
+    public void initLiveEffects(boolean flipped) {
         imagePreview.setRotationAxis(new Point3D(0, 1, 0));
         if (flipped) {
             imagePreview.setRotate(0);
@@ -61,13 +59,6 @@ public class EditorController {
         }
     }
 
-    public void setCapture(Image capture) {
-        this.capture = capture;
-    }
-
-    public void setFlipped(boolean flipped) {
-        this.flipped = flipped;
-    }
 
     @FXML
     public void onReturnButtonClicked() {
