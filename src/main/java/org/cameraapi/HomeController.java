@@ -211,22 +211,6 @@ public class HomeController {
 
         ScreenController.addScreen("editor", root);
         ScreenController.activate("editor");
-
-//        Stage oldStage = (Stage) mainPane.getScene().getWindow();
-//        double minHeight = oldStage.getMinHeight();
-//        double minWidth = oldStage.getMinWidth();
-//        double Height = oldStage.getHeight();
-//        double Width = oldStage.getWidth();
-//
-//        Scene scene = new Scene(root);
-//        Stage newStage = new Stage();
-//        newStage.setTitle("Editor");
-//        newStage.setScene(scene);
-//        newStage.setMinHeight(minHeight);
-//        newStage.setMinWidth(minWidth);
-//        newStage.setHeight(Height);
-//        newStage.setWidth(Width);
-//        newStage.show();
     }
 
     @FXML

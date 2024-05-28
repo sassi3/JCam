@@ -44,7 +44,7 @@ public class App extends Application {
         Parent root = fxmlLoader.load();
 
         Scene scene = new Scene(root);
-        new ScreenController(scene);
+        ScreenController.setScreenController(scene);
         ScreenController.addScreen("home", root);
         stage.setMinHeight(sceneMinHeight);
         stage.setMinWidth(sceneMinWidth);
