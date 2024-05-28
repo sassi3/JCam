@@ -91,9 +91,11 @@ public class EditorController {
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.addEventFilter(ActionEvent.ACTION, event -> {
             controller.save();
+            dialog.close();
             event.consume();
         });
         dialog.setResizable(false);
+        dialog.showAndWait();
     }
 
     @FXML
