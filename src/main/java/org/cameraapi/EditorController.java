@@ -29,12 +29,15 @@ public class EditorController {
 
 
     private AnimationTimer timer;
+    double dx,dy;
 
     @FXML
     public void initialize() {
     }
 
     public void initCanvas(Image capture) {
+        dx = capture.getWidth() - imagePreview.getWidth();
+        dy = capture.getHeight() - imagePreview.getHeight();
         timer = new AnimationTimer() {
 
             @Override
@@ -96,6 +99,11 @@ public class EditorController {
         });
         dialog.setResizable(false);
         dialog.showAndWait();
+    }
+
+    public void resize(){
+        anchorPane.getScene().getWindow().setWidth(anchorPane.getWidth() + dx);
+        anchorPane.getScene().getWindow().setHeight(anchorPane.getHeight() + dy);
     }
 
     @FXML
