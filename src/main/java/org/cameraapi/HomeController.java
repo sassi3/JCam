@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
+
+import atlantafx.base.theme.CupertinoDark;
+import atlantafx.base.theme.CupertinoLight;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
@@ -48,7 +52,7 @@ public class HomeController {
     private boolean frozenFlipStatus;
 
     @FXML private StackPane stackPane;
-    @FXML private AnchorPane anchorPane;
+    @FXML private ToggleButton themeButton;
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
@@ -59,10 +63,16 @@ public class HomeController {
     private Thread stabilityTrayThread;
 
     public void initialize() {
+        initTheme();
         initWebcamChoiceBox();
         initWebcam();
         initLiveEffects();
         initMotionMonitor();
+    }
+
+    private void initTheme() {
+        themeButton.setSelected(false);
+        Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
     }
 
     private void initWebcamChoiceBox() {
@@ -148,6 +158,16 @@ public class HomeController {
         freezeToggleButton.arm();
         flipToggleButton.arm();
         System.out.println("Interface enabled.");
+    }
+
+    @FXML
+    private void changeTheme() {
+        if (themeButton.isSelected()) {
+            Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
+        } else {
+            Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
+        }
+        themeButton.setText(themeButton.isSelected() ? "Dark" : "Light");
     }
 
     @FXML
