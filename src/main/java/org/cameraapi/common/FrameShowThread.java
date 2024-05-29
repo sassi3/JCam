@@ -7,7 +7,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.cameraapi.model.WebcamUtils;
+
 import java.util.Objects;
 import static java.lang.Thread.interrupted;
 

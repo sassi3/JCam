@@ -1,4 +1,4 @@
-package org.cameraapi.model;
+package org.cameraapi.common;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamResolution;

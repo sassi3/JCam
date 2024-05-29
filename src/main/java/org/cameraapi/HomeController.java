@@ -12,7 +12,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -31,7 +30,7 @@ import org.cameraapi.common.WebcamListener;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
-import org.cameraapi.model.WebcamUtils;
+import org.cameraapi.common.WebcamUtils;
 
 import static java.lang.Thread.interrupted;
 
