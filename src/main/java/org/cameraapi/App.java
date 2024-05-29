@@ -17,7 +17,7 @@ public class App extends Application {
         int screenHeight = (int) Screen.getPrimary().getBounds().getHeight();
         System.out.println("Screen resolution: " + screenWidth + " x " + screenHeight);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("camera-home-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("home.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
 

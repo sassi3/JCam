@@ -200,7 +200,7 @@ public class HomeController {
 
     @FXML
     public void openEditor(Image capture) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("editor.fxml"));
         Parent newPane = loader.load();
 
         EditorController controller = loader.getController();
