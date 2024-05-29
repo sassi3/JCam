@@ -220,8 +220,8 @@ public class HomeController {
         controller.initCanvas(capture);
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
-        ScreenController.slideFromRight(stackPane, "editor");
         controller.resize();
+        ScreenController.slideFromRight("editor");
     }
 
     @FXML
