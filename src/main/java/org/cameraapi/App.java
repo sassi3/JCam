@@ -1,6 +1,6 @@
 package org.cameraapi;
 
-import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.CupertinoDark;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,7 +18,7 @@ public class App extends Application {
         int screenHeight = (int) Screen.getPrimary().getBounds().getHeight();
         System.out.println("Screen resolution: " + screenWidth + " x " + screenHeight);
 
-        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+        Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
 
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("home.fxml"));
         Parent root = fxmlLoader.load();
