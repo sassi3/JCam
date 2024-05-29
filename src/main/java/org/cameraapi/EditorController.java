@@ -25,7 +25,7 @@ public class EditorController {
     @FXML
     Button returnButton;
     @FXML
-    AnchorPane editorPage;
+    AnchorPane anchorPane;
 
 
     private AnimationTimer timer;
@@ -69,6 +69,10 @@ public class EditorController {
         }
     }
 
+    public void handleHomePage() throws IOException {
+        ScreenController.slideFromLeft(anchorPane, "home");
+    }
+
     private void handleSave() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("save-dialog.fxml"));
@@ -103,9 +107,5 @@ public class EditorController {
         }
 
 
-    }
-
-    public void handleHomePage() throws IOException {
-        ScreenController.activate("home");
     }
 }
