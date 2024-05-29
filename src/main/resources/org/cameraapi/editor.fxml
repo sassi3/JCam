@@ -9,11 +9,11 @@
 
 <AnchorPane fx:id="anchorPane" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cameraapi.EditorController">
    <children>
-      <BorderPane layoutX="90.0" layoutY="79.0" prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
-            <AnchorPane prefHeight="34.0" prefWidth="892.0" BorderPane.alignment="CENTER_RIGHT">
+            <AnchorPane fx:id="bottomPane" prefHeight="71.0" prefWidth="900.0" BorderPane.alignment="CENTER_RIGHT">
                <BorderPane.margin>
-                  <Insets bottom="30.0" />
+                  <Insets />
                </BorderPane.margin>
                <children>
                   <Button fx:id="saveButton" layoutX="798.0" layoutY="7.0" mnemonicParsing="false" onAction="#onSaveButtonClicked" text="Save" />

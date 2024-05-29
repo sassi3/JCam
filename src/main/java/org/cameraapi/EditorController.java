@@ -26,15 +26,19 @@ public class EditorController {
     Button returnButton;
     @FXML
     AnchorPane anchorPane;
-
+    @FXML
+    AnchorPane bottomPane;
 
     private AnimationTimer timer;
+    double dx,dy;
 
     @FXML
     public void initialize() {
     }
 
     public void initCanvas(Image capture) {
+        dx = capture.getWidth() - imagePreview.getWidth();
+        dy = capture.getHeight() - imagePreview.getHeight();
         timer = new AnimationTimer() {
 
             @Override
@@ -88,6 +92,7 @@ public class EditorController {
         dialog.setTitle("Save Image");
         dialog.initModality(Modality.WINDOW_MODAL);
         dialog.setDialogPane(saveDialog);
+        dialog.initOwner(anchorPane.getScene().getWindow());
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.addEventFilter(ActionEvent.ACTION, event -> {
             controller.save();
@@ -96,6 +101,15 @@ public class EditorController {
         });
         dialog.setResizable(false);
         dialog.showAndWait();
+    }
+
+    public void resize(){
+        if(saveButton.getLayoutX() > anchorPane.getScene().getWindow().getWidth()){
+            anchorPane.getScene().getWindow().setWidth(anchorPane.getPrefWidth() + dx);
+        }
+        if(anchorPane.getPrefHeight() - bottomPane.getHeight() + saveButton.getLayoutY() > anchorPane.getScene().getWindow().getHeight()){
+            anchorPane.getScene().getWindow().setHeight(anchorPane.getPrefHeight() + dy);
+        }
     }
 
     @FXML

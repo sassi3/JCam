@@ -58,7 +58,8 @@ public class SaveDialogController {
             // https://stackoverflow.com/a/57674578
             BufferedImage awtImage = new BufferedImage((int)imageToSave.getWidth(), (int)imageToSave.getHeight(), BufferedImage.TYPE_INT_RGB);
             SwingFXUtils.fromFXImage(imageToSave, awtImage);
-            ImageIO.write(awtImage, typeChoiceBox.getSelectionModel().getSelectedItem(), target);
+            //Removing the dot from the type, since it must not be included
+            ImageIO.write(awtImage, typeChoiceBox.getSelectionModel().getSelectedItem().substring(1), target);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

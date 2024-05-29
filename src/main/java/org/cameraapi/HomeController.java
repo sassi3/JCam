@@ -187,7 +187,12 @@ public class HomeController {
         liveEffects.get(Freeze.class).toggle(webcamDisplay);
         if (liveEffects.get(Freeze.class).isApplied()) {
             Freeze.freeze(frameShowThread);
+            stabilityTrayThread.interrupt();
+            stabilityTray.setSelected(true);
         } else {
+            stabilityTray.setSelected(false);
+            initStabilityTrayThread();
+            stabilityTrayThread.start();
             frameShowThread.startShowingFrame();
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
@@ -216,6 +221,7 @@ public class HomeController {
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
         ScreenController.slideFromRight("editor");
+        controller.resize();
     }
 
     @FXML
