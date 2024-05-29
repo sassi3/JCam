@@ -8,7 +8,6 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -16,128 +15,124 @@
 
 <StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cameraapi.HomeController">
    <children>
-      <AnchorPane fx:id="anchorPane">
-         <children>
-            <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <bottom>
-                  <HBox BorderPane.alignment="CENTER">
+      <BorderPane>
+         <bottom>
+            <HBox BorderPane.alignment="CENTER">
+               <children>
+                  <StackPane HBox.hgrow="ALWAYS">
                      <children>
-                        <StackPane HBox.hgrow="ALWAYS">
-                           <children>
-                              <ToggleButton fx:id="flipToggleButton" mnemonicParsing="false" onAction="#flipCamera" prefHeight="25.0" prefWidth="70.0" text="Flip" StackPane.alignment="CENTER_RIGHT">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                                 <StackPane.margin>
-                                    <Insets right="30.0" />
-                                 </StackPane.margin>
-                              </ToggleButton>
-                           </children>
-                        </StackPane>
-                        <StackPane HBox.hgrow="NEVER">
-                           <children>
-                              <Button fx:id="captureButton" mnemonicParsing="false" onAction="#takePicture" prefHeight="45.0" prefWidth="80.0" text="Capture" StackPane.alignment="CENTER">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                                 <StackPane.margin>
-                                    <Insets />
-                                 </StackPane.margin>
-                              </Button>
-                           </children>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </StackPane>
-                        <StackPane HBox.hgrow="ALWAYS">
-                           <children>
-                              <ToggleButton fx:id="freezeToggleButton" mnemonicParsing="false" onAction="#freezeCamera" prefHeight="25.0" prefWidth="70.0" text="Freeze" StackPane.alignment="CENTER_LEFT">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                                 <StackPane.margin>
-                                    <Insets left="30.0" />
-                                 </StackPane.margin>
-                              </ToggleButton>
-                           </children>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </StackPane>
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
-                     </padding>
-                  </HBox>
-               </bottom>
-               <center>
-                  <StackPane BorderPane.alignment="CENTER">
-                     <children>
-                        <ImageView fx:id="webcamDisplay" fitHeight="428.0" fitWidth="631.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+                        <ToggleButton fx:id="flipToggleButton" mnemonicParsing="false" onAction="#flipCamera" prefHeight="25.0" prefWidth="70.0" text="Flip" StackPane.alignment="CENTER_RIGHT">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <StackPane.margin>
+                              <Insets right="30.0" />
+                           </StackPane.margin>
+                        </ToggleButton>
                      </children>
                   </StackPane>
-               </center>
-               <top>
-                  <HBox BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
+                  <StackPane HBox.hgrow="NEVER">
                      <children>
-                        <StackPane>
+                        <Button fx:id="captureButton" mnemonicParsing="false" onAction="#takePicture" prefHeight="45.0" prefWidth="80.0" text="Capture" StackPane.alignment="CENTER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                        </Button>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </StackPane>
+                  <StackPane HBox.hgrow="ALWAYS">
+                     <children>
+                        <ToggleButton fx:id="freezeToggleButton" mnemonicParsing="false" onAction="#freezeCamera" prefHeight="25.0" prefWidth="70.0" text="Freeze" StackPane.alignment="CENTER_LEFT">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <StackPane.margin>
+                              <Insets left="30.0" />
+                           </StackPane.margin>
+                        </ToggleButton>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </StackPane>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+            </HBox>
+         </bottom>
+         <center>
+            <StackPane BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fx:id="webcamDisplay" fitHeight="428.0" fitWidth="631.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+               </children>
+            </StackPane>
+         </center>
+         <top>
+            <HBox BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <children>
+                  <StackPane>
+                     <children>
+                        <Label text="Stable:" StackPane.alignment="CENTER_LEFT" />
+                        <StackPane StackPane.alignment="CENTER_LEFT">
+                           <StackPane.margin>
+                              <Insets left="45.0" />
+                           </StackPane.margin>
                            <children>
-                              <Label text="Stable:" StackPane.alignment="CENTER_LEFT" />
-                              <StackPane StackPane.alignment="CENTER_LEFT">
-                                 <StackPane.margin>
-                                    <Insets left="45.0" />
-                                 </StackPane.margin>
-                                 <children>
-                                    <RadioButton fx:id="stabilityTray" mnemonicParsing="false" mouseTransparent="true" />
-                                 </children>
-                              </StackPane>
-                           </children>
-                        </StackPane>
-                        <StackPane HBox.hgrow="ALWAYS">
-                           <children>
-                              <ChoiceBox fx:id="webcamList" prefHeight="25.0" prefWidth="175.0" StackPane.alignment="CENTER">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                                 <StackPane.margin>
-                                    <Insets />
-                                 </StackPane.margin>
-                              </ChoiceBox>
-                           </children>
-                        </StackPane>
-                        <StackPane HBox.hgrow="NEVER">
-                           <children>
-                              <ToggleButton fx:id="themeButton" mnemonicParsing="false" onAction="#changeTheme" text="Light" StackPane.alignment="CENTER" />
+                              <RadioButton fx:id="stabilityTray" mnemonicParsing="false" mouseTransparent="true" />
                            </children>
                         </StackPane>
                      </children>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <padding>
-                        <Insets bottom="10.0" left="20.0" right="20.0" top="15.0" />
-                     </padding>
-                  </HBox>
-               </top>
-               <left>
-                  <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </VBox>
-               </left>
-               <right>
-                  <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </VBox>
-               </right>
-            </BorderPane>
-         </children>
-      </AnchorPane>
+                  </StackPane>
+                  <StackPane HBox.hgrow="ALWAYS">
+                     <children>
+                        <ChoiceBox fx:id="webcamList" prefHeight="25.0" prefWidth="175.0" StackPane.alignment="CENTER">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                        </ChoiceBox>
+                     </children>
+                  </StackPane>
+                  <StackPane HBox.hgrow="NEVER">
+                     <children>
+                        <ToggleButton fx:id="themeButton" mnemonicParsing="false" onAction="#changeTheme" text="Light" StackPane.alignment="CENTER" />
+                     </children>
+                  </StackPane>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="15.0" />
+               </padding>
+            </HBox>
+         </top>
+         <left>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </left>
+         <right>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </right>
+      </BorderPane>
    </children>
 </StackPane>
