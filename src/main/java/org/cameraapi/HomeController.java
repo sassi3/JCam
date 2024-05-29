@@ -216,9 +216,6 @@ public class HomeController {
         KeyValue kv = new KeyValue(newPane.translateXProperty(), 0, Interpolator.EASE_IN);
         KeyFrame kf = new KeyFrame(Duration.seconds(0.4), kv);
         timeline.getKeyFrames().add(kf);
-        timeline.setOnFinished(t -> {
-            anchorPane.getChildren().remove(anchorPane);
-        });
         timeline.play();
     }
 
