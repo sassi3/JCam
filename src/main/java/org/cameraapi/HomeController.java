@@ -9,16 +9,10 @@ import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
 import javafx.collections.FXCollections;
@@ -46,6 +40,7 @@ public class HomeController {
     @FXML private ImageView printablePicture;
     private Image rawPicture;
     private Image currentPicture;
+    @FXML Label FPSLabel;
 
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
     private Image frozenPicture;
