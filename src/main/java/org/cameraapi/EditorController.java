@@ -1,13 +1,10 @@
 package org.cameraapi;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -16,10 +13,8 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Optional;
 
 
 public class EditorController {
@@ -34,8 +29,6 @@ public class EditorController {
 
 
     private AnimationTimer timer;
-
-
 
     @FXML
     public void initialize() {
