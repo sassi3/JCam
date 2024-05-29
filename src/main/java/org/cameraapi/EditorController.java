@@ -92,6 +92,7 @@ public class EditorController {
         dialog.setTitle("Save Image");
         dialog.initModality(Modality.WINDOW_MODAL);
         dialog.setDialogPane(saveDialog);
+        dialog.initOwner(anchorPane.getScene().getWindow());
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.addEventFilter(ActionEvent.ACTION, event -> {
             controller.save();
