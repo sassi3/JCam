@@ -14,6 +14,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
@@ -47,7 +48,8 @@ public class HomeController {
     private Image frozenPicture;
     private boolean frozenFlipStatus;
 
-    @FXML private AnchorPane mainPane;
+    @FXML private StackPane stackPane;
+    @FXML private AnchorPane anchorPane;
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
@@ -199,24 +201,23 @@ public class HomeController {
     @FXML
     public void openEditor(Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor-controller-view.fxml"));
-        Parent root = loader.load();
+        Parent newPane = loader.load();
 
         EditorController controller = loader.getController();
-
         controller.initCanvas(capture);
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
-        Scene scene = mainPane.getScene();
-        root.translateXProperty().set(scene.getWidth());
-        ScreenController.addScreen("editor", root);
+        double sceneWidth = stackPane.getScene().getWidth();
+        newPane.translateXProperty().set(sceneWidth);
+        ScreenController.addScreen("editor", newPane);
         ScreenController.activate("editor");
 
         Timeline timeline = new Timeline();
-        KeyValue kv = new KeyValue(root.translateXProperty(), 0, Interpolator.EASE_IN);
+        KeyValue kv = new KeyValue(newPane.translateXProperty(), 0, Interpolator.EASE_IN);
         KeyFrame kf = new KeyFrame(Duration.seconds(0.4), kv);
         timeline.getKeyFrames().add(kf);
         timeline.setOnFinished(t -> {
-            mainPane.getChildren().remove(mainPane);
+            anchorPane.getChildren().remove(anchorPane);
         });
         timeline.play();
     }
