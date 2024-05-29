@@ -7,6 +7,7 @@ module org.example.cameraapi {
     requires webcam.capture;
     requires javafx.swing;
     requires javafx.base;
+    requires atlantafx.base;
 
 
     opens org.cameraapi to javafx.fxml;
