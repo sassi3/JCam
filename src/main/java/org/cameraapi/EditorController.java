@@ -26,7 +26,8 @@ public class EditorController {
     Button returnButton;
     @FXML
     AnchorPane anchorPane;
-
+    @FXML
+    AnchorPane bottomPane;
 
     private AnimationTimer timer;
     double dx,dy;
@@ -102,8 +103,12 @@ public class EditorController {
     }
 
     public void resize(){
-        anchorPane.getScene().getWindow().setWidth(anchorPane.getWidth() + dx);
-        anchorPane.getScene().getWindow().setHeight(anchorPane.getHeight() + dy);
+        if(saveButton.getLayoutX() > anchorPane.getScene().getWindow().getWidth()){
+            anchorPane.getScene().getWindow().setWidth(anchorPane.getPrefWidth() + dx);
+        }
+        if(anchorPane.getPrefHeight() - bottomPane.getHeight() + saveButton.getLayoutY() > anchorPane.getScene().getWindow().getHeight()){
+            anchorPane.getScene().getWindow().setHeight(anchorPane.getPrefHeight() + dy);
+        }
     }
 
     @FXML
