@@ -1,7 +1,6 @@
 package org.cameraapi;
 
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -10,15 +9,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
-import org.bytedeco.opencv.presets.opencv_core;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Target;
-import java.nio.file.Path;
 
 public class SaveDialogController {
 
@@ -100,11 +95,8 @@ public class SaveDialogController {
         typeChoiceBox.getSelectionModel().selectFirst();
     }
 
-
-
     public void initPreview(Image image){
         preview.setImage(image);
         imageToSave = image;
     }
-
 }
