@@ -110,7 +110,7 @@
                         </StackPane>
                         <StackPane HBox.hgrow="NEVER">
                            <children>
-                              <ToggleButton mnemonicParsing="false" text="Light" StackPane.alignment="CENTER" />
+                              <ToggleButton fx:id="themeButton" mnemonicParsing="false" onAction="#changeTheme" text="Light" StackPane.alignment="CENTER" />
                            </children>
                         </StackPane>
                      </children>
