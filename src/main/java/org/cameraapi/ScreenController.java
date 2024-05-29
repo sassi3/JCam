@@ -33,17 +33,18 @@ public class ScreenController {
         main.setRoot(newPane);
     }
 
-    public static void slideFromRight(Parent oldParent, String name) {
+    public static void slideFromRight(String name) {
         Parent newParent = screenMap.get(name);
+        Parent oldParent = main.getRoot();
         double sceneWidth = oldParent.getScene().getWidth();
         newParent.translateXProperty().set(sceneWidth);
         activate(name);
 
-        Timeline timeline = new Timeline();
+        Timeline newParentTimeline = new Timeline();
         KeyValue kv = new KeyValue(newParent.translateXProperty(), 0, Interpolator.EASE_IN);
         KeyFrame kf = new KeyFrame(Duration.seconds(0.4), kv);
-        timeline.getKeyFrames().add(kf);
-        timeline.play();
+        newParentTimeline.getKeyFrames().add(kf);
+        newParentTimeline.play();
     }
 
     public static void slideFromLeft(Parent oldParent, String name) {
