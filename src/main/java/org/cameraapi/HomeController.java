@@ -151,30 +151,6 @@ public class HomeController {
     }
 
     @FXML
-    private void takePicture() {
-        try {
-            rawPicture = webcamDisplay.getImage();
-            currentPicture = rawPicture;
-            openEditor(currentPicture);
-        } catch (IOException e) {
-            AlertWindows.showFailedToTakePictureAlert();
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void closeCameraHomeScene() {
-        if (frameShowThread.getFrameShowThread().isAlive()) {
-            try {
-                frameShowThread.stopShowingFrame();
-                stopStabilityTrayThread();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        WebcamUtils.shutDownWebcams(webcams);
-    }
-
-    @FXML
     private void flipCamera() {
         if (liveEffects.get(Flip.class).isDisabled()) {
             throw new RuntimeException("Flip is currently disabled.");
@@ -195,6 +171,18 @@ public class HomeController {
             frameShowThread.startShowingFrame();
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
+    }
+
+    @FXML
+    private void takePicture() {
+        try {
+            rawPicture = webcamDisplay.getImage();
+            currentPicture = rawPicture;
+            openEditor(currentPicture);
+        } catch (Exception e) {
+            AlertWindows.showFailedToTakePictureAlert();
+            throw new RuntimeException(e);
+        }
     }
 
     @FXML
