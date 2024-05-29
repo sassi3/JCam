@@ -209,21 +209,13 @@ public class HomeController {
     public void openEditor(Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor.fxml"));
         Parent newPane = loader.load();
+        ScreenController.addScreen("editor", newPane);
 
         EditorController controller = loader.getController();
         controller.initCanvas(capture);
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
-        double sceneWidth = stackPane.getScene().getWidth();
-        newPane.translateXProperty().set(sceneWidth);
-        ScreenController.addScreen("editor", newPane);
-        ScreenController.activate("editor");
-
-        Timeline timeline = new Timeline();
-        KeyValue kv = new KeyValue(newPane.translateXProperty(), 0, Interpolator.EASE_IN);
-        KeyFrame kf = new KeyFrame(Duration.seconds(0.4), kv);
-        timeline.getKeyFrames().add(kf);
-        timeline.play();
+        ScreenController.slideFromRight(stackPane, "editor");
     }
 
     @FXML
