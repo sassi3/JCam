@@ -3,34 +3,59 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cameraapi.EditorController">
+
+<StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cameraapi.EditorController">
    <children>
-      <BorderPane prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane>
          <bottom>
-            <AnchorPane fx:id="bottomPane" prefHeight="71.0" prefWidth="900.0" BorderPane.alignment="CENTER_RIGHT">
+            <HBox BorderPane.alignment="CENTER_RIGHT">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
                <children>
-                  <Button fx:id="saveButton" layoutX="798.0" layoutY="7.0" mnemonicParsing="false" onAction="#onSaveButtonClicked" text="Save" />
-                  <Button fx:id="returnButton" layoutX="38.0" layoutY="7.0" mnemonicParsing="false" onAction="#onReturnButtonClicked" text="Return" />
+                  <StackPane HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="returnButton" mnemonicParsing="false" onAction="#onReturnButtonClicked" text="Return" StackPane.alignment="CENTER_LEFT" />
+                     </children>
+                  </StackPane>
+                  <StackPane HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#onSaveButtonClicked" text="Save" StackPane.alignment="CENTER_RIGHT" />
+                     </children>
+                  </StackPane>
                </children>
-            </AnchorPane>
+               <padding>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </padding>
+            </HBox>
          </bottom>
          <left>
-            <VBox prefHeight="595.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+            <VBox BorderPane.alignment="CENTER" />
          </left>
          <center>
-            <Canvas fx:id="imagePreview" height="355.0" width="509.0" BorderPane.alignment="CENTER">
+            <StackPane BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets right="100.0" top="50.0" />
+                  <Insets />
                </BorderPane.margin>
-            </Canvas>
+               <children>
+                  <Canvas fx:id="imagePreview" height="355.0" width="509.0" StackPane.alignment="CENTER" />
+               </children>
+               <padding>
+                  <Insets left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </StackPane>
          </center>
+         <top>
+            <HBox BorderPane.alignment="CENTER" />
+         </top>
+         <right>
+            <VBox BorderPane.alignment="CENTER" />
+         </right>
       </BorderPane>
    </children>
-</AnchorPane>
+</StackPane>

@@ -221,7 +221,6 @@ public class HomeController {
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
         ScreenController.slideFromRight("editor");
-        controller.resize();
     }
 
     @FXML

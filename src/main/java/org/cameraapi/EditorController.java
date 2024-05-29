@@ -12,6 +12,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 
 import java.io.IOException;
@@ -25,20 +26,15 @@ public class EditorController {
     @FXML
     Button returnButton;
     @FXML
-    AnchorPane anchorPane;
-    @FXML
-    AnchorPane bottomPane;
+    StackPane stackPane;
 
     private AnimationTimer timer;
-    double dx,dy;
 
     @FXML
     public void initialize() {
     }
 
     public void initCanvas(Image capture) {
-        dx = capture.getWidth() - imagePreview.getWidth();
-        dy = capture.getHeight() - imagePreview.getHeight();
         timer = new AnimationTimer() {
 
             @Override
@@ -74,7 +70,7 @@ public class EditorController {
     }
 
     public void handleHomePage() throws IOException {
-        ScreenController.slideFromLeft(anchorPane, "home");
+        ScreenController.slideFromLeft("home");
     }
 
     private void handleSave() throws IOException {
@@ -92,7 +88,7 @@ public class EditorController {
         dialog.setTitle("Save Image");
         dialog.initModality(Modality.WINDOW_MODAL);
         dialog.setDialogPane(saveDialog);
-        dialog.initOwner(anchorPane.getScene().getWindow());
+        dialog.initOwner(stackPane.getScene().getWindow());
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.addEventFilter(ActionEvent.ACTION, event -> {
             controller.save();
@@ -103,15 +99,6 @@ public class EditorController {
         dialog.showAndWait();
     }
 
-    public void resize(){
-        if(saveButton.getLayoutX() > anchorPane.getScene().getWindow().getWidth()){
-            anchorPane.getScene().getWindow().setWidth(anchorPane.getPrefWidth() + dx);
-        }
-        if(anchorPane.getPrefHeight() - bottomPane.getHeight() + saveButton.getLayoutY() > anchorPane.getScene().getWindow().getHeight()){
-            anchorPane.getScene().getWindow().setHeight(anchorPane.getPrefHeight() + dy);
-        }
-    }
-
     @FXML
     public void onSaveButtonClicked() {
         try {
@@ -119,7 +106,5 @@ public class EditorController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 }
