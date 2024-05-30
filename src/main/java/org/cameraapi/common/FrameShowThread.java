@@ -10,8 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
 import java.util.Objects;
-import static java.lang.Thread.interrupted;
-import static java.lang.Thread.sleep;
 
 public class FrameShowThread extends Thread {
     private final ChoiceBox<Webcam> webcamList;

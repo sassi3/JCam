@@ -1,6 +1,5 @@
 package org.cameraapi;
 
-import atlantafx.base.theme.CupertinoDark;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
