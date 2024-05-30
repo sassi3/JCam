@@ -18,6 +18,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
@@ -57,6 +58,7 @@ public class HomeController {
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
     @FXML private ChoiceBox<Webcam> webcamList;
+    @FXML private Text FPSTray;
 
     private WebcamMotionDetector motionDetector;
     @FXML private RadioButton stabilityTray;
@@ -87,7 +89,7 @@ public class HomeController {
         Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
         webcamList.setValue(activeWebcam);
         WebcamUtils.startUpWebcam(activeWebcam, null);
-        frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
+        frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay, FPSTray);
         initFrameShowThread(frameShowThread);
     }
 
