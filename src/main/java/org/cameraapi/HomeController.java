@@ -14,7 +14,6 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
 import javafx.collections.FXCollections;
@@ -42,7 +41,6 @@ public class HomeController {
     @FXML private ImageView printablePicture;
     private Image rawPicture;
     private Image currentPicture;
-    @FXML Label FPSLabel;
 
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
     private Image frozenPicture;
