@@ -76,18 +76,15 @@ public class FrameShowThread extends Thread {
 
     private void runFPSTrayThread() {
         FPSTrayThread = new Thread(() -> {
-            if (Objects.nonNull(FPSTray)) {
-                long start = Instant.now().toEpochMilli();
-                System.out.println("FPSTray is running.");
-                while (!interrupted()) {
-                    if (Instant.now().toEpochMilli() - start >= 1000) {
-                        FPSTray.setText("FPS: " + (int) activeWebcam.getFPS());
-                        start = Instant.now().toEpochMilli();
-                    }
+            System.out.println("FPSTray is running.");
+            long start = Instant.now().toEpochMilli();
+            while (!interrupted()) {
+                if (Instant.now().toEpochMilli() - start >= 1000) {
+                    FPSTray.setText("FPS: " + (int) activeWebcam.getFPS());
+                    start = Instant.now().toEpochMilli();
                 }
-            } else {
-                System.out.println("FPSTray not running. Text area is null");
             }
+            System.out.println("FPSTray stopped.");
         });
     }
 
