@@ -37,33 +37,28 @@ public class FrameShowThread extends Thread {
         }
         webcamDisplay.imageProperty().bind(imageProperty);
         this.initFrameShowThread();
-        this.initFPSTrayThread();
         if (!this.isAlive()) {
             throw new IllegalThreadStateException("Failed to start " + this.getName() + ".");
         }
     }
 
     private void initFrameShowThread() {
-        this.setDaemon(true);
         this.setName("Webcam Frame-Showing Thread");
+        this.setDaemon(true);
+        this.setPriority(MAX_PRIORITY);
         this.start();
-    }
-
-    private void initFPSTrayThread() {
-        this.runFPSTrayThread();
-        FPSTrayThread.setDaemon(true);
-        FPSTrayThread.setName("FPSTray Thread");
-        FPSTrayThread.start();
     }
 
     @Override
     public void run() {
+        System.out.println(this.getName() + " started.");
         webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
             activeWebcam = newWebcam;
             if (!activeWebcam.isOpen()) {
                 WebcamUtils.startUpWebcam(activeWebcam, null);
             }
         });
+        this.initFPSTrayThread();
         while (!interrupted()) {
             try {
                 imageProperty.set(SwingFXUtils.toFXImage(activeWebcam.getImage(), null));
@@ -72,22 +67,27 @@ public class FrameShowThread extends Thread {
                 break;
             }
         }
+        System.out.println(this.getName() + " terminated.");
+    }
+
+    private void initFPSTrayThread() {
+        this.runFPSTrayThread();
+        FPSTrayThread.setName("FPSTray Thread");
+        FPSTrayThread.setDaemon(true);
+        FPSTrayThread.start();
     }
 
     private void runFPSTrayThread() {
         FPSTrayThread = new Thread(() -> {
-            if (Objects.nonNull(FPSTray)) {
-                long start = Instant.now().toEpochMilli();
-                System.out.println("FPSTray is running.");
-                while (!interrupted()) {
-                    if(Instant.now().toEpochMilli() - start >= 1000) {
-                        FPSTray.setText("FPS: " + (int) activeWebcam.getFPS());
-                        start = Instant.now().toEpochMilli();
-                    }
+            System.out.println("FPSTray started.");
+            long start = Instant.now().toEpochMilli();
+            while (!interrupted()) {
+                if (Instant.now().toEpochMilli() - start >= 1000) {
+                    FPSTray.setText("FPS: " + (int) activeWebcam.getFPS());
+                    start = Instant.now().toEpochMilli();
                 }
-            } else {
-                System.out.println("FPSTray not running. Text area is null");
             }
+            System.out.println("FPSTray terminated.");
         });
     }
 
