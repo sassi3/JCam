@@ -43,8 +43,9 @@ public class FrameShowThread extends Thread {
     }
 
     private void initFrameShowThread() {
-        this.setDaemon(true);
         this.setName("Webcam Frame-Showing Thread");
+        this.setDaemon(true);
+        this.setPriority(MAX_PRIORITY);
         this.start();
     }
 
@@ -69,8 +70,8 @@ public class FrameShowThread extends Thread {
 
     private void initFPSTrayThread() {
         this.runFPSTrayThread();
-        FPSTrayThread.setDaemon(true);
         FPSTrayThread.setName("FPSTray Thread");
+        FPSTrayThread.setDaemon(true);
         FPSTrayThread.start();
     }
 
