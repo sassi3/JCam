@@ -13,6 +13,7 @@ import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
 import javafx.collections.FXCollections;
@@ -40,7 +41,6 @@ public class HomeController {
     @FXML private ImageView printablePicture;
     private Image rawPicture;
     private Image currentPicture;
-    @FXML Label FPSLabel;
 
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
     private Image frozenPicture;
@@ -52,6 +52,7 @@ public class HomeController {
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
     @FXML private ChoiceBox<Webcam> webcamList;
+    @FXML private Text FPSTray;
 
     private WebcamMotionDetector motionDetector;
     @FXML private RadioButton stabilityTray;
@@ -82,7 +83,7 @@ public class HomeController {
         Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
         webcamList.setValue(activeWebcam);
         WebcamUtils.startUpWebcam(activeWebcam, null);
-        frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay);
+        frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay, FPSTray);
         initFrameShowThread(frameShowThread);
     }
 
