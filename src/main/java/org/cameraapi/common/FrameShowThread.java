@@ -37,7 +37,6 @@ public class FrameShowThread extends Thread {
         }
         webcamDisplay.imageProperty().bind(imageProperty);
         this.initFrameShowThread();
-        this.initFPSTrayThread();
         if (!this.isAlive()) {
             throw new IllegalThreadStateException("Failed to start " + this.getName() + ".");
         }
@@ -49,13 +48,6 @@ public class FrameShowThread extends Thread {
         this.start();
     }
 
-    private void initFPSTrayThread() {
-        this.runFPSTrayThread();
-        FPSTrayThread.setDaemon(true);
-        FPSTrayThread.setName("FPSTray Thread");
-        FPSTrayThread.start();
-    }
-
     @Override
     public void run() {
         webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
@@ -64,6 +56,7 @@ public class FrameShowThread extends Thread {
                 WebcamUtils.startUpWebcam(activeWebcam, null);
             }
         });
+        this.initFPSTrayThread();
         while (!interrupted()) {
             try {
                 imageProperty.set(SwingFXUtils.toFXImage(activeWebcam.getImage(), null));
@@ -72,6 +65,13 @@ public class FrameShowThread extends Thread {
                 break;
             }
         }
+    }
+
+    private void initFPSTrayThread() {
+        this.runFPSTrayThread();
+        FPSTrayThread.setDaemon(true);
+        FPSTrayThread.setName("FPSTray Thread");
+        FPSTrayThread.start();
     }
 
     private void runFPSTrayThread() {
