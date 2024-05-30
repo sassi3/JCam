@@ -183,6 +183,7 @@ public class HomeController {
         liveEffects.get(Freeze.class).toggle(webcamDisplay);
         if (liveEffects.get(Freeze.class).isApplied()) {
             Freeze.freeze(frameShowThread);
+            FPSTray.setText("FPS: N.A.");
             stabilityTrayThread.interrupt();
             stabilityTray.setSelected(true);
         } else {
