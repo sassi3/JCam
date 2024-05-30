@@ -189,7 +189,7 @@ public class HomeController {
             stabilityTray.setSelected(false);
             initStabilityTrayThread();
             stabilityTrayThread.start();
-            frameShowThread.startShowingFrame();
+            frameShowThread =  Freeze.unfreeze(frameShowThread);
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");
     }
