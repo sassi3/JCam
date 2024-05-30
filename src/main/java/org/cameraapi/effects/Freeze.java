@@ -1,7 +1,10 @@
 package org.cameraapi.effects;
 
+import com.github.sarxos.webcam.Webcam;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
 import org.cameraapi.common.FrameShowThread;
 
 import java.util.Objects;
@@ -23,6 +26,17 @@ public class Freeze extends LiveEffect {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static FrameShowThread unfreeze(FrameShowThread thread) {
+        Objects.requireNonNull(thread);
+        ChoiceBox<Webcam> choiceBox = thread.getWebcamList();
+        Webcam webcam = thread.getActiveWebcam();
+        ImageView imageView = thread.getWebcamDisplay();
+        Text text = thread.getFPSTray();
+        thread = new FrameShowThread(choiceBox, webcam, imageView, text);
+        thread.startShowingFrame();
+        return thread;
     }
 
     // Unused mat2Image converter, but maybe useful for
