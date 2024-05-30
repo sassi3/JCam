@@ -3,12 +3,10 @@ package org.cameraapi;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Optional;
 
 import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamMotionDetector;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
@@ -22,7 +20,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Modality;
 import javafx.fxml.FXML;
 
 import org.cameraapi.common.WebcamListener;
@@ -30,8 +27,6 @@ import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
 import org.cameraapi.common.WebcamUtils;
-
-import static java.lang.Thread.interrupted;
 
 public class HomeController {
     private static ObservableList<Webcam> webcams;
@@ -42,8 +37,6 @@ public class HomeController {
     private Image currentPicture;
 
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
-    private Image frozenPicture;
-    private boolean frozenFlipStatus;
 
     @FXML private StackPane stackPane;
     @FXML private ToggleButton themeButton;
@@ -53,16 +46,13 @@ public class HomeController {
     @FXML private ChoiceBox<Webcam> webcamChoiceBox;
     @FXML private Text FPSTray;
 
-    private WebcamMotionDetector motionDetector;
     @FXML private RadioButton stabilityTray;
-    private Thread stabilityTrayThread;
 
     public void initialize() {
         initTheme();
         initWebcamChoiceBox();
         initWebcam();
         initLiveEffects();
-        initMotionMonitor();
     }
 
     private void initTheme() {
@@ -82,7 +72,7 @@ public class HomeController {
         Webcam activeWebcam = webcamChoiceBox.getSelectionModel().getSelectedItem();
         webcamChoiceBox.setValue(activeWebcam);
         WebcamUtils.startUpWebcam(activeWebcam, null);
-        frameShowThread = new FrameShowThread(webcamChoiceBox, activeWebcam, webcamImageView, FPSTray);
+        frameShowThread = new FrameShowThread(webcamChoiceBox, activeWebcam, webcamImageView, FPSTray, stabilityTray);
         initFrameShowThread(frameShowThread);
     }
 
@@ -100,45 +90,6 @@ public class HomeController {
             effect.enable();
         }
         liveEffects.get(Flip.class).toggle(webcamImageView);
-    }
-
-    private void initMotionMonitor() {
-        stabilityTray.setSelected(true);
-        stabilityTray.disarm();
-
-        int interval = 210;
-        int threshold = 10;
-        int inertia = 10;
-        motionDetector = new WebcamMotionDetector(webcamChoiceBox.getSelectionModel().getSelectedItem(), threshold, inertia);
-        motionDetector.setInterval(interval);
-        motionDetector.start();
-        initStabilityTrayThread();
-        stabilityTrayThread.start();
-    }
-    private void initStabilityTrayThread() {
-        stabilityTrayThread = new Thread(() -> {
-            System.out.println("StabilityTray thread started.");
-            while (!interrupted() || Objects.isNull(motionDetector)) {
-                boolean previousStabilityStatus = stabilityTray.isSelected();
-                boolean currentStabilityStatus = !motionDetector.isMotion();
-                if (currentStabilityStatus != previousStabilityStatus) {
-                    stabilityTray.setSelected(currentStabilityStatus);
-                }
-            }
-            System.out.println("StabilityTray thread stopped.");
-        });
-        stabilityTrayThread.setDaemon(true);
-    }
-    private void stopStabilityTrayThread() throws InterruptedException {
-        if (!stabilityTrayThread.isAlive()) {
-            throw new IllegalStateException("StabilityTray thread is not alive.");
-        }
-        stabilityTrayThread.interrupt();
-        stabilityTrayThread.join();
-        if (stabilityTrayThread.isAlive()) {
-            throw new IllegalStateException("StabilityTray thread is still alive.");
-        }
-        stabilityTray.setSelected(false);
     }
 
     public void disableInterface() {
@@ -182,13 +133,7 @@ public class HomeController {
         liveEffects.get(Freeze.class).toggle(webcamImageView);
         if (liveEffects.get(Freeze.class).isApplied()) {
             Freeze.freeze(frameShowThread);
-            FPSTray.setText("FPS: --");
-            stabilityTrayThread.interrupt();
-            stabilityTray.setSelected(true);
         } else {
-            stabilityTray.setSelected(false);
-            initStabilityTrayThread();
-            stabilityTrayThread.start();
             frameShowThread = Freeze.unfreeze(frameShowThread);
         }
         freezeToggleButton.setText(freezeToggleButton.isSelected() ? "Unfreeze" : "Freeze");

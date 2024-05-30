@@ -2,7 +2,7 @@ package org.cameraapi.effects;
 
 import com.github.sarxos.webcam.Webcam;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.image.Image;
+import javafx.scene.control.RadioButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import org.cameraapi.common.FrameShowThread;
@@ -30,11 +30,12 @@ public class Freeze extends LiveEffect {
 
     public static FrameShowThread unfreeze(FrameShowThread thread) {
         Objects.requireNonNull(thread);
-        ChoiceBox<Webcam> choiceBox = thread.getWebcamList();
+        ChoiceBox<Webcam> choiceBox = thread.getWebcamChoiceBox();
         Webcam webcam = thread.getActiveWebcam();
         ImageView imageView = thread.getWebcamDisplay();
         Text text = thread.getFPSTray();
-        thread = new FrameShowThread(choiceBox, webcam, imageView, text);
+        RadioButton stabilityTray = thread.getStabilityTray();
+        thread = new FrameShowThread(choiceBox, webcam, imageView, text, stabilityTray);
         thread.startShowingFrame();
         return thread;
     }
