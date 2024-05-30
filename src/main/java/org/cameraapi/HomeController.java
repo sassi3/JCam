@@ -218,29 +218,4 @@ public class HomeController {
 
         ScreenController.slideFromRight("editor");
     }
-
-    @FXML
-    public void handleWebcamChangeDialog() {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("webcam-change-dialog.fxml"));
-        try {
-            DialogPane changePane = loader.load();
-
-            WebcamChangeDialogController ChangeDialogController = loader.getController();
-
-            Dialog<ButtonType> dialog = new Dialog<>();
-            dialog.setDialogPane(changePane);
-            dialog.setTitle("Warning");
-            dialog.initModality(Modality.WINDOW_MODAL);
-
-            Optional<ButtonType> clickedButton = dialog.showAndWait();
-            if (clickedButton.orElse(ButtonType.NO) == ButtonType.YES) {
-                // if the dialog button pressed is the YES button it will reset the effect
-                ChangeDialogController.reset(liveEffects);
-            }
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
