@@ -80,7 +80,7 @@ public class FrameShowThread extends Thread {
                 long start = Instant.now().toEpochMilli();
                 System.out.println("FPSTray is running.");
                 while (!interrupted()) {
-                    if(Instant.now().toEpochMilli() - start >= 1000) {
+                    if (Instant.now().toEpochMilli() - start >= 1000) {
                         FPSTray.setText("FPS: " + (int) activeWebcam.getFPS());
                         start = Instant.now().toEpochMilli();
                     }
