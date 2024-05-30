@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
+import java.time.Instant;
 import java.util.Objects;
 
 public class FrameShowThread extends Thread {
@@ -76,13 +77,12 @@ public class FrameShowThread extends Thread {
     private void runFPSTrayThread() {
         FPSTrayThread = new Thread(() -> {
             if (Objects.nonNull(FPSTray)) {
+                long start = Instant.now().toEpochMilli();
                 System.out.println("FPSTray is running.");
                 while (!interrupted()) {
-                    FPSTray.setText("FPS: " + (int) activeWebcam.getFPS());
-                    try {
-                        sleep(1000L);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    if(Instant.now().toEpochMilli() - start >= 1000) {
+                        FPSTray.setText("FPS: " + (int) activeWebcam.getFPS());
+                        start = Instant.now().toEpochMilli();
                     }
                 }
             } else {
@@ -110,5 +110,21 @@ public class FrameShowThread extends Thread {
         } else {
             throw new IllegalThreadStateException(this.getName() + " already stopped.");
         }
+    }
+
+    public ChoiceBox<Webcam> getWebcamList() {
+        return webcamList;
+    }
+
+    public Text getFPSTray() {
+        return FPSTray;
+    }
+
+    public Webcam getActiveWebcam() {
+        return activeWebcam;
+    }
+
+    public ImageView getWebcamDisplay() {
+        return webcamDisplay;
     }
 }
