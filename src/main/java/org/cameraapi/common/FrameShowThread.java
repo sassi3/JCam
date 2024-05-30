@@ -51,6 +51,7 @@ public class FrameShowThread extends Thread {
 
     @Override
     public void run() {
+        System.out.println(this.getName() + " started.");
         webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
             activeWebcam = newWebcam;
             if (!activeWebcam.isOpen()) {
@@ -66,6 +67,7 @@ public class FrameShowThread extends Thread {
                 break;
             }
         }
+        System.out.println(this.getName() + " terminated.");
     }
 
     private void initFPSTrayThread() {
@@ -77,7 +79,7 @@ public class FrameShowThread extends Thread {
 
     private void runFPSTrayThread() {
         FPSTrayThread = new Thread(() -> {
-            System.out.println("FPSTray is running.");
+            System.out.println("FPSTray started.");
             long start = Instant.now().toEpochMilli();
             while (!interrupted()) {
                 if (Instant.now().toEpochMilli() - start >= 1000) {
@@ -85,7 +87,7 @@ public class FrameShowThread extends Thread {
                     start = Instant.now().toEpochMilli();
                 }
             }
-            System.out.println("FPSTray stopped.");
+            System.out.println("FPSTray terminated.");
         });
     }
 

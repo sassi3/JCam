@@ -37,8 +37,7 @@ public class HomeController {
     private static ObservableList<Webcam> webcams;
     private FrameShowThread frameShowThread;
 
-    @FXML private ImageView webcamDisplay;
-    @FXML private ImageView printablePicture;
+    @FXML private ImageView webcamImageView;
     private Image rawPicture;
     private Image currentPicture;
 
@@ -51,7 +50,7 @@ public class HomeController {
     @FXML private ToggleButton freezeToggleButton;
     @FXML private ToggleButton flipToggleButton;
     @FXML private Button captureButton;
-    @FXML private ChoiceBox<Webcam> webcamList;
+    @FXML private ChoiceBox<Webcam> webcamChoiceBox;
     @FXML private Text FPSTray;
 
     private WebcamMotionDetector motionDetector;
@@ -74,16 +73,16 @@ public class HomeController {
     private void initWebcamChoiceBox() {
         webcams = FXCollections.observableArrayList();
         new WebcamListener(webcams);
-        webcamList.setItems(webcams);
-        webcamList.getSelectionModel().selectFirst();
-        webcams.addListener((ListChangeListener<Webcam>) change -> webcamList.setItems(webcams));
+        webcamChoiceBox.setItems(webcams);
+        webcamChoiceBox.getSelectionModel().selectFirst();
+        webcams.addListener((ListChangeListener<Webcam>) change -> webcamChoiceBox.setItems(webcams));
     }
 
     private void initWebcam() {
-        Webcam activeWebcam = webcamList.getSelectionModel().getSelectedItem();
-        webcamList.setValue(activeWebcam);
+        Webcam activeWebcam = webcamChoiceBox.getSelectionModel().getSelectedItem();
+        webcamChoiceBox.setValue(activeWebcam);
         WebcamUtils.startUpWebcam(activeWebcam, null);
-        frameShowThread = new FrameShowThread(webcamList, activeWebcam, webcamDisplay, FPSTray);
+        frameShowThread = new FrameShowThread(webcamChoiceBox, activeWebcam, webcamImageView, FPSTray);
         initFrameShowThread(frameShowThread);
     }
 
@@ -100,7 +99,7 @@ public class HomeController {
         for (LiveEffect effect : liveEffects.values()) {
             effect.enable();
         }
-        liveEffects.get(Flip.class).toggle(webcamDisplay);
+        liveEffects.get(Flip.class).toggle(webcamImageView);
     }
 
     private void initMotionMonitor() {
@@ -110,7 +109,7 @@ public class HomeController {
         int interval = 210;
         int threshold = 10;
         int inertia = 10;
-        motionDetector = new WebcamMotionDetector(webcamList.getSelectionModel().getSelectedItem(), threshold, inertia);
+        motionDetector = new WebcamMotionDetector(webcamChoiceBox.getSelectionModel().getSelectedItem(), threshold, inertia);
         motionDetector.setInterval(interval);
         motionDetector.start();
         initStabilityTrayThread();
@@ -171,7 +170,7 @@ public class HomeController {
         if (liveEffects.get(Flip.class).isDisabled()) {
             throw new RuntimeException("Flip is currently disabled.");
         }
-        liveEffects.get(Flip.class).toggle(webcamDisplay);
+        liveEffects.get(Flip.class).toggle(webcamImageView);
         flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
@@ -180,7 +179,7 @@ public class HomeController {
         if (liveEffects.get(Freeze.class).isDisabled()) {
             throw new RuntimeException("Freeze is currently disabled.");
         }
-        liveEffects.get(Freeze.class).toggle(webcamDisplay);
+        liveEffects.get(Freeze.class).toggle(webcamImageView);
         if (liveEffects.get(Freeze.class).isApplied()) {
             Freeze.freeze(frameShowThread);
             FPSTray.setText("FPS: --");
@@ -198,7 +197,7 @@ public class HomeController {
     @FXML
     private void takePicture() {
         try {
-            rawPicture = webcamDisplay.getImage();
+            rawPicture = webcamImageView.getImage();
             currentPicture = rawPicture;
             openEditor(currentPicture);
         } catch (Exception e) {

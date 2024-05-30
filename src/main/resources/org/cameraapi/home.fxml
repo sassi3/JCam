@@ -75,7 +75,7 @@
          <center>
             <StackPane BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="webcamDisplay" fitHeight="428.0" fitWidth="631.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+                  <ImageView fx:id="webcamImageView" fitHeight="428.0" fitWidth="631.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
                </children>
             </StackPane>
          </center>
@@ -100,7 +100,7 @@
                   </StackPane>
                   <StackPane HBox.hgrow="ALWAYS">
                      <children>
-                        <ChoiceBox fx:id="webcamList" prefHeight="25.0" prefWidth="175.0" StackPane.alignment="CENTER">
+                        <ChoiceBox fx:id="webcamChoiceBox" prefHeight="25.0" prefWidth="175.0" StackPane.alignment="CENTER">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
