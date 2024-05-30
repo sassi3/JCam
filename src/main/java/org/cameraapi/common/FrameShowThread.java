@@ -111,4 +111,20 @@ public class FrameShowThread extends Thread {
             throw new IllegalThreadStateException(this.getName() + " already stopped.");
         }
     }
+
+    public ChoiceBox<Webcam> getWebcamList() {
+        return webcamList;
+    }
+
+    public Text getFPSTray() {
+        return FPSTray;
+    }
+
+    public Webcam getActiveWebcam() {
+        return activeWebcam;
+    }
+
+    public ImageView getWebcamDisplay() {
+        return webcamDisplay;
+    }
 }
