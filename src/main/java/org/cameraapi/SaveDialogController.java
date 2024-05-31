@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
+import org.cameraapi.common.AlertWindows;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -40,15 +41,21 @@ public class SaveDialogController {
     public void save(){
         String os = System.getProperty("os.name");
         if (selectDirTxtField.getText().isEmpty()) {
-            throw new RuntimeException("No directory selected");
+            AlertWindows.throwAlert("Error","No directory selected","A directory is required");
+            throw new RuntimeException();
         }
         if (fileNameTxtField.getText().isEmpty()) {
-            throw new RuntimeException("No file selected");
+            AlertWindows.throwAlert("Error","No file selected","A filename is required");
+            throw new RuntimeException();
         }
         File target = getFile(os);
         try {
-            target.createNewFile();
+            if (!target.createNewFile()) {
+                AlertWindows.throwAlert("Error","Could not create new file","File already exists");
+                throw new RuntimeException();
+            }
         } catch (IOException e) {
+            AlertWindows.throwAlert("Error","Could not create new file","An unexpected error occurred");
             throw new RuntimeException(e);
             // You could launch an alert pane...
         }
@@ -61,6 +68,7 @@ public class SaveDialogController {
             //Removing the dot from the type, since it must not be included
             ImageIO.write(awtImage, typeChoiceBox.getSelectionModel().getSelectedItem().substring(1), target);
         } catch (IOException e) {
+            AlertWindows.throwAlert("Error","Could not save image","An unexpected error occurred");
             throw new RuntimeException(e);
         }
     }
@@ -81,12 +89,7 @@ public class SaveDialogController {
         else {
             target = new File(selectDirTxtField.getText()+ "/" + fileNameTxtField.getText() + typeChoiceBox.getSelectionModel().getSelectedItem());
         }
-
-        if (target.exists() || target.isDirectory()) {
-            throw new RuntimeException("File exists or is a directory");
-            // You could launch an alert pane...
-        }
-
+        
         return target;
     }
 
