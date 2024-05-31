@@ -8,6 +8,7 @@ import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import com.github.sarxos.webcam.Webcam;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
@@ -43,8 +44,6 @@ public class HomeController {
     @FXML private StackPane stackPane;
     @FXML private ToggleButton themeButton;
     @FXML private ToggleButton freezeToggleButton;
-    @FXML private ToggleButton flipToggleButton;
-    @FXML private Button captureButton;
     @FXML private ChoiceBox<Webcam> webcamChoiceBox;
     @FXML private Text FPSTray;
 
@@ -52,9 +51,16 @@ public class HomeController {
 
     public void initialize() {
         initTheme();
-        initWebcamChoiceBox();
-        initWebcam();
         initLiveEffects();
+        initWebcamChoiceBox();
+        if (webcams.isEmpty()) {
+            Platform.runLater(this::disableInterface);
+            Thread webcamWaiter = getWebcamWaiterThread();
+            webcamWaiter.setDaemon(true);
+            webcamWaiter.start();
+        } else {
+            initWebcam();
+        }
     }
 
     private void initTheme() {
@@ -65,23 +71,12 @@ public class HomeController {
     private void initWebcamChoiceBox() {
         webcams = FXCollections.observableArrayList();
         new WebcamListener(webcams);
-        if (webcams.isEmpty()) {
-            try {
-                Thread webcamWaiter = getWebcamWaiterThread();
-                webcamWaiter.setDaemon(true);
-                webcamWaiter.start();
-                webcamWaiter.join();
-            } catch (InterruptedException e) {
-                AlertWindows.showFatalError();
-                System.exit(1);
-            }
-        }
         webcamChoiceBox.setItems(webcams);
-        webcamChoiceBox.getSelectionModel().selectFirst();
         webcams.addListener((ListChangeListener<Webcam>) change -> webcamChoiceBox.setItems(webcams));
     }
 
     private void initWebcam() {
+        webcamChoiceBox.getSelectionModel().selectFirst();
         Webcam activeWebcam = webcamChoiceBox.getSelectionModel().getSelectedItem();
         webcamChoiceBox.setValue(activeWebcam);
         WebcamUtils.startUpWebcam(activeWebcam, null);
@@ -91,11 +86,16 @@ public class HomeController {
     private Thread getWebcamWaiterThread() {
         return new Thread(() -> {
             System.out.println("WebcamWaiter: no such webcam detected. Waiting for webcams...");
+            ImageView errorImage = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("errImg/ErrImg.png"))));
+            Flip.viewportFlipper(errorImage);
+            Platform.runLater(() -> webcamImageView.setImage(errorImage.snapshot(null, null)));
             while (!interrupted()) {
                 if (!webcams.isEmpty()) {
                     break;
                 }
             }
+            Platform.runLater(this::initWebcam);
+            enableInterface();
             System.out.println("WebcamWaiter: webcam" + webcams.getFirst() + " found.");
         });
     }
