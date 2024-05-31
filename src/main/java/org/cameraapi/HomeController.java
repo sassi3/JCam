@@ -156,8 +156,8 @@ public class HomeController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor.fxml"));
         Parent nextPane = loader.load();
         try {
-            if (!ScreenController.getScreenMap().containsValue(nextPane)) {
-                ScreenController.addScreen("editor", nextPane);
+            if (!RootController.getRootMap().containsValue(nextPane)) {
+                RootController.addRoot("editor", nextPane);
             }
         } catch (Exception e) {
             AlertWindows.showFailedToTakePictureAlert();
@@ -168,6 +168,6 @@ public class HomeController {
         controller.initCanvas(capture);
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
-        ScreenController.activate("editor");
+        RootController.changeRoot("editor");
     }
 }
