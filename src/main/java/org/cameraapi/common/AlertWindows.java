@@ -30,4 +30,23 @@ public class AlertWindows {
                 "Try to restart it or reboot the computer.");
         alert.showAndWait();
     }
+
+    public static void throwAlert(String title, String headerText, String contentText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.getDialogPane().setMinWidth(400);
+        alert.getDialogPane().setMaxWidth(300);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        alert.showAndWait();
+    }
+    public static void throwAlert(String title, String headerText, String contentText,double width, double height) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.getDialogPane().setMinWidth(width);
+        alert.getDialogPane().setMaxWidth(height);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        alert.showAndWait();
+    }
 }
