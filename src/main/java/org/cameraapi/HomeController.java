@@ -86,9 +86,8 @@ public class HomeController {
     private Thread getWebcamWaiterThread() {
         return new Thread(() -> {
             System.out.println("WebcamWaiter: no such webcam detected. Waiting for webcams...");
-            ImageView errorImage = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("errImg/ErrImg.png"))));
-            Flip.viewportFlipper(errorImage);
-            Platform.runLater(() -> webcamImageView.setImage(errorImage.snapshot(null, null)));
+            Platform.runLater(this::showErrorImage);
+            FPSTray.setText("FPS: --");
             while (!interrupted()) {
                 if (!webcams.isEmpty()) {
                     break;
@@ -98,6 +97,11 @@ public class HomeController {
             enableInterface();
             System.out.println("WebcamWaiter: webcam" + webcams.getFirst() + " found.");
         });
+    }
+    private void showErrorImage() {
+        ImageView errorImage = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("errorImage/ErrImg.png"))));
+        Flip.viewportFlipper(errorImage);
+        webcamImageView.setImage(errorImage.snapshot(null, null));
     }
 
     private void initFrameShowThread(FrameShowThread thread) {
