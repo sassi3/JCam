@@ -28,6 +28,8 @@ import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
 import org.cameraapi.common.WebcamUtils;
 
+import static java.lang.Thread.interrupted;
+
 public class HomeController {
     private static ObservableList<Webcam> webcams;
     private FrameShowThread frameShowThread;
@@ -63,6 +65,17 @@ public class HomeController {
     private void initWebcamChoiceBox() {
         webcams = FXCollections.observableArrayList();
         new WebcamListener(webcams);
+        if (webcams.isEmpty()) {
+            try {
+                Thread webcamWaiter = getWebcamWaiterThread();
+                webcamWaiter.setDaemon(true);
+                webcamWaiter.start();
+                webcamWaiter.join();
+            } catch (InterruptedException e) {
+                AlertWindows.showFatalError();
+                System.exit(1);
+            }
+        }
         webcamChoiceBox.setItems(webcams);
         webcamChoiceBox.getSelectionModel().selectFirst();
         webcams.addListener((ListChangeListener<Webcam>) change -> webcamChoiceBox.setItems(webcams));
@@ -74,6 +87,17 @@ public class HomeController {
         WebcamUtils.startUpWebcam(activeWebcam, null);
         frameShowThread = new FrameShowThread(webcamChoiceBox, activeWebcam, webcamImageView, FPSTray, stabilityTray);
         initFrameShowThread(frameShowThread);
+    }
+    private Thread getWebcamWaiterThread() {
+        return new Thread(() -> {
+            System.out.println("WebcamWaiter: no such webcam detected. Waiting for webcams...");
+            while (!interrupted()) {
+                if (!webcams.isEmpty()) {
+                    break;
+                }
+            }
+            System.out.println("WebcamWaiter: webcam" + webcams.getFirst() + " found.");
+        });
     }
 
     private void initFrameShowThread(FrameShowThread thread) {
