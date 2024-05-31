@@ -1,10 +1,12 @@
 package org.cameraapi.common;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamMotionDetector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
@@ -13,22 +15,48 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class FrameShowThread extends Thread {
-    private final ChoiceBox<Webcam> webcamList;
+    private final ChoiceBox<Webcam> webcamChoiceBox;
     private final Text FPSTray;
+    private final RadioButton stabilityTray;
+
+    private Thread FPSTrayThread;
+    private Thread stabilityTrayThread;
 
     private Webcam activeWebcam;
     private final ImageView webcamDisplay;
-    private Thread FPSTrayThread;
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
-    public FrameShowThread(ChoiceBox<Webcam> webcamList, Webcam activeWebcam, ImageView webcamDisplay, Text FPSTray) {
-        Objects.requireNonNull(webcamList);
+    private WebcamMotionDetector motionDetector;
+
+    public FrameShowThread(ChoiceBox<Webcam> webcamChoiceBox, Webcam activeWebcam, ImageView webcamDisplay, Text FPSTray, RadioButton stabilityTray) {
+        Objects.requireNonNull(webcamChoiceBox);
         Objects.requireNonNull(activeWebcam);
         Objects.requireNonNull(webcamDisplay);
-        this.webcamList = webcamList;
+        this.webcamChoiceBox = webcamChoiceBox;
         this.activeWebcam = activeWebcam;
         this.webcamDisplay = webcamDisplay;
         this.FPSTray = FPSTray;
+        this.stabilityTray = stabilityTray;
+    }
+
+    public ChoiceBox<Webcam> getWebcamChoiceBox() {
+        return webcamChoiceBox;
+    }
+
+    public Text getFPSTray() {
+        return FPSTray;
+    }
+
+    public Webcam getActiveWebcam() {
+        return activeWebcam;
+    }
+
+    public ImageView getWebcamDisplay() {
+        return webcamDisplay;
+    }
+
+    public RadioButton getStabilityTray() {
+        return stabilityTray;
     }
 
     public void startShowingFrame() {
@@ -42,23 +70,35 @@ public class FrameShowThread extends Thread {
         }
     }
 
-    private void initFrameShowThread() {
-        this.setName("Webcam Frame-Showing Thread");
-        this.setDaemon(true);
-        this.setPriority(MAX_PRIORITY);
-        this.start();
+    public void stopShowingFrame() throws InterruptedException {
+        this.threadStopUtility(stabilityTrayThread);
+        this.threadStopUtility(FPSTrayThread);
+        this.threadStopUtility(this);
+    }
+
+    private void threadStopUtility(Thread threadToStop) throws InterruptedException {
+        if (threadToStop.isAlive()) {
+            threadToStop.interrupt();
+            threadToStop.join();
+            if (threadToStop.isAlive()) {
+                throw new IllegalThreadStateException("Failed to stop " + threadToStop.getName() + ".");
+            }
+        } else {
+            throw new IllegalThreadStateException(threadToStop.getName() + " already stopped.");
+        }
     }
 
     @Override
     public void run() {
         System.out.println(this.getName() + " started.");
-        webcamList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
+        webcamChoiceBox.getSelectionModel().selectedItemProperty().addListener((observableValue, oldWebcam, newWebcam) -> {
             activeWebcam = newWebcam;
             if (!activeWebcam.isOpen()) {
                 WebcamUtils.startUpWebcam(activeWebcam, null);
             }
         });
         this.initFPSTrayThread();
+        this.initStabilityTrayThread();
         while (!interrupted()) {
             try {
                 imageProperty.set(SwingFXUtils.toFXImage(activeWebcam.getImage(), null));
@@ -68,13 +108,6 @@ public class FrameShowThread extends Thread {
             }
         }
         System.out.println(this.getName() + " terminated.");
-    }
-
-    private void initFPSTrayThread() {
-        this.runFPSTrayThread();
-        FPSTrayThread.setName("FPSTray Thread");
-        FPSTrayThread.setDaemon(true);
-        FPSTrayThread.start();
     }
 
     private void runFPSTrayThread() {
@@ -87,44 +120,58 @@ public class FrameShowThread extends Thread {
                     start = Instant.now().toEpochMilli();
                 }
             }
+            FPSTray.setText("FPS: --");
             System.out.println("FPSTray terminated.");
         });
     }
 
-    public void stopShowingFrame() throws InterruptedException {
-        if (FPSTrayThread.isAlive()) {
-            FPSTrayThread.interrupt();
-            FPSTrayThread.join();
-            if (FPSTrayThread.isAlive()) {
-                throw new IllegalThreadStateException("Failed to stop " + FPSTrayThread.getName() + ".");
+    private void runStabilityTrayThread() {
+        stabilityTrayThread = new Thread(() -> {
+            System.out.println("StabilityTrayThread started.");
+            stabilityTray.setSelected(false);
+            while (!interrupted() || Objects.isNull(motionDetector)) {
+                boolean previousStabilityStatus = stabilityTray.isSelected();
+                boolean currentStabilityStatus = !motionDetector.isMotion();
+                if (currentStabilityStatus != previousStabilityStatus) {
+                    stabilityTray.setSelected(currentStabilityStatus);
+                }
             }
-        } else {
-            throw new IllegalThreadStateException(FPSTrayThread.getName() + " already stopped.");
-        }
-        if (this.isAlive()) {
-            this.interrupt();
-            this.join();
-            if (this.isAlive()) {
-                throw new IllegalThreadStateException("Failed to stop " + this.getName() + ".");
-            }
-        } else {
-            throw new IllegalThreadStateException(this.getName() + " already stopped.");
-        }
+            stabilityTray.setSelected(true);
+            System.out.println("StabilityTrayThread stopped.");
+        });
     }
 
-    public ChoiceBox<Webcam> getWebcamList() {
-        return webcamList;
+    private void initFrameShowThread() {
+        this.setName("Webcam Frame-Showing Thread");
+        this.setDaemon(true);
+        this.setPriority(MAX_PRIORITY);
+        this.start();
     }
 
-    public Text getFPSTray() {
-        return FPSTray;
+    private void initFPSTrayThread() {
+        this.runFPSTrayThread();
+        FPSTrayThread.setName("FPSTray Thread");
+        FPSTrayThread.setDaemon(true);
+        FPSTrayThread.start();
     }
 
-    public Webcam getActiveWebcam() {
-        return activeWebcam;
+    private void initStabilityTrayThread() {
+        this.initMotionMonitor();
+        this.runStabilityTrayThread();
+        stabilityTrayThread.setName("StabilityTrayThread Thread");
+        stabilityTrayThread.setDaemon(true);
+        stabilityTrayThread.start();
     }
 
-    public ImageView getWebcamDisplay() {
-        return webcamDisplay;
+    private void initMotionMonitor() {
+        stabilityTray.setSelected(true);
+        stabilityTray.disarm();
+
+        int interval = 210;
+        int threshold = 10;
+        int inertia = 10;
+        motionDetector = new WebcamMotionDetector(webcamChoiceBox.getSelectionModel().getSelectedItem(), threshold, inertia);
+        motionDetector.setInterval(interval);
+        motionDetector.start();
     }
 }
