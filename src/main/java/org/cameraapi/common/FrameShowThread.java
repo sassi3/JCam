@@ -71,23 +71,20 @@ public class FrameShowThread extends Thread {
     }
 
     public void stopShowingFrame() throws InterruptedException {
-        if (FPSTrayThread.isAlive()) {
-            FPSTrayThread.interrupt();
-            FPSTrayThread.join();
-            if (FPSTrayThread.isAlive()) {
-                throw new IllegalThreadStateException("Failed to stop " + FPSTrayThread.getName() + ".");
+        this.threadStopUtility(stabilityTrayThread);
+        this.threadStopUtility(FPSTrayThread);
+        this.threadStopUtility(this);
+    }
+
+    private void threadStopUtility(Thread threadToStop) throws InterruptedException {
+        if (threadToStop.isAlive()) {
+            threadToStop.interrupt();
+            threadToStop.join();
+            if (threadToStop.isAlive()) {
+                throw new IllegalThreadStateException("Failed to stop " + threadToStop.getName() + ".");
             }
         } else {
-            throw new IllegalThreadStateException(FPSTrayThread.getName() + " already stopped.");
-        }
-        if (this.isAlive()) {
-            this.interrupt();
-            this.join();
-            if (this.isAlive()) {
-                throw new IllegalThreadStateException("Failed to stop " + this.getName() + ".");
-            }
-        } else {
-            throw new IllegalThreadStateException(this.getName() + " already stopped.");
+            throw new IllegalThreadStateException(threadToStop.getName() + " already stopped.");
         }
     }
 
