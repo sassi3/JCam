@@ -93,17 +93,19 @@ public class HomeController {
     }
 
     public void disableInterface() {
-        captureButton.disarm();
-        freezeToggleButton.disarm();
-        flipToggleButton.disarm();
-        System.out.println("Interface disabled.");
+        Parent root = stackPane.getScene().getRoot();
+        root.disableProperty().setValue(true);
+        for (LiveEffect effect : liveEffects.values()) {
+            effect.disable();
+        }
     }
 
     public void enableInterface() {
-        captureButton.arm();
-        freezeToggleButton.arm();
-        flipToggleButton.arm();
-        System.out.println("Interface enabled.");
+        for (LiveEffect effect : liveEffects.values()) {
+            effect.enable();
+        }
+        Parent root = stackPane.getScene().getRoot();
+        root.disableProperty().setValue(false);
     }
 
     @FXML
