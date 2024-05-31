@@ -8,48 +8,48 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ScreenController {
-    private static Map<String, Parent> screenMap;
-    private static Deque<Parent> screenStack;
-    private static Scene main;
+public class RootController {
+    private static Map<String, Parent> rootMap;
+    private static Deque<Parent> rootStack;
+    private static Scene scene;
 
-    public static void initScreenController(Scene main, String rootName) {
-        screenMap = new HashMap<>();
-        screenStack = new ArrayDeque<>();
-        ScreenController.main = main;
-        addScreen(rootName, main.getRoot());
+    public static void initRootController(Scene main, String rootName) {
+        rootMap = new HashMap<>();
+        rootStack = new ArrayDeque<>();
+        RootController.scene = main;
+        addRoot(rootName, main.getRoot());
     }
 
-    public static Map<String, Parent> getScreenMap() {
-        return screenMap;
+    public static Map<String, Parent> getRootMap() {
+        return rootMap;
     }
 
-    public static <T extends Parent> void addScreen(String name, T pane){
-        screenMap.put(name, pane);
+    public static <T extends Parent> void addRoot(String name, T pane){
+        rootMap.put(name, pane);
     }
 
-    public static void removeScreen(String name){
-        screenMap.remove(name);
+    public static void removeRoot(String name){
+        rootMap.remove(name);
     }
 
-    public static void activate(String name) {
-        if (!screenMap.containsKey(name)) {
-            throw new IllegalArgumentException("No such screen: " + name);
+    public static void changeRoot(String name) {
+        if (!rootMap.containsKey(name)) {
+            throw new IllegalArgumentException("No such root: " + name);
         }
-        Parent nextPane = screenMap.get(name);
-        Parent currentPane = main.getRoot();
-        goForward(currentPane);
-        main.setRoot(nextPane);
+        Parent nextRoot = rootMap.get(name);
+        Parent currentRoot = scene.getRoot();
+        goForward(currentRoot);
+        scene.setRoot(nextRoot);
         System.out.println(name.toUpperCase() + " activated.");
     }
 
     public static void goBack() {
-        Parent backPane = screenStack.pop();
-        main.setRoot(backPane);
+        Parent backRoot = rootStack.pop();
+        scene.setRoot(backRoot);
     }
 
-    public static void goForward(Parent forwardPane) {
-        screenStack.push(forwardPane);
+    public static void goForward(Parent forwardRoot) {
+        rootStack.push(forwardRoot);
     }
 
 //    public static void slideFromRight(String name) {

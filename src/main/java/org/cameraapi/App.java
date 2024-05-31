@@ -22,7 +22,7 @@ public class App extends Application {
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
 
-        ScreenController.initScreenController(scene, "home");
+        RootController.initRootController(scene, "home");
 
         stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("icons/CameraIconNew.png"))));
         stage.setTitle("Camera");

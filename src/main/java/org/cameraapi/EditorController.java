@@ -61,7 +61,7 @@ public class EditorController {
     @FXML
     public void onReturnButtonClicked() {
         timer.stop();
-        ScreenController.goBack();
+        RootController.goBack();
     }
 
     private void handleSave() throws IOException {

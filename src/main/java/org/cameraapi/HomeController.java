@@ -8,6 +8,7 @@ import atlantafx.base.theme.CupertinoDark;
 import atlantafx.base.theme.CupertinoLight;
 import com.github.sarxos.webcam.Webcam;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
@@ -28,6 +29,8 @@ import org.cameraapi.effects.Freeze;
 import org.cameraapi.effects.LiveEffect;
 import org.cameraapi.common.WebcamUtils;
 
+import static java.lang.Thread.interrupted;
+
 public class HomeController {
     private static ObservableList<Webcam> webcams;
     private FrameShowThread frameShowThread;
@@ -41,8 +44,6 @@ public class HomeController {
     @FXML private StackPane stackPane;
     @FXML private ToggleButton themeButton;
     @FXML private ToggleButton freezeToggleButton;
-    @FXML private ToggleButton flipToggleButton;
-    @FXML private Button captureButton;
     @FXML private ChoiceBox<Webcam> webcamChoiceBox;
     @FXML private Text FPSTray;
 
@@ -50,9 +51,16 @@ public class HomeController {
 
     public void initialize() {
         initTheme();
-        initWebcamChoiceBox();
-        initWebcam();
         initLiveEffects();
+        initWebcamChoiceBox();
+        if (webcams.isEmpty()) {
+            Platform.runLater(this::disableInterface);
+            Thread webcamWaiter = getWebcamWaiterThread();
+            webcamWaiter.setDaemon(true);
+            webcamWaiter.start();
+        } else {
+            initWebcam();
+        }
     }
 
     private void initTheme() {
@@ -64,16 +72,32 @@ public class HomeController {
         webcams = FXCollections.observableArrayList();
         new WebcamListener(webcams);
         webcamChoiceBox.setItems(webcams);
-        webcamChoiceBox.getSelectionModel().selectFirst();
         webcams.addListener((ListChangeListener<Webcam>) change -> webcamChoiceBox.setItems(webcams));
     }
 
     private void initWebcam() {
+        webcamChoiceBox.getSelectionModel().selectFirst();
         Webcam activeWebcam = webcamChoiceBox.getSelectionModel().getSelectedItem();
         webcamChoiceBox.setValue(activeWebcam);
         WebcamUtils.startUpWebcam(activeWebcam, null);
         frameShowThread = new FrameShowThread(webcamChoiceBox, activeWebcam, webcamImageView, FPSTray, stabilityTray);
         initFrameShowThread(frameShowThread);
+    }
+    private Thread getWebcamWaiterThread() {
+        return new Thread(() -> {
+            System.out.println("WebcamWaiter: no such webcam detected. Waiting for webcams...");
+            ImageView errorImage = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("errImg/ErrImg.png"))));
+            Flip.viewportFlipper(errorImage);
+            Platform.runLater(() -> webcamImageView.setImage(errorImage.snapshot(null, null)));
+            while (!interrupted()) {
+                if (!webcams.isEmpty()) {
+                    break;
+                }
+            }
+            Platform.runLater(this::initWebcam);
+            enableInterface();
+            System.out.println("WebcamWaiter: webcam" + webcams.getFirst() + " found.");
+        });
     }
 
     private void initFrameShowThread(FrameShowThread thread) {
@@ -93,17 +117,19 @@ public class HomeController {
     }
 
     public void disableInterface() {
-        captureButton.disarm();
-        freezeToggleButton.disarm();
-        flipToggleButton.disarm();
-        System.out.println("Interface disabled.");
+        Parent root = stackPane.getScene().getRoot();
+        root.disableProperty().setValue(true);
+        for (LiveEffect effect : liveEffects.values()) {
+            effect.disable();
+        }
     }
 
     public void enableInterface() {
-        captureButton.arm();
-        freezeToggleButton.arm();
-        flipToggleButton.arm();
-        System.out.println("Interface enabled.");
+        for (LiveEffect effect : liveEffects.values()) {
+            effect.enable();
+        }
+        Parent root = stackPane.getScene().getRoot();
+        root.disableProperty().setValue(false);
     }
 
     @FXML
@@ -122,7 +148,6 @@ public class HomeController {
             throw new RuntimeException("Flip is currently disabled.");
         }
         liveEffects.get(Flip.class).toggle(webcamImageView);
-        flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
     @FXML
@@ -156,8 +181,8 @@ public class HomeController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor.fxml"));
         Parent nextPane = loader.load();
         try {
-            if (!ScreenController.getScreenMap().containsValue(nextPane)) {
-                ScreenController.addScreen("editor", nextPane);
+            if (!RootController.getRootMap().containsValue(nextPane)) {
+                RootController.addRoot("editor", nextPane);
             }
         } catch (Exception e) {
             AlertWindows.showFailedToTakePictureAlert();
@@ -168,6 +193,6 @@ public class HomeController {
         controller.initCanvas(capture);
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
-        ScreenController.activate("editor");
+        RootController.changeRoot("editor");
     }
 }
