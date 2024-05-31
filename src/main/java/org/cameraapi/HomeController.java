@@ -122,7 +122,6 @@ public class HomeController {
             throw new RuntimeException("Flip is currently disabled.");
         }
         liveEffects.get(Flip.class).toggle(webcamImageView);
-        flipToggleButton.setText(flipToggleButton.isSelected() ? "Unflip" : "Flip");
     }
 
     @FXML
