@@ -61,15 +61,7 @@ public class EditorController {
     @FXML
     public void onReturnButtonClicked() {
         timer.stop();
-        try {
-            handleHomePage();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void handleHomePage() throws IOException {
-        ScreenController.slideFromLeft("home");
+        ScreenController.goBack();
     }
 
     private void handleSave() throws IOException {

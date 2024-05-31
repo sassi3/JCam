@@ -154,13 +154,20 @@ public class HomeController {
     @FXML
     public void openEditor(Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor.fxml"));
-        Parent newPane = loader.load();
-        ScreenController.addScreen("editor", newPane);
+        Parent nextPane = loader.load();
+        try {
+            if (!ScreenController.getScreenMap().containsValue(nextPane)) {
+                ScreenController.addScreen("editor", nextPane);
+            }
+        } catch (Exception e) {
+            AlertWindows.showFailedToTakePictureAlert();
+            throw new RuntimeException(e);
+        }
 
         EditorController controller = loader.getController();
         controller.initCanvas(capture);
         controller.initLiveEffects(liveEffects.get(Flip.class).isApplied());
 
-        ScreenController.slideFromRight("editor");
+        ScreenController.activate("editor");
     }
 }
