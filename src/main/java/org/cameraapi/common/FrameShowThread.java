@@ -98,16 +98,34 @@ public class FrameShowThread extends Thread {
             }
         });
         this.initFPSTrayThread();
-        this.initStabilityTrayThread();
+        this.initMotionMonitor();
+        stabilityTray.setSelected(false);
         while (!interrupted()) {
             try {
                 imageProperty.set(SwingFXUtils.toFXImage(activeWebcam.getImage(), null));
+                boolean previousStabilityStatus = stabilityTray.isSelected();
+                boolean currentStabilityStatus = !motionDetector.isMotion();
+                if (currentStabilityStatus != previousStabilityStatus) {
+                    stabilityTray.setSelected(currentStabilityStatus);
+                }
             } catch (Exception e) {
                 System.out.println("Skipped frame: " + e.getMessage());
                 break;
             }
         }
+        stabilityTray.setSelected(true);
         System.out.println(this.getName() + " terminated.");
+    }
+    private void initMotionMonitor() {
+        stabilityTray.setSelected(true);
+        stabilityTray.disarm();
+
+        int interval = 210;
+        int threshold = 10;
+        int inertia = 10;
+        motionDetector = new WebcamMotionDetector(webcamChoiceBox.getSelectionModel().getSelectedItem(), threshold, inertia);
+        motionDetector.setInterval(interval);
+        motionDetector.start();
     }
 
     private void runFPSTrayThread() {
@@ -125,22 +143,6 @@ public class FrameShowThread extends Thread {
         });
     }
 
-    private void runStabilityTrayThread() {
-        stabilityTrayThread = new Thread(() -> {
-            System.out.println("StabilityTrayThread started.");
-            stabilityTray.setSelected(false);
-            while (!interrupted() || Objects.isNull(motionDetector)) {
-                boolean previousStabilityStatus = stabilityTray.isSelected();
-                boolean currentStabilityStatus = !motionDetector.isMotion();
-                if (currentStabilityStatus != previousStabilityStatus) {
-                    stabilityTray.setSelected(currentStabilityStatus);
-                }
-            }
-            stabilityTray.setSelected(true);
-            System.out.println("StabilityTrayThread stopped.");
-        });
-    }
-
     private void initFrameShowThread() {
         this.setName("Webcam Frame-Showing Thread");
         this.setDaemon(true);
@@ -153,25 +155,5 @@ public class FrameShowThread extends Thread {
         FPSTrayThread.setName("FPSTray Thread");
         FPSTrayThread.setDaemon(true);
         FPSTrayThread.start();
-    }
-
-    private void initStabilityTrayThread() {
-        this.initMotionMonitor();
-        this.runStabilityTrayThread();
-        stabilityTrayThread.setName("StabilityTrayThread Thread");
-        stabilityTrayThread.setDaemon(true);
-        stabilityTrayThread.start();
-    }
-
-    private void initMotionMonitor() {
-        stabilityTray.setSelected(true);
-        stabilityTray.disarm();
-
-        int interval = 210;
-        int threshold = 10;
-        int inertia = 10;
-        motionDetector = new WebcamMotionDetector(webcamChoiceBox.getSelectionModel().getSelectedItem(), threshold, inertia);
-        motionDetector.setInterval(interval);
-        motionDetector.start();
     }
 }
