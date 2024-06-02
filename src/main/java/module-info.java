@@ -8,6 +8,7 @@ module org.example.cameraapi {
     requires javafx.swing;
     requires javafx.base;
     requires atlantafx.base;
+    requires static lombok;
 
 
     opens org.cameraapi to javafx.fxml;

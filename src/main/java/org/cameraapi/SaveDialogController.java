@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
+import lombok.NonNull;
 import org.cameraapi.common.AlertWindows;
 
 import javax.imageio.ImageIO;
@@ -38,7 +39,7 @@ public class SaveDialogController {
         selectDirTxtField.setEditable(false);
     }
 
-    public void save(){
+    public void save() {
         String os = System.getProperty("os.name");
         if (selectDirTxtField.getText().isEmpty()) {
             AlertWindows.throwAlert("Error","No directory selected","A directory is required");
@@ -81,7 +82,7 @@ public class SaveDialogController {
         }
     }
 
-    private File getFile(String os) {
+    private File getFile(@NonNull String os) {
         File target;
         if (os.contains("Windows")) {
             target = new File(selectDirTxtField.getText()+ "\\" + fileNameTxtField.getText() + typeChoiceBox.getSelectionModel().getSelectedItem());
@@ -98,7 +99,7 @@ public class SaveDialogController {
         typeChoiceBox.getSelectionModel().selectFirst();
     }
 
-    public void initPreview(Image image) {
+    public void initPreview(@NonNull Image image) {
         preview.setImage(image);
         imageToSave = image;
     }

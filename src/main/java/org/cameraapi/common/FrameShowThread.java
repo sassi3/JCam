@@ -10,53 +10,37 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import lombok.Getter;
+import lombok.NonNull;
 
 import java.time.Instant;
 import java.util.Objects;
 
 public class FrameShowThread extends Thread {
+    @Getter
     private final ChoiceBox<Webcam> webcamChoiceBox;
+    @Getter
     private final Text FPSTray;
+    @Getter
     private final RadioButton stabilityTray;
 
     private Thread FPSTrayThread;
     private Thread stabilityTrayThread;
 
+    @Getter
     private Webcam activeWebcam;
+    @Getter
     private final ImageView webcamDisplay;
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
     private WebcamMotionDetector motionDetector;
 
-    public FrameShowThread(ChoiceBox<Webcam> webcamChoiceBox, Webcam activeWebcam, ImageView webcamDisplay, Text FPSTray, RadioButton stabilityTray) {
-        Objects.requireNonNull(webcamChoiceBox);
-        Objects.requireNonNull(activeWebcam);
-        Objects.requireNonNull(webcamDisplay);
+    public FrameShowThread(@NonNull ChoiceBox<Webcam> webcamChoiceBox, @NonNull Webcam activeWebcam, @NonNull ImageView webcamDisplay, @NonNull Text FPSTray, @NonNull RadioButton stabilityTray) {
         this.webcamChoiceBox = webcamChoiceBox;
         this.activeWebcam = activeWebcam;
         this.webcamDisplay = webcamDisplay;
         this.FPSTray = FPSTray;
         this.stabilityTray = stabilityTray;
-    }
-
-    public ChoiceBox<Webcam> getWebcamChoiceBox() {
-        return webcamChoiceBox;
-    }
-
-    public Text getFPSTray() {
-        return FPSTray;
-    }
-
-    public Webcam getActiveWebcam() {
-        return activeWebcam;
-    }
-
-    public ImageView getWebcamDisplay() {
-        return webcamDisplay;
-    }
-
-    public RadioButton getStabilityTray() {
-        return stabilityTray;
     }
 
     public void startShowingFrame() {
@@ -76,7 +60,7 @@ public class FrameShowThread extends Thread {
         this.threadStopUtility(this);
     }
 
-    private void threadStopUtility(Thread threadToStop) throws InterruptedException {
+    private void threadStopUtility(@NonNull Thread threadToStop) throws InterruptedException {
         if (threadToStop.isAlive()) {
             threadToStop.interrupt();
             threadToStop.join();
