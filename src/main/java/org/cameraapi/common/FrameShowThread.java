@@ -10,19 +10,25 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.Objects;
 
 public class FrameShowThread extends Thread {
+    @Getter
     private final ChoiceBox<Webcam> webcamChoiceBox;
+    @Getter
     private final Text FPSTray;
+    @Getter
     private final RadioButton stabilityTray;
 
     private Thread FPSTrayThread;
     private Thread stabilityTrayThread;
 
+    @Getter
     private Webcam activeWebcam;
+    @Getter
     private final ImageView webcamDisplay;
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
@@ -37,26 +43,6 @@ public class FrameShowThread extends Thread {
         this.webcamDisplay = webcamDisplay;
         this.FPSTray = FPSTray;
         this.stabilityTray = stabilityTray;
-    }
-
-    public ChoiceBox<Webcam> getWebcamChoiceBox() {
-        return webcamChoiceBox;
-    }
-
-    public Text getFPSTray() {
-        return FPSTray;
-    }
-
-    public Webcam getActiveWebcam() {
-        return activeWebcam;
-    }
-
-    public ImageView getWebcamDisplay() {
-        return webcamDisplay;
-    }
-
-    public RadioButton getStabilityTray() {
-        return stabilityTray;
     }
 
     public void startShowingFrame() {
