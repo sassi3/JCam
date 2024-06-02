@@ -13,6 +13,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
+import lombok.NonNull;
 
 import java.io.IOException;
 
@@ -33,7 +34,7 @@ public class EditorController {
     public void initialize() {
     }
 
-    public void initCanvas(Image capture) {
+    public void initCanvas(@NonNull Image capture) {
         timer = new AnimationTimer() {
 
             @Override

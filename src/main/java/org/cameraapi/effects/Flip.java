@@ -2,8 +2,7 @@ package org.cameraapi.effects;
 
 import javafx.geometry.Point3D;
 import javafx.scene.image.ImageView;
-
-import java.util.Objects;
+import lombok.NonNull;
 
 public class Flip extends LiveEffect {
     private static double rotationValue;
@@ -14,14 +13,12 @@ public class Flip extends LiveEffect {
     }
 
     @Override
-    public void toggle(ImageView imageAffected) {
-        Objects.requireNonNull(imageAffected);
+    public void toggle(@NonNull ImageView imageAffected) {
         setApplied(!isApplied());
         flip(imageAffected);
     }
 
-    public void flip(ImageView picture) {
-        Objects.requireNonNull(picture);
+    public void flip(@NonNull ImageView picture) {
         if (rotationValue == 180) {
             rotationValue = 0;
         } else {
@@ -31,8 +28,7 @@ public class Flip extends LiveEffect {
         System.out.println("flip: " + this.isApplied());
     }
 
-    public static void viewportFlipper(ImageView picture) {
-        Objects.requireNonNull(picture);
+    public static void viewportFlipper(@NonNull ImageView picture) {
         picture.setRotationAxis(new Point3D(0, 1, 0));
         picture.setRotate(rotationValue);
     }

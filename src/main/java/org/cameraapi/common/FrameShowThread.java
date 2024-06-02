@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -34,10 +35,7 @@ public class FrameShowThread extends Thread {
 
     private WebcamMotionDetector motionDetector;
 
-    public FrameShowThread(ChoiceBox<Webcam> webcamChoiceBox, Webcam activeWebcam, ImageView webcamDisplay, Text FPSTray, RadioButton stabilityTray) {
-        Objects.requireNonNull(webcamChoiceBox);
-        Objects.requireNonNull(activeWebcam);
-        Objects.requireNonNull(webcamDisplay);
+    public FrameShowThread(@NonNull ChoiceBox<Webcam> webcamChoiceBox, @NonNull Webcam activeWebcam, @NonNull ImageView webcamDisplay, @NonNull Text FPSTray, @NonNull RadioButton stabilityTray) {
         this.webcamChoiceBox = webcamChoiceBox;
         this.activeWebcam = activeWebcam;
         this.webcamDisplay = webcamDisplay;
@@ -62,7 +60,7 @@ public class FrameShowThread extends Thread {
         this.threadStopUtility(this);
     }
 
-    private void threadStopUtility(Thread threadToStop) throws InterruptedException {
+    private void threadStopUtility(@NonNull Thread threadToStop) throws InterruptedException {
         if (threadToStop.isAlive()) {
             threadToStop.interrupt();
             threadToStop.join();

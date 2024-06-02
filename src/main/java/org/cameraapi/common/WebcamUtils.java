@@ -3,6 +3,7 @@ package org.cameraapi.common;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamResolution;
 import javafx.collections.ObservableList;
+import lombok.NonNull;
 
 import java.awt.*;
 import java.util.Objects;
@@ -48,8 +49,7 @@ public class WebcamUtils {
         return false;
     }
 
-    public static void startUpWebcam(Webcam webcam, Dimension resolution) {
-        Objects.requireNonNull(webcam);
+    public static void startUpWebcam(@NonNull Webcam webcam, Dimension resolution) {
         if (webcam.isOpen()) {
             throw new RuntimeException("Webcam has been already initialized.");
         }
@@ -70,9 +70,7 @@ public class WebcamUtils {
         }
     }
 
-    public static void changeResolution(Webcam webcam, Dimension resolution) {
-        Objects.requireNonNull(webcam);
-        Objects.requireNonNull(resolution);
+    public static void changeResolution(@NonNull Webcam webcam, @NonNull Dimension resolution) {
         if (!isValidResolution(resolution)) {
             throw new IllegalArgumentException("Resolution " + resolution + " is not supported.");
         }

@@ -13,6 +13,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import lombok.NonNull;
 import org.cameraapi.common.AlertWindows;
 import org.cameraapi.common.FrameShowThread;
 import javafx.collections.FXCollections;
@@ -111,8 +112,7 @@ public class HomeController {
         webcamImageView.setImage(errorImage.snapshot(null, null));
     }
 
-    private void initFrameShowThread(FrameShowThread thread) {
-        Objects.requireNonNull(thread, "Thread cannot be null");
+    private void initFrameShowThread(@NonNull FrameShowThread thread) {
         thread.startShowingFrame();
     }
 
@@ -188,7 +188,7 @@ public class HomeController {
     }
 
     @FXML
-    public void openEditor(Image capture) throws IOException {
+    public void openEditor(@NonNull Image capture) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("editor.fxml"));
         Parent nextPane = loader.load();
         try {

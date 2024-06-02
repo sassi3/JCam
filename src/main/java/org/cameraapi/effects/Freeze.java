@@ -5,6 +5,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import lombok.NonNull;
 import org.cameraapi.common.FrameShowThread;
 
 import java.util.Objects;
@@ -13,14 +14,13 @@ public class Freeze extends LiveEffect {
     public Freeze() {}
 
     @Override
-    public void toggle(ImageView imageAffected) {
+    public void toggle(@NonNull ImageView imageAffected) {
         Objects.requireNonNull(imageAffected);
         setApplied(!isApplied());
         System.out.println("freeze: " + isApplied());
     }
 
-    public static void freeze(FrameShowThread thread) {
-        Objects.requireNonNull(thread);
+    public static void freeze(@NonNull FrameShowThread thread) {
         try {
             thread.stopShowingFrame();
         } catch (InterruptedException e) {
@@ -28,8 +28,7 @@ public class Freeze extends LiveEffect {
         }
     }
 
-    public static FrameShowThread unfreeze(FrameShowThread thread) {
-        Objects.requireNonNull(thread);
+    public static FrameShowThread unfreeze(@NonNull FrameShowThread thread) {
         ChoiceBox<Webcam> choiceBox = thread.getWebcamChoiceBox();
         Webcam webcam = thread.getActiveWebcam();
         ImageView imageView = thread.getWebcamDisplay();
