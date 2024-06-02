@@ -35,19 +35,26 @@ public class HomeController {
     private static ObservableList<Webcam> webcams;
     private FrameShowThread frameShowThread;
 
-    @FXML private ImageView webcamImageView;
+    @FXML
+    private ImageView webcamImageView;
     private Image rawPicture;
     private Image currentPicture;
 
     private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
 
-    @FXML private StackPane stackPane;
-    @FXML private ToggleButton themeButton;
-    @FXML private ToggleButton freezeToggleButton;
-    @FXML private ChoiceBox<Webcam> webcamChoiceBox;
-    @FXML private Text FPSTray;
+    @FXML
+    private StackPane stackPane;
+    @FXML
+    private ToggleButton themeButton;
+    @FXML
+    private ToggleButton freezeToggleButton;
+    @FXML
+    private ChoiceBox<Webcam> webcamChoiceBox;
+    @FXML
+    private Text FPSTray;
 
-    @FXML private RadioButton stabilityTray;
+    @FXML
+    private RadioButton stabilityTray;
 
     public void initialize() {
         initTheme();
