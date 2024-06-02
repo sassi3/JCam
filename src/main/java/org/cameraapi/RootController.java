@@ -2,6 +2,7 @@ package org.cameraapi;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import lombok.Getter;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RootController {
+    @Getter
     private static Map<String, Parent> rootMap;
     private static Deque<Parent> rootStack;
     private static Scene scene;
@@ -18,10 +20,6 @@ public class RootController {
         rootStack = new ArrayDeque<>();
         RootController.scene = main;
         addRoot(rootName, main.getRoot());
-    }
-
-    public static Map<String, Parent> getRootMap() {
-        return rootMap;
     }
 
     public static <T extends Parent> void addRoot(String name, T pane){
