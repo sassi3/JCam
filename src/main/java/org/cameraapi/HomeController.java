@@ -25,11 +25,8 @@ import javafx.scene.image.ImageView;
 import javafx.fxml.FXML;
 
 import org.cameraapi.common.WebcamListener;
-import org.cameraapi.effects.Flip;
-import org.cameraapi.effects.Freeze;
-import org.cameraapi.effects.EffectAbstract;
+import org.cameraapi.effects.*;
 import org.cameraapi.common.WebcamUtils;
-import org.cameraapi.effects.LiveEffect;
 
 import static java.lang.Thread.interrupted;
 
