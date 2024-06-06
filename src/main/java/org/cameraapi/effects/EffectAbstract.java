@@ -1,5 +1,8 @@
 package org.cameraapi.effects;
 
+import lombok.Setter;
+
+@Setter
 public abstract class EffectAbstract implements Effect {
     private boolean enabled;
     private boolean applied;
@@ -7,14 +10,6 @@ public abstract class EffectAbstract implements Effect {
     public EffectAbstract() {
         this.enabled = false;
         this.applied = false;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setApplied(boolean applied) {
-        this.applied = applied;
     }
 
     @Override
