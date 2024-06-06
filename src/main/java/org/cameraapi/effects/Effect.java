@@ -2,12 +2,11 @@ package org.cameraapi.effects;
 
 import javafx.scene.image.ImageView;
 
-public interface LiveEffectsInterface {
+public interface Effect {
     void enable();
     void disable();
     boolean isDisabled();
     boolean isEnabled();
-    void toggle(ImageView imageAffected);
     boolean isApplied();
     void resetStatus();
 }

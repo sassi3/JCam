@@ -27,8 +27,9 @@ import javafx.fxml.FXML;
 import org.cameraapi.common.WebcamListener;
 import org.cameraapi.effects.Flip;
 import org.cameraapi.effects.Freeze;
-import org.cameraapi.effects.LiveEffect;
+import org.cameraapi.effects.EffectAbstract;
 import org.cameraapi.common.WebcamUtils;
+import org.cameraapi.effects.LiveEffect;
 
 import static java.lang.Thread.interrupted;
 
@@ -130,13 +131,13 @@ public class HomeController {
     public void disableInterface() {
         Parent root = stackPane.getScene().getRoot();
         root.disableProperty().setValue(true);
-        for (LiveEffect effect : liveEffects.values()) {
+        for (EffectAbstract effect : liveEffects.values()) {
             effect.disable();
         }
     }
 
     public void enableInterface() {
-        for (LiveEffect effect : liveEffects.values()) {
+        for (EffectAbstract effect : liveEffects.values()) {
             effect.enable();
         }
         Parent root = stackPane.getScene().getRoot();
