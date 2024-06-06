@@ -36,10 +36,8 @@ public class RootController {
             throw new IllegalArgumentException("No such root: " + name);
         }
         Parent nextRoot = rootMap.get(name);
-        Parent currentRoot = scene.getRoot();
-        goForward(currentRoot);
+        goForward();
         scene.setRoot(nextRoot);
-        System.out.println(name.toUpperCase() + " activated.");
     }
 
     public static void goBack() {
@@ -47,8 +45,9 @@ public class RootController {
         scene.setRoot(backRoot);
     }
 
-    public static void goForward(@NonNull Parent forwardRoot) {
-        rootStack.push(forwardRoot);
+    public static void goForward() {
+        Parent oldRoot = scene.getRoot();
+        rootStack.push(oldRoot);
     }
 
 //    public static void slideFromRight(String name) {
