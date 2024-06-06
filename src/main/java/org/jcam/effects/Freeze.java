@@ -1,4 +1,4 @@
-package org.cameraapi.effects;
+package org.jcam.effects;
 
 import com.github.sarxos.webcam.Webcam;
 import javafx.scene.control.ChoiceBox;
@@ -6,11 +6,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import lombok.NonNull;
-import org.cameraapi.common.FrameShowThread;
+import org.jcam.common.FrameShowThread;
 
 import java.util.Objects;
 
-public class Freeze extends LiveEffect {
+public class Freeze extends LiveEffectAbstract {
     public Freeze() {}
 
     @Override

@@ -1,4 +1,4 @@
-package org.cameraapi.common;
+package org.jcam.common;
 
 import javafx.scene.control.Alert;
 

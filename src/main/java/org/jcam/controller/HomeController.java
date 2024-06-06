@@ -1,4 +1,4 @@
-package org.cameraapi;
+package org.jcam.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,8 +14,8 @@ import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import lombok.NonNull;
-import org.cameraapi.common.AlertWindows;
-import org.cameraapi.common.FrameShowThread;
+import org.jcam.common.AlertWindows;
+import org.jcam.common.FrameShowThread;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -24,11 +24,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.fxml.FXML;
 
-import org.cameraapi.common.WebcamListener;
-import org.cameraapi.effects.Flip;
-import org.cameraapi.effects.Freeze;
-import org.cameraapi.effects.LiveEffect;
-import org.cameraapi.common.WebcamUtils;
+import org.jcam.common.WebcamListener;
+import org.jcam.effects.*;
+import org.jcam.common.WebcamUtils;
 
 import static java.lang.Thread.interrupted;
 
@@ -41,7 +39,7 @@ public class HomeController {
     private Image rawPicture;
     private Image currentPicture;
 
-    private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
+    private HashMap<Class<? extends LiveEffectAbstract>, LiveEffectAbstract> liveEffects;
 
     @FXML
     private StackPane stackPane;
@@ -121,7 +119,7 @@ public class HomeController {
         liveEffects.put(Flip.class, new Flip());
         liveEffects.put(Freeze.class, new Freeze());
 
-        for (LiveEffect effect : liveEffects.values()) {
+        for (LiveEffectAbstract effect : liveEffects.values()) {
             effect.enable();
         }
         liveEffects.get(Flip.class).toggle(webcamImageView);
@@ -130,13 +128,13 @@ public class HomeController {
     public void disableInterface() {
         Parent root = stackPane.getScene().getRoot();
         root.disableProperty().setValue(true);
-        for (LiveEffect effect : liveEffects.values()) {
+        for (EffectAbstract effect : liveEffects.values()) {
             effect.disable();
         }
     }
 
     public void enableInterface() {
-        for (LiveEffect effect : liveEffects.values()) {
+        for (EffectAbstract effect : liveEffects.values()) {
             effect.enable();
         }
         Parent root = stackPane.getScene().getRoot();

@@ -1,10 +1,10 @@
-package org.cameraapi.effects;
+package org.jcam.effects;
 
 import javafx.geometry.Point3D;
 import javafx.scene.image.ImageView;
 import lombok.NonNull;
 
-public class Flip extends LiveEffect {
+public class Flip extends LiveEffectAbstract {
     private static double rotationValue;
 
     public Flip() {

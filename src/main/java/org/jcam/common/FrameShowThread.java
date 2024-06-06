@@ -1,4 +1,4 @@
-package org.cameraapi.common;
+package org.jcam.common;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamMotionDetector;
@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.time.Instant;
-import java.util.Objects;
 
 public class FrameShowThread extends Thread {
     @Getter

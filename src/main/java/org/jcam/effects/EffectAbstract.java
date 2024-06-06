@@ -1,20 +1,15 @@
-package org.cameraapi.effects;
+package org.jcam.effects;
 
-public abstract class LiveEffect implements LiveEffectsInterface {
+import lombok.Setter;
+
+@Setter
+public abstract class EffectAbstract implements Effect {
     private boolean enabled;
     private boolean applied;
 
-    public LiveEffect() {
+    public EffectAbstract() {
         this.enabled = false;
         this.applied = false;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setApplied(boolean applied) {
-        this.applied = applied;
     }
 
     @Override

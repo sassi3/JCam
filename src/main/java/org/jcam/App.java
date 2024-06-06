@@ -1,4 +1,4 @@
-package org.cameraapi;
+package org.jcam;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.jcam.controller.RootController;
 
 import java.io.IOException;
 import java.util.Objects;

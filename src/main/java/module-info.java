@@ -11,10 +11,12 @@ module org.example.cameraapi {
     requires static lombok;
 
 
-    opens org.cameraapi to javafx.fxml;
-    exports org.cameraapi;
-    exports org.cameraapi.common;
-    opens org.cameraapi.common to javafx.fxml;
-    exports org.cameraapi.effects;
-    opens org.cameraapi.effects to javafx.fxml;
+    opens org.jcam to javafx.fxml;
+    exports org.jcam;
+    exports org.jcam.common;
+    opens org.jcam.common to javafx.fxml;
+    exports org.jcam.effects;
+    opens org.jcam.effects to javafx.fxml;
+    exports org.jcam.controller;
+    opens org.jcam.controller to javafx.fxml;
 }

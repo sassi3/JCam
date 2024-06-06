@@ -1,4 +1,4 @@
-package org.cameraapi;
+package org.jcam.controller;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
