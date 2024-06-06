@@ -39,7 +39,7 @@ public class HomeController {
     private Image rawPicture;
     private Image currentPicture;
 
-    private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
+    private HashMap<Class<? extends LiveEffectAbstract>, LiveEffectAbstract> liveEffects;
 
     @FXML
     private StackPane stackPane;
@@ -119,7 +119,7 @@ public class HomeController {
         liveEffects.put(Flip.class, new Flip());
         liveEffects.put(Freeze.class, new Freeze());
 
-        for (LiveEffect effect : liveEffects.values()) {
+        for (LiveEffectAbstract effect : liveEffects.values()) {
             effect.enable();
         }
         liveEffects.get(Flip.class).toggle(webcamImageView);
