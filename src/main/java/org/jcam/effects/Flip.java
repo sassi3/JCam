@@ -1,4 +1,4 @@
-package org.cameraapi.effects;
+package org.jcam.effects;
 
 import javafx.geometry.Point3D;
 import javafx.scene.image.ImageView;

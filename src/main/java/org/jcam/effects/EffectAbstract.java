@@ -1,4 +1,4 @@
-package org.cameraapi.effects;
+package org.jcam.effects;
 
 import lombok.Setter;
 

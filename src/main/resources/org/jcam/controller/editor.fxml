@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cameraapi.controller.EditorController">
+<StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jcam.controller.EditorController">
    <children>
       <BorderPane>
          <bottom>

@@ -1,4 +1,4 @@
-package org.cameraapi.controller;
+package org.jcam.controller;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -10,7 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import lombok.NonNull;
-import org.cameraapi.common.AlertWindows;
+import org.jcam.common.AlertWindows;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

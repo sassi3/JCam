@@ -1,4 +1,4 @@
-package org.cameraapi.controller;
+package org.jcam.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,8 +14,8 @@ import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import lombok.NonNull;
-import org.cameraapi.common.AlertWindows;
-import org.cameraapi.common.FrameShowThread;
+import org.jcam.common.AlertWindows;
+import org.jcam.common.FrameShowThread;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -24,9 +24,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.fxml.FXML;
 
-import org.cameraapi.common.WebcamListener;
-import org.cameraapi.effects.*;
-import org.cameraapi.common.WebcamUtils;
+import org.jcam.common.WebcamListener;
+import org.jcam.effects.*;
+import org.jcam.common.WebcamUtils;
 
 import static java.lang.Thread.interrupted;
 
