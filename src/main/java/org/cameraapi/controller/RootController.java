@@ -1,4 +1,4 @@
-package org.cameraapi;
+package org.cameraapi.controller;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;

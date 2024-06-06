@@ -1,4 +1,4 @@
-package org.cameraapi;
+package org.cameraapi.controller;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package org.cameraapi;
+package org.cameraapi.controller;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;

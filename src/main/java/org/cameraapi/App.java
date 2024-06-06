@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.cameraapi.controller.RootController;
 
 import java.io.IOException;
 import java.util.Objects;
