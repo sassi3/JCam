@@ -10,7 +10,7 @@ import org.jcam.common.FrameShowThread;
 
 import java.util.Objects;
 
-public class Freeze extends LiveEffectAbstract {
+public class Freeze extends LiveEffect {
     public Freeze() {}
 
     @Override

@@ -26,7 +26,7 @@ import javafx.fxml.FXML;
 
 import org.jcam.common.WebcamListener;
 import org.jcam.effects.*;
-import org.jcam.common.WebcamUtils;
+import org.jcam.lib.WebcamUtils;
 
 import static java.lang.Thread.interrupted;
 
@@ -39,7 +39,7 @@ public class HomeController {
     private Image rawPicture;
     private Image currentPicture;
 
-    private HashMap<Class<? extends LiveEffectAbstract>, LiveEffectAbstract> liveEffects;
+    private HashMap<Class<? extends LiveEffect>, LiveEffect> liveEffects;
 
     @FXML
     private StackPane stackPane;
@@ -119,7 +119,7 @@ public class HomeController {
         liveEffects.put(Flip.class, new Flip());
         liveEffects.put(Freeze.class, new Freeze());
 
-        for (LiveEffectAbstract effect : liveEffects.values()) {
+        for (LiveEffect effect : liveEffects.values()) {
             effect.enable();
         }
         liveEffects.get(Flip.class).toggle(webcamImageView);
@@ -128,13 +128,13 @@ public class HomeController {
     public void disableInterface() {
         Parent root = stackPane.getScene().getRoot();
         root.disableProperty().setValue(true);
-        for (EffectAbstract effect : liveEffects.values()) {
+        for (Effect effect : liveEffects.values()) {
             effect.disable();
         }
     }
 
     public void enableInterface() {
-        for (EffectAbstract effect : liveEffects.values()) {
+        for (Effect effect : liveEffects.values()) {
             effect.enable();
         }
         Parent root = stackPane.getScene().getRoot();

@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.NonNull;
+import org.jcam.lib.WebcamUtils;
 
 import java.time.Instant;
 
@@ -24,7 +25,6 @@ public class FrameShowThread extends Thread {
     private final RadioButton stabilityTray;
 
     private Thread FPSTrayThread;
-    private Thread stabilityTrayThread;
 
     @Getter
     private Webcam activeWebcam;
@@ -54,7 +54,6 @@ public class FrameShowThread extends Thread {
     }
 
     public void stopShowingFrame() throws InterruptedException {
-        this.threadStopUtility(stabilityTrayThread);
         this.threadStopUtility(FPSTrayThread);
         this.threadStopUtility(this);
     }
