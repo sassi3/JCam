@@ -4,7 +4,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.image.ImageView;
 import lombok.NonNull;
 
-public class Flip extends LiveEffectAbstract {
+public class Flip extends LiveEffect {
     private static double rotationValue;
 
     public Flip() {
