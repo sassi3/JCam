@@ -7,7 +7,8 @@ import lombok.NonNull;
 public class Flip extends LiveEffect {
     private static double rotationValue;
 
-    public Flip() {
+    protected Flip() {
+        super();
         setApplied(true);
         rotationValue = 0.0;
     }
@@ -32,6 +33,10 @@ public class Flip extends LiveEffect {
         picture.setRotationAxis(new Point3D(0, 1, 0));
         picture.setRotate(rotationValue);
     }
+
+
+
+
 // I don't want to delete this for now, it can be useful
 //    public static void imgFlipper(GraphicsContext graphicsContext2D) {
 //        graphicsContext2D.setTransform(flipperMaker(graphicsContext2D.getCanvas().getWidth()));

@@ -6,12 +6,17 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import lombok.NonNull;
+import lombok.Setter;
 import org.jcam.common.FrameShowThread;
 
+import java.beans.ConstructorProperties;
 import java.util.Objects;
 
 public class Freeze extends LiveEffect {
-    public Freeze() {}
+
+    protected Freeze() {
+        super();
+    }
 
     @Override
     public void apply(@NonNull ImageView imageAffected) {
