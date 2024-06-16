@@ -122,7 +122,7 @@ public class HomeController {
         for (LiveEffect effect : liveEffects.values()) {
             effect.enable();
         }
-        liveEffects.get(Flip.class).toggle(webcamImageView);
+        liveEffects.get(Flip.class).apply(webcamImageView);
     }
 
     public void disableInterface() {
@@ -156,7 +156,7 @@ public class HomeController {
         if (liveEffects.get(Flip.class).isDisabled()) {
             throw new RuntimeException("Flip is currently disabled.");
         }
-        liveEffects.get(Flip.class).toggle(webcamImageView);
+        liveEffects.get(Flip.class).apply(webcamImageView);
     }
 
     @FXML
@@ -164,7 +164,7 @@ public class HomeController {
         if (liveEffects.get(Freeze.class).isDisabled()) {
             throw new RuntimeException("Freeze is currently disabled.");
         }
-        liveEffects.get(Freeze.class).toggle(webcamImageView);
+        liveEffects.get(Freeze.class).apply(webcamImageView);
         if (liveEffects.get(Freeze.class).isApplied()) {
             Freeze.freeze(frameShowThread);
         } else {
