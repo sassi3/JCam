@@ -20,7 +20,7 @@ public class Flip extends LiveEffect {
 
     public void flip(@NonNull ImageView picture) {
         if (rotationValue == 180) {
-            rotationValue = 0;
+            rotationValue = 0.0;
         } else {
             rotationValue = 180;
         }
