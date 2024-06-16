@@ -26,7 +26,7 @@ import javafx.fxml.FXML;
 
 import org.jcam.common.WebcamListener;
 import org.jcam.effects.*;
-import org.jcam.common.WebcamUtils;
+import org.jcam.lib.WebcamUtils;
 
 import static java.lang.Thread.interrupted;
 

@@ -1,4 +1,4 @@
-package org.jcam.common;
+package org.jcam.lib;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamResolution;

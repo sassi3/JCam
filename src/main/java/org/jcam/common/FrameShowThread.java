@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.NonNull;
+import org.jcam.lib.WebcamUtils;
 
 import java.time.Instant;
 

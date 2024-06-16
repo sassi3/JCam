@@ -19,4 +19,6 @@ module org.example.cameraapi {
     opens org.jcam.effects to javafx.fxml;
     exports org.jcam.controller;
     opens org.jcam.controller to javafx.fxml;
+    exports org.jcam.lib;
+    opens org.jcam.lib to javafx.fxml;
 }
