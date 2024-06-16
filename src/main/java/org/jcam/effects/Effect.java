@@ -37,10 +37,6 @@ public abstract class Effect implements Enableable, Applicable, Resettable {
         return !enabled;
     }
 
-    @Override
-    public void apply() {
-        applied = !applied;
-    }
     public abstract void apply(@NonNull ImageView imageAffected);
 
     @Override
