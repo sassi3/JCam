@@ -8,8 +8,8 @@ import lombok.NonNull;
 import java.awt.*;
 import java.util.Objects;
 
-public class WebcamUtils {
-    private static final Dimension[] nonStandardResolutions = new Dimension[] {
+public interface WebcamUtils {
+     Dimension[] NON_STANDARD_RESOLUTIONS = new Dimension[] {
             WebcamResolution.QQVGA.getSize(),
             WebcamResolution.HQVGA.getSize(),
             WebcamResolution.QVGA.getSize(),
@@ -37,11 +37,10 @@ public class WebcamUtils {
             WebcamResolution.QHD.getSize(),
             WebcamResolution.UHD4K.getSize()
     };
-    private static final Dimension defaultResolution = nonStandardResolutions[0];
 
     private static boolean isValidResolution(Dimension resolution) {
         Objects.requireNonNull(resolution);
-        for (Dimension dimension : nonStandardResolutions) {
+        for (Dimension dimension : NON_STANDARD_RESOLUTIONS) {
             if (resolution.equals(dimension)) {
                 return true;
             }
@@ -49,17 +48,17 @@ public class WebcamUtils {
         return false;
     }
 
-    public static void startUpWebcam(@NonNull Webcam webcam, Dimension resolution) {
+    static void startUpWebcam(@NonNull Webcam webcam, Dimension resolution) {
         if (webcam.isOpen()) {
             throw new RuntimeException("Webcam has been already initialized.");
         }
         webcam.open();
-        webcam.setCustomViewSizes(nonStandardResolutions);
+        webcam.setCustomViewSizes(NON_STANDARD_RESOLUTIONS);
         Dimension[] dimensionsSupported = webcam.getDevice().getResolutions();
         Dimension maxDimension = dimensionsSupported[dimensionsSupported.length - 1];
         if (Objects.isNull(resolution)) {
             if (Objects.isNull(maxDimension)) {
-                resolution = defaultResolution;
+                resolution = NON_STANDARD_RESOLUTIONS[0];
             } else {
                 resolution = maxDimension;
             }
@@ -70,7 +69,7 @@ public class WebcamUtils {
         }
     }
 
-    public static void changeResolution(@NonNull Webcam webcam, @NonNull Dimension resolution) {
+    static void changeResolution(@NonNull Webcam webcam, @NonNull Dimension resolution) {
         if (!isValidResolution(resolution)) {
             throw new IllegalArgumentException("Resolution " + resolution + " is not supported.");
         }
@@ -80,7 +79,7 @@ public class WebcamUtils {
         webcam.open();
     }
 
-    public static void shutDownWebcams(ObservableList<Webcam> webcams) {
+    static void shutDownWebcams(ObservableList<Webcam> webcams) {
         for (Webcam webcam: webcams) {
             if (webcam.isOpen()) {
                 webcam.close();
