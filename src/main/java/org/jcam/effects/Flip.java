@@ -13,16 +13,16 @@ public class Flip extends LiveEffect {
     }
 
     @Override
-    public void toggle(@NonNull ImageView imageAffected) {
+    public void apply(@NonNull ImageView imageAffected) {
         setApplied(!isApplied());
         flip(imageAffected);
     }
 
     public void flip(@NonNull ImageView picture) {
-        if (rotationValue == 180) {
-            rotationValue = 0;
+        if (rotationValue == 180.0) {
+            rotationValue = 0.0;
         } else {
-            rotationValue = 180;
+            rotationValue = 180.0;
         }
         viewportFlipper(picture);
         System.out.println("flip: " + this.isApplied());

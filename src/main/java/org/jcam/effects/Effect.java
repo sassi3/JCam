@@ -1,5 +1,7 @@
 package org.jcam.effects;
 
+import javafx.scene.image.ImageView;
+import lombok.NonNull;
 import lombok.Setter;
 import org.jcam.lib.Applicable;
 import org.jcam.lib.Enableable;
@@ -34,6 +36,8 @@ public abstract class Effect implements Enableable, Applicable, Resettable {
     public boolean isDisabled() {
         return !enabled;
     }
+
+    public abstract void apply(@NonNull ImageView imageAffected);
 
     @Override
     public boolean isApplied() {

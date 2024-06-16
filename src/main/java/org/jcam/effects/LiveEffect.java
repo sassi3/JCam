@@ -1,7 +1,12 @@
 package org.jcam.effects;
 
-import org.jcam.lib.Toggleable;
+public abstract class LiveEffect extends Effect {
+    public LiveEffect() {
+        super();
+    }
 
-public abstract class LiveEffect extends Effect implements Toggleable {
-
+    @Override
+    public void apply() {
+        throw new IllegalCallerException("This method is unsupported by " + this.getClass().getName());
+    }
 }
