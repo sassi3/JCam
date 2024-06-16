@@ -1,13 +1,11 @@
 package org.jcam.effects;
 
-import lombok.Setter;
 import org.jcam.lib.Applicable;
 import org.jcam.lib.Enableable;
 import org.jcam.lib.Resettable;
 
 public abstract class Effect implements Enableable, Applicable, Resettable {
     private boolean enabled;
-    @Setter
     private boolean applied;
 
     public Effect() {
@@ -33,6 +31,11 @@ public abstract class Effect implements Enableable, Applicable, Resettable {
     @Override
     public boolean isDisabled() {
         return !enabled;
+    }
+
+    @Override
+    public void apply() {
+        applied = !applied;
     }
 
     @Override

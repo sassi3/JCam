@@ -8,13 +8,13 @@ public class Flip extends LiveEffect {
     private static double rotationValue;
 
     public Flip() {
-        setApplied(true);
+        apply();
         rotationValue = 0.0;
     }
 
     @Override
     public void toggle(@NonNull ImageView imageAffected) {
-        setApplied(!isApplied());
+        apply();
         flip(imageAffected);
     }
 
