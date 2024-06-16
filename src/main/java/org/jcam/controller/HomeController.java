@@ -116,8 +116,8 @@ public class HomeController {
 
     private void initLiveEffects() {
         liveEffects = new HashMap<>();
-        liveEffects.put(Flip.class, new Flip());
-        liveEffects.put(Freeze.class, new Freeze());
+        liveEffects.put(Flip.class, Effect.getUniqueInstance(Flip.class));
+        liveEffects.put(Freeze.class, Effect.getUniqueInstance(Freeze.class));
 
         for (LiveEffect effect : liveEffects.values()) {
             effect.enable();
