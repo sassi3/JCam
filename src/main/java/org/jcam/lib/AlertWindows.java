@@ -1,9 +1,9 @@
-package org.jcam.common;
+package org.jcam.lib;
 
 import javafx.scene.control.Alert;
 
-public class AlertWindows {
-    public static void showFailedToTakePictureAlert() {
+public interface AlertWindows {
+    static void showFailedToTakePictureAlert() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.getDialogPane().setMinWidth(675);
         alert.getDialogPane().setMaxWidth(675);
@@ -20,7 +20,7 @@ public class AlertWindows {
         alert.showAndWait();
     }
 
-    public static void showFatalError() {
+    static void showFatalError() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.getDialogPane().setMinWidth(400);
         alert.getDialogPane().setMaxWidth(300);
@@ -31,7 +31,7 @@ public class AlertWindows {
         alert.showAndWait();
     }
 
-    public static void throwAlert(String title, String headerText, String contentText) {
+    static void throwAlert(String title, String headerText, String contentText) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.getDialogPane().setMinWidth(400);
         alert.getDialogPane().setMaxWidth(300);
@@ -40,7 +40,8 @@ public class AlertWindows {
         alert.setContentText(contentText);
         alert.showAndWait();
     }
-    public static void throwAlert(String title, String headerText, String contentText,double width, double height) {
+
+    static void throwAlert(String title, String headerText, String contentText,double width, double height) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.getDialogPane().setMinWidth(width);
         alert.getDialogPane().setMaxWidth(height);
