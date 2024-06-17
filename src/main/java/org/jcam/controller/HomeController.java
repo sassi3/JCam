@@ -14,7 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import lombok.NonNull;
-import org.jcam.common.AlertWindows;
+import org.jcam.lib.AlertWindows;
 import org.jcam.common.FrameShowThread;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

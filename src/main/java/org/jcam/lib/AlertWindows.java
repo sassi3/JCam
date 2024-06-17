@@ -1,4 +1,4 @@
-package org.jcam.common;
+package org.jcam.lib;
 
 import javafx.scene.control.Alert;
 

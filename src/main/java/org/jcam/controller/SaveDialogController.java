@@ -10,7 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import lombok.NonNull;
-import org.jcam.common.AlertWindows;
+import org.jcam.lib.AlertWindows;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
