@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 
 public class SaveDialogController {
     @FXML
@@ -40,7 +41,6 @@ public class SaveDialogController {
     }
 
     public void save() {
-        String os = System.getProperty("os.name");
         if (selectDirTxtField.getText().isEmpty()) {
             AlertWindows.throwAlert("Error","No directory selected","A directory is required");
             throw new RuntimeException();
@@ -49,7 +49,7 @@ public class SaveDialogController {
             AlertWindows.throwAlert("Error","No file selected","A filename is required");
             throw new RuntimeException();
         }
-        File target = getFile(os);
+        File target = getFile();
         try {
             if (!target.createNewFile()) {
                 AlertWindows.throwAlert("Error","Could not create new file","File already exists");
@@ -82,16 +82,8 @@ public class SaveDialogController {
         }
     }
 
-    private File getFile(@NonNull String os) {
-        File target;
-        if (os.contains("Windows")) {
-            target = new File(selectDirTxtField.getText()+ "\\" + fileNameTxtField.getText() + typeChoiceBox.getSelectionModel().getSelectedItem());
-        }
-        else {
-            target = new File(selectDirTxtField.getText()+ "/" + fileNameTxtField.getText() + typeChoiceBox.getSelectionModel().getSelectedItem());
-        }
-        
-        return target;
+    private File getFile() {
+        return new File(selectDirTxtField.getText() + FileSystems.getDefault().getSeparator() + fileNameTxtField.getText() + typeChoiceBox.getSelectionModel().getSelectedItem());
     }
 
     public void initTypeChoiceBox() {
