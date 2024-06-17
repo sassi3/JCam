@@ -49,7 +49,7 @@ public class SaveDialogController {
             AlertWindows.throwAlert("Error","No file selected","A filename is required");
             throw new RuntimeException();
         }
-        File target = getFile();
+        File target = createFile();
         try {
             if (!target.createNewFile()) {
                 AlertWindows.throwAlert("Error","Could not create new file","File already exists");
@@ -82,8 +82,12 @@ public class SaveDialogController {
         }
     }
 
-    private File getFile() {
-        return new File(selectDirTxtField.getText() + FileSystems.getDefault().getSeparator() + fileNameTxtField.getText() + typeChoiceBox.getSelectionModel().getSelectedItem());
+    private File createFile() {
+        String dir = selectDirTxtField.getText();
+        String separator = FileSystems.getDefault().getSeparator();
+        String filename = fileNameTxtField.getText();
+        String extension = typeChoiceBox.getSelectionModel().getSelectedItem();
+        return new File(dir + separator + filename + extension);
     }
 
     public void initTypeChoiceBox() {
