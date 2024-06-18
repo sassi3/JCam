@@ -35,6 +35,7 @@ public class FrameShowThread extends Thread {
     private WebcamMotionDetector motionDetector;
 
     public FrameShowThread(@NonNull ChoiceBox<Webcam> webcamChoiceBox, @NonNull Webcam activeWebcam, @NonNull ImageView webcamDisplay, @NonNull Text FPSTray, @NonNull RadioButton stabilityTray) {
+        super();
         this.webcamChoiceBox = webcamChoiceBox;
         this.activeWebcam = activeWebcam;
         this.webcamDisplay = webcamDisplay;
