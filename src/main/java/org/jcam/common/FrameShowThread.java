@@ -13,7 +13,6 @@ import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.NonNull;
 import org.jcam.lib.WebcamUtils;
-
 import java.time.Instant;
 
 public class FrameShowThread extends Thread {
@@ -24,17 +23,17 @@ public class FrameShowThread extends Thread {
     @Getter
     private final RadioButton stabilityTray;
 
-    private Thread FPSTrayThread;
-
     @Getter
     private Webcam activeWebcam;
     @Getter
     private final ImageView webcamDisplay;
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
+    private Thread FPSTrayThread;
     private WebcamMotionDetector motionDetector;
 
     public FrameShowThread(@NonNull ChoiceBox<Webcam> webcamChoiceBox, @NonNull Webcam activeWebcam, @NonNull ImageView webcamDisplay, @NonNull Text FPSTray, @NonNull RadioButton stabilityTray) {
+        super();
         this.webcamChoiceBox = webcamChoiceBox;
         this.activeWebcam = activeWebcam;
         this.webcamDisplay = webcamDisplay;
