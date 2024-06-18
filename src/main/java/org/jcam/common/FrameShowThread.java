@@ -24,14 +24,13 @@ public class FrameShowThread extends Thread {
     @Getter
     private final RadioButton stabilityTray;
 
-    private Thread FPSTrayThread;
-
     @Getter
     private Webcam activeWebcam;
     @Getter
     private final ImageView webcamDisplay;
     private final ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
 
+    private Thread FPSTrayThread;
     private WebcamMotionDetector motionDetector;
 
     public FrameShowThread(@NonNull ChoiceBox<Webcam> webcamChoiceBox, @NonNull Webcam activeWebcam, @NonNull ImageView webcamDisplay, @NonNull Text FPSTray, @NonNull RadioButton stabilityTray) {
