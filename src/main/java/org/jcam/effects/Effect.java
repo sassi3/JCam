@@ -70,5 +70,4 @@ public abstract class Effect implements Enableable, Applicable, Resettable {
         // In any case returns the unique Instance. So it is recommended to use this every time we want to access instance methods of an Effect class
         return effectClass.cast(instances.get(effectClass));
     }
-
 }

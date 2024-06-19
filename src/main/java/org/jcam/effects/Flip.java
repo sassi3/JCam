@@ -33,5 +33,4 @@ public class Flip extends LiveEffect {
         picture.setRotationAxis(new Point3D(0, 1, 0));
         picture.setRotate(rotationValue);
     }
-    
 }
