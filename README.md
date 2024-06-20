@@ -15,7 +15,7 @@ che cazzo scegliamo ocropoid? (resolved)
 oporco ha un cane, di chi è il cane? (unresolved)
 
 ## Camera API
-we're making out of unimore with this one `fire emoji`
+we're making out of UNIMORE with this one `fire emoji`
 
 ## Resources
 Here a list of useful resources:
