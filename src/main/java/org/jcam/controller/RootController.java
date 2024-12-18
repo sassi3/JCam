@@ -49,32 +49,4 @@ public class RootController {
         Parent oldRoot = scene.getRoot();
         rootStack.push(oldRoot);
     }
-
-//    public static void slideFromRight(String name) {
-//        Parent newParent = screenMap.get(name);
-//        Parent oldParent = main.getRoot();
-//        double sceneWidth = oldParent.getScene().getWidth();
-//        newParent.translateXProperty().set(sceneWidth);
-//        activate(name);
-//
-//        Timeline newParentTimeline = new Timeline();
-//        KeyValue kv = new KeyValue(newParent.translateXProperty(), 0, Interpolator.EASE_IN);
-//        KeyFrame kf = new KeyFrame(Duration.seconds(0.4), kv);
-//        newParentTimeline.getKeyFrames().add(kf);
-//        newParentTimeline.play();
-//    }
-
-//    public static void slideFromLeft(String name) {
-//        Parent newParent = screenMap.get(name);
-//        Parent oldParent = main.getRoot();
-//        double sceneWidth = oldParent.getScene().getWidth();
-//        newParent.translateXProperty().set(-sceneWidth);
-//        activate(name);
-//
-//        Timeline newParentTimeline = new Timeline();
-//        KeyValue kv = new KeyValue(newParent.translateXProperty(), 0, Interpolator.EASE_IN);
-//        KeyFrame kf = new KeyFrame(Duration.seconds(0.4), kv);
-//        newParentTimeline.getKeyFrames().add(kf);
-//        newParentTimeline.play();
-//    }
 }
